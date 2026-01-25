@@ -1,0 +1,249 @@
+Global Code,Global Name,Region Code,Region Name,Sub-region Code,Sub-region Name,Intermediate Region Code,Intermediate Region Name,Country or Area,M49 Code,ISO-alpha2 Code,ISO-alpha3 Code,Least Developed Countries (LDC),Land Locked Developing Countries (LLDC),Small Island Developing States (SIDS)
+001,World,002,Africa,015,Northern Africa,NA,NA,Algeria,012,DZ,DZA,NA,NA,NA
+001,World,002,Africa,015,Northern Africa,NA,NA,Egypt,818,EG,EGY,NA,NA,NA
+001,World,002,Africa,015,Northern Africa,NA,NA,Libya,434,LY,LBY,NA,NA,NA
+001,World,002,Africa,015,Northern Africa,NA,NA,Morocco,504,MA,MAR,NA,NA,NA
+001,World,002,Africa,015,Northern Africa,NA,NA,Sudan,729,SD,SDN,x,NA,NA
+001,World,002,Africa,015,Northern Africa,NA,NA,Tunisia,788,TN,TUN,NA,NA,NA
+001,World,002,Africa,015,Northern Africa,NA,NA,Western Sahara,732,EH,ESH,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,British Indian Ocean Territory,086,IO,IOT,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Burundi,108,BI,BDI,x,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Comoros,174,KM,COM,x,NA,x
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Djibouti,262,DJ,DJI,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Eritrea,232,ER,ERI,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Ethiopia,231,ET,ETH,x,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,French Southern Territories,260,TF,ATF,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Kenya,404,KE,KEN,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Madagascar,450,MG,MDG,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Malawi,454,MW,MWI,x,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Mauritius,480,MU,MUS,NA,NA,x
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Mayotte,175,YT,MYT,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Mozambique,508,MZ,MOZ,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Réunion,638,RE,REU,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Rwanda,646,RW,RWA,x,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Seychelles,690,SC,SYC,NA,NA,x
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Somalia,706,SO,SOM,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,South Sudan,728,SS,SSD,x,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Uganda,800,UG,UGA,x,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,United Republic of Tanzania,834,TZ,TZA,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Zambia,894,ZM,ZMB,x,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,014,Eastern Africa,Zimbabwe,716,ZW,ZWE,NA,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,017,Middle Africa,Angola,024,AO,AGO,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,017,Middle Africa,Cameroon,120,CM,CMR,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,017,Middle Africa,Central African Republic,140,CF,CAF,x,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,017,Middle Africa,Chad,148,TD,TCD,x,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,017,Middle Africa,Congo,178,CG,COG,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,017,Middle Africa,Democratic Republic of the Congo,180,CD,COD,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,017,Middle Africa,Equatorial Guinea,226,GQ,GNQ,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,017,Middle Africa,Gabon,266,GA,GAB,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,017,Middle Africa,Sao Tome and Principe,678,ST,STP,NA,NA,x
+001,World,002,Africa,202,Sub-Saharan Africa,018,Southern Africa,Botswana,072,BW,BWA,NA,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,018,Southern Africa,Eswatini,748,SZ,SWZ,NA,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,018,Southern Africa,Lesotho,426,LS,LSO,x,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,018,Southern Africa,Namibia,516,NA,NAM,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,018,Southern Africa,South Africa,710,ZA,ZAF,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Benin,204,BJ,BEN,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Burkina Faso,854,BF,BFA,x,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Cabo Verde,132,CV,CPV,NA,NA,x
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Côte d’Ivoire,384,CI,CIV,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Gambia,270,GM,GMB,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Ghana,288,GH,GHA,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Guinea,324,GN,GIN,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Guinea-Bissau,624,GW,GNB,x,NA,x
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Liberia,430,LR,LBR,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Mali,466,ML,MLI,x,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Mauritania,478,MR,MRT,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Niger,562,NE,NER,x,x,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Nigeria,566,NG,NGA,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Saint Helena,654,SH,SHN,NA,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Senegal,686,SN,SEN,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Sierra Leone,694,SL,SLE,x,NA,NA
+001,World,002,Africa,202,Sub-Saharan Africa,011,Western Africa,Togo,768,TG,TGO,x,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Anguilla,660,AI,AIA,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Antigua and Barbuda,028,AG,ATG,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Aruba,533,AW,ABW,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Bahamas,044,BS,BHS,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Barbados,052,BB,BRB,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,"Bonaire, Sint Eustatius and Saba",535,BQ,BES,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,British Virgin Islands,092,VG,VGB,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Cayman Islands,136,KY,CYM,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Cuba,192,CU,CUB,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Curaçao,531,CW,CUW,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Dominica,212,DM,DMA,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Dominican Republic,214,DO,DOM,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Grenada,308,GD,GRD,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Guadeloupe,312,GP,GLP,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Haiti,332,HT,HTI,x,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Jamaica,388,JM,JAM,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Martinique,474,MQ,MTQ,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Montserrat,500,MS,MSR,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Puerto Rico,630,PR,PRI,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Saint Barthélemy,652,BL,BLM,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Saint Kitts and Nevis,659,KN,KNA,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Saint Lucia,662,LC,LCA,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Saint Martin (French Part),663,MF,MAF,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Saint Vincent and the Grenadines,670,VC,VCT,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Sint Maarten (Dutch part),534,SX,SXM,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Trinidad and Tobago,780,TT,TTO,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,Turks and Caicos Islands,796,TC,TCA,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,029,Caribbean,United States Virgin Islands,850,VI,VIR,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,013,Central America,Belize,084,BZ,BLZ,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,013,Central America,Costa Rica,188,CR,CRI,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,013,Central America,El Salvador,222,SV,SLV,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,013,Central America,Guatemala,320,GT,GTM,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,013,Central America,Honduras,340,HN,HND,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,013,Central America,Mexico,484,MX,MEX,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,013,Central America,Nicaragua,558,NI,NIC,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,013,Central America,Panama,591,PA,PAN,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Argentina,032,AR,ARG,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Bolivia (Plurinational State of),068,BO,BOL,NA,x,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Bouvet Island,074,BV,BVT,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Brazil,076,BR,BRA,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Chile,152,CL,CHL,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Colombia,170,CO,COL,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Ecuador,218,EC,ECU,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Falkland Islands (Malvinas),238,FK,FLK,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,French Guiana,254,GF,GUF,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Guyana,328,GY,GUY,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Paraguay,600,PY,PRY,NA,x,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Peru,604,PE,PER,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,South Georgia and the South Sandwich Islands,239,GS,SGS,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Suriname,740,SR,SUR,NA,NA,x
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Uruguay,858,UY,URY,NA,NA,NA
+001,World,019,Americas,419,Latin America and the Caribbean,005,South America,Venezuela (Bolivarian Republic of),862,VE,VEN,NA,NA,NA
+001,World,019,Americas,021,Northern America,NA,NA,Bermuda,060,BM,BMU,NA,NA,NA
+001,World,019,Americas,021,Northern America,NA,NA,Canada,124,CA,CAN,NA,NA,NA
+001,World,019,Americas,021,Northern America,NA,NA,Greenland,304,GL,GRL,NA,NA,NA
+001,World,019,Americas,021,Northern America,NA,NA,Saint Pierre and Miquelon,666,PM,SPM,NA,NA,NA
+001,World,019,Americas,021,Northern America,NA,NA,United States of America,840,US,USA,NA,NA,NA
+001,World,NA,NA,NA,NA,NA,NA,Antarctica,010,AQ,ATA,NA,NA,NA
+001,World,142,Asia,143,Central Asia,NA,NA,Kazakhstan,398,KZ,KAZ,NA,x,NA
+001,World,142,Asia,143,Central Asia,NA,NA,Kyrgyzstan,417,KG,KGZ,NA,x,NA
+001,World,142,Asia,143,Central Asia,NA,NA,Tajikistan,762,TJ,TJK,NA,x,NA
+001,World,142,Asia,143,Central Asia,NA,NA,Turkmenistan,795,TM,TKM,NA,x,NA
+001,World,142,Asia,143,Central Asia,NA,NA,Uzbekistan,860,UZ,UZB,NA,x,NA
+001,World,142,Asia,030,Eastern Asia,NA,NA,China,156,CN,CHN,NA,NA,NA
+001,World,142,Asia,030,Eastern Asia,NA,NA,"China, Hong Kong Special Administrative Region",344,HK,HKG,NA,NA,NA
+001,World,142,Asia,030,Eastern Asia,NA,NA,"China, Macao Special Administrative Region",446,MO,MAC,NA,NA,NA
+001,World,142,Asia,030,Eastern Asia,NA,NA,Democratic People's Republic of Korea,408,KP,PRK,NA,NA,NA
+001,World,142,Asia,030,Eastern Asia,NA,NA,Japan,392,JP,JPN,NA,NA,NA
+001,World,142,Asia,030,Eastern Asia,NA,NA,Mongolia,496,MN,MNG,NA,x,NA
+001,World,142,Asia,030,Eastern Asia,NA,NA,Republic of Korea,410,KR,KOR,NA,NA,NA
+001,World,142,Asia,035,South-eastern Asia,NA,NA,Brunei Darussalam,096,BN,BRN,NA,NA,NA
+001,World,142,Asia,035,South-eastern Asia,NA,NA,Cambodia,116,KH,KHM,x,NA,NA
+001,World,142,Asia,035,South-eastern Asia,NA,NA,Indonesia,360,ID,IDN,NA,NA,NA
+001,World,142,Asia,035,South-eastern Asia,NA,NA,Lao People's Democratic Republic,418,LA,LAO,x,x,NA
+001,World,142,Asia,035,South-eastern Asia,NA,NA,Malaysia,458,MY,MYS,NA,NA,NA
+001,World,142,Asia,035,South-eastern Asia,NA,NA,Myanmar,104,MM,MMR,x,NA,NA
+001,World,142,Asia,035,South-eastern Asia,NA,NA,Philippines,608,PH,PHL,NA,NA,NA
+001,World,142,Asia,035,South-eastern Asia,NA,NA,Singapore,702,SG,SGP,NA,NA,x
+001,World,142,Asia,035,South-eastern Asia,NA,NA,Thailand,764,TH,THA,NA,NA,NA
+001,World,142,Asia,035,South-eastern Asia,NA,NA,Timor-Leste,626,TL,TLS,x,NA,x
+001,World,142,Asia,035,South-eastern Asia,NA,NA,Viet Nam,704,VN,VNM,NA,NA,NA
+001,World,142,Asia,034,Southern Asia,NA,NA,Afghanistan,004,AF,AFG,x,x,NA
+001,World,142,Asia,034,Southern Asia,NA,NA,Bangladesh,050,BD,BGD,x,NA,NA
+001,World,142,Asia,034,Southern Asia,NA,NA,Bhutan,064,BT,BTN,NA,x,NA
+001,World,142,Asia,034,Southern Asia,NA,NA,India,356,IN,IND,NA,NA,NA
+001,World,142,Asia,034,Southern Asia,NA,NA,Iran (Islamic Republic of),364,IR,IRN,NA,NA,NA
+001,World,142,Asia,034,Southern Asia,NA,NA,Maldives,462,MV,MDV,NA,NA,x
+001,World,142,Asia,034,Southern Asia,NA,NA,Nepal,524,NP,NPL,x,x,NA
+001,World,142,Asia,034,Southern Asia,NA,NA,Pakistan,586,PK,PAK,NA,NA,NA
+001,World,142,Asia,034,Southern Asia,NA,NA,Sri Lanka,144,LK,LKA,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Armenia,051,AM,ARM,NA,x,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Azerbaijan,031,AZ,AZE,NA,x,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Bahrain,048,BH,BHR,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Cyprus,196,CY,CYP,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Georgia,268,GE,GEO,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Iraq,368,IQ,IRQ,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Israel,376,IL,ISR,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Jordan,400,JO,JOR,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Kuwait,414,KW,KWT,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Lebanon,422,LB,LBN,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Oman,512,OM,OMN,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Qatar,634,QA,QAT,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Saudi Arabia,682,SA,SAU,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,State of Palestine,275,PS,PSE,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Syrian Arab Republic,760,SY,SYR,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Türkiye,792,TR,TUR,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,United Arab Emirates,784,AE,ARE,NA,NA,NA
+001,World,142,Asia,145,Western Asia,NA,NA,Yemen,887,YE,YEM,x,NA,NA
+001,World,150,Europe,151,Eastern Europe,NA,NA,Belarus,112,BY,BLR,NA,NA,NA
+001,World,150,Europe,151,Eastern Europe,NA,NA,Bulgaria,100,BG,BGR,NA,NA,NA
+001,World,150,Europe,151,Eastern Europe,NA,NA,Czechia,203,CZ,CZE,NA,NA,NA
+001,World,150,Europe,151,Eastern Europe,NA,NA,Hungary,348,HU,HUN,NA,NA,NA
+001,World,150,Europe,151,Eastern Europe,NA,NA,Poland,616,PL,POL,NA,NA,NA
+001,World,150,Europe,151,Eastern Europe,NA,NA,Republic of Moldova,498,MD,MDA,NA,x,NA
+001,World,150,Europe,151,Eastern Europe,NA,NA,Romania,642,RO,ROU,NA,NA,NA
+001,World,150,Europe,151,Eastern Europe,NA,NA,Russian Federation,643,RU,RUS,NA,NA,NA
+001,World,150,Europe,151,Eastern Europe,NA,NA,Slovakia,703,SK,SVK,NA,NA,NA
+001,World,150,Europe,151,Eastern Europe,NA,NA,Ukraine,804,UA,UKR,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Åland Islands,248,AX,ALA,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Denmark,208,DK,DNK,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Estonia,233,EE,EST,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Faroe Islands,234,FO,FRO,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Finland,246,FI,FIN,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Guernsey,831,GG,GGY,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Iceland,352,IS,ISL,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Ireland,372,IE,IRL,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Isle of Man,833,IM,IMN,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Jersey,832,JE,JEY,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Latvia,428,LV,LVA,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Lithuania,440,LT,LTU,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Norway,578,NO,NOR,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Svalbard and Jan Mayen Islands,744,SJ,SJM,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,Sweden,752,SE,SWE,NA,NA,NA
+001,World,150,Europe,154,Northern Europe,NA,NA,United Kingdom of Great Britain and Northern Ireland,826,GB,GBR,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Albania,008,AL,ALB,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Andorra,020,AD,AND,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Bosnia and Herzegovina,070,BA,BIH,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Croatia,191,HR,HRV,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Gibraltar,292,GI,GIB,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Greece,300,GR,GRC,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Holy See,336,VA,VAT,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Italy,380,IT,ITA,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Malta,470,MT,MLT,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Montenegro,499,ME,MNE,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,North Macedonia,807,MK,MKD,NA,x,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Portugal,620,PT,PRT,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,San Marino,674,SM,SMR,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Serbia,688,RS,SRB,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Slovenia,705,SI,SVN,NA,NA,NA
+001,World,150,Europe,039,Southern Europe,NA,NA,Spain,724,ES,ESP,NA,NA,NA
+001,World,150,Europe,155,Western Europe,NA,NA,Austria,040,AT,AUT,NA,NA,NA
+001,World,150,Europe,155,Western Europe,NA,NA,Belgium,056,BE,BEL,NA,NA,NA
+001,World,150,Europe,155,Western Europe,NA,NA,France,250,FR,FRA,NA,NA,NA
+001,World,150,Europe,155,Western Europe,NA,NA,Germany,276,DE,DEU,NA,NA,NA
+001,World,150,Europe,155,Western Europe,NA,NA,Liechtenstein,438,LI,LIE,NA,NA,NA
+001,World,150,Europe,155,Western Europe,NA,NA,Luxembourg,442,LU,LUX,NA,NA,NA
+001,World,150,Europe,155,Western Europe,NA,NA,Monaco,492,MC,MCO,NA,NA,NA
+001,World,150,Europe,155,Western Europe,NA,NA,Netherlands (Kingdom of the),528,NL,NLD,NA,NA,NA
+001,World,150,Europe,155,Western Europe,NA,NA,Switzerland,756,CH,CHE,NA,NA,NA
+001,World,009,Oceania,053,Australia and New Zealand,NA,NA,Australia,036,AU,AUS,NA,NA,NA
+001,World,009,Oceania,053,Australia and New Zealand,NA,NA,Christmas Island,162,CX,CXR,NA,NA,NA
+001,World,009,Oceania,053,Australia and New Zealand,NA,NA,Cocos (Keeling) Islands,166,CC,CCK,NA,NA,NA
+001,World,009,Oceania,053,Australia and New Zealand,NA,NA,Heard Island and McDonald Islands,334,HM,HMD,NA,NA,NA
+001,World,009,Oceania,053,Australia and New Zealand,NA,NA,New Zealand,554,NZ,NZL,NA,NA,NA
+001,World,009,Oceania,053,Australia and New Zealand,NA,NA,Norfolk Island,574,NF,NFK,NA,NA,NA
+001,World,009,Oceania,054,Melanesia,NA,NA,Fiji,242,FJ,FJI,NA,NA,x
+001,World,009,Oceania,054,Melanesia,NA,NA,New Caledonia,540,NC,NCL,NA,NA,x
+001,World,009,Oceania,054,Melanesia,NA,NA,Papua New Guinea,598,PG,PNG,NA,NA,x
+001,World,009,Oceania,054,Melanesia,NA,NA,Solomon Islands,090,SB,SLB,x,NA,x
+001,World,009,Oceania,054,Melanesia,NA,NA,Vanuatu,548,VU,VUT,NA,NA,x
+001,World,009,Oceania,057,Micronesia,NA,NA,Guam,316,GU,GUM,NA,NA,x
+001,World,009,Oceania,057,Micronesia,NA,NA,Kiribati,296,KI,KIR,x,NA,x
+001,World,009,Oceania,057,Micronesia,NA,NA,Marshall Islands,584,MH,MHL,NA,NA,x
+001,World,009,Oceania,057,Micronesia,NA,NA,Micronesia (Federated States of),583,FM,FSM,NA,NA,x
+001,World,009,Oceania,057,Micronesia,NA,NA,Nauru,520,NR,NRU,NA,NA,x
+001,World,009,Oceania,057,Micronesia,NA,NA,Northern Mariana Islands,580,MP,MNP,NA,NA,x
+001,World,009,Oceania,057,Micronesia,NA,NA,Palau,585,PW,PLW,NA,NA,x
+001,World,009,Oceania,057,Micronesia,NA,NA,United States Minor Outlying Islands,581,UM,UMI,NA,NA,NA
+001,World,009,Oceania,061,Polynesia,NA,NA,American Samoa,016,AS,ASM,NA,NA,x
+001,World,009,Oceania,061,Polynesia,NA,NA,Cook Islands,184,CK,COK,NA,NA,x
+001,World,009,Oceania,061,Polynesia,NA,NA,French Polynesia,258,PF,PYF,NA,NA,x
+001,World,009,Oceania,061,Polynesia,NA,NA,Niue,570,NU,NIU,NA,NA,x
+001,World,009,Oceania,061,Polynesia,NA,NA,Pitcairn,612,PN,PCN,NA,NA,NA
+001,World,009,Oceania,061,Polynesia,NA,NA,Samoa,882,WS,WSM,NA,NA,x
+001,World,009,Oceania,061,Polynesia,NA,NA,Tokelau,772,TK,TKL,NA,NA,NA
+001,World,009,Oceania,061,Polynesia,NA,NA,Tonga,776,TO,TON,NA,NA,x
+001,World,009,Oceania,061,Polynesia,NA,NA,Tuvalu,798,TV,TUV,x,NA,x
+001,World,009,Oceania,061,Polynesia,NA,NA,Wallis and Futuna Islands,876,WF,WLF,NA,NA,NA
