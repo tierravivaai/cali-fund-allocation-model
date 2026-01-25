@@ -5,6 +5,8 @@ from pathlib import Path
 import plotly.express as px
 import plotly.graph_objects as go
 
+from jinja2 import Template
+
 # Page configuration
 st.set_page_config(
     page_title="Cali Fund Educational Journey",
@@ -24,17 +26,9 @@ def load_data(params):
     # Read the SQL model
     sql_template = SQL_MODEL_PATH.read_text()
     
-    # Simple manual template replacement (since we don't want to depend on jinja2 in the dashboard if possible)
-    rendered_sql = sql_template
-    for key, value in params.items():
-        if isinstance(value, str):
-            replacement = f"'{value}'"
-        else:
-            replacement = str(value)
-        # Match {{ key }} or {{ key | default(...) }}
-        import re
-        pattern = r"\{\{\s*" + re.escape(key) + r"(\s*\|\s*default\([^)]*\))?\s*\}\}"
-        rendered_sql = re.sub(pattern, replacement, rendered_sql)
+    # Use Jinja2 for robust template rendering
+    template = Template(sql_template)
+    rendered_sql = template.render(**params)
     
     # Execute the rendered SQL
     con.execute(rendered_sql)
