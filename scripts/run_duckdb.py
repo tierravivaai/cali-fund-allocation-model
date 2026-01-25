@@ -40,12 +40,20 @@ def _load_cbd_contributions(path: Path) -> pd.DataFrame:
             "CBD_scale_with_ceiling_percentage": "cbd_scale_pct",
         }
     )
-    df["party"] = df["party"].astype(str).str.strip()
+    df["party"] = (
+        df["party"]
+        .astype(str)
+        .str.replace("\r\n", "\n", regex=False)
+        .str.replace("\r", "\n", regex=False)
+        .str.strip()
+    )
     df = df[df["party"].notna() & (df["party"].str.lower() != "total")]
     df["cbd_scale_pct"] = pd.to_numeric(df["cbd_scale_pct"], errors="coerce")
     df["is_party"] = True
+    df["is_state"] = True
+    df.loc[df["party"].str.strip() == "European Union", "is_state"] = False
     df["source_decision"] = "CBD/COP/DEC/16/28"
-    return df[["party", "cbd_scale_pct", "is_party", "source_decision"]]
+    return df[["party", "cbd_scale_pct", "is_party", "is_state", "source_decision"]]
 
 
 def _load_unsd_m49(path: Path) -> pd.DataFrame:
@@ -81,6 +89,14 @@ def _load_eu27(path: Path) -> pd.DataFrame:
 
 def _load_manual_name_map(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path)
+    df["party_raw"] = (
+        df["party_raw"]
+        .astype(str)
+        .str.replace("\r\n", "\n", regex=False)
+        .str.replace("\r", "\n", regex=False)
+        .str.strip()
+    )
+    df["party_mapped"] = df["party_mapped"].astype(str).str.strip()
     return df[["party_raw", "party_mapped"]]
 
 
@@ -129,14 +145,21 @@ def build_database(
     rendered_sql = _render_sql(sql_text, params)
     con.execute(rendered_sql)
 
+    public_internal_path = sql_path.parent / "public_internal.sql"
+    if public_internal_path.exists():
+        public_sql = public_internal_path.read_text()
+        con.execute(public_sql)
+
     export_views = [
-        "v_alloc_country",
-        "v_alloc_region",
-        "v_alloc_subregion",
-        "v_alloc_intermediate",
-        "v_alloc_eu",
-        "v_alloc_eu_total",
-        "v_alloc_devstatus",
+        "allocation_country",
+        "un_region",
+        "un_subregion",
+        "allocation_un_intermediate_region",
+        "allocation_eu",
+        "allocation_eu_total",
+        "allocation_devstatus",
+        "allocation_country_internal",
+        "allocation_country_public",
     ]
     for view in export_views:
         output_path = outputs_dir / f"{view}.csv"

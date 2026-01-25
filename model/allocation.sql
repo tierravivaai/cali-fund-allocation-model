@@ -3,7 +3,7 @@
 -- Parameterised with Jinja variables so the same SQL can be used in Superset.
 --
 -- Required input tables (already loaded into DuckDB):
---   cbd_assessed_contributions(party, cbd_scale_pct, is_party, source_decision)
+--   cbd_assessed_contributions(party, cbd_scale_pct, is_party, is_state, source_decision)
 --   unsd_m49(party, un_region, un_subregion, un_intermediate, dev_status)
 --   eu27(party, is_eu27)
 -- Optional:
@@ -15,7 +15,7 @@
 -- In DuckDB, you can run this file as-is by replacing Jinja placeholders yourself,
 -- or via Superset (Jinja supported), or via a Python runner that renders Jinja then executes.
 
-CREATE OR REPLACE VIEW v_alloc_country AS
+CREATE OR REPLACE VIEW allocation_country AS
 WITH
 params AS (
   SELECT
@@ -43,6 +43,7 @@ base_contrib AS (
     c.party                           AS party_raw,
     c.cbd_scale_pct,
     c.is_party,
+    c.is_state,
     c.source_decision
   FROM cbd_assessed_contributions c
   LEFT JOIN manual_name_map m
@@ -57,6 +58,7 @@ party_base AS (
     b.party,
     b.party_raw,
     b.cbd_scale_pct,
+    b.is_state,
     u.un_region,
     u.un_subregion,
     u.un_intermediate,
@@ -157,6 +159,7 @@ alloc_country AS (
     un_intermediate,
     dev_status,
     is_eu27,
+    is_state,
 
     cbd_scale_pct,
     pct_adj,
@@ -184,18 +187,18 @@ SELECT *
 FROM alloc_country
 ORDER BY party;
 
-CREATE OR REPLACE VIEW v_alloc_region AS
+CREATE OR REPLACE VIEW un_region AS
 SELECT
   un_region,
   COUNT(*) AS parties_count,
   SUM(alloc_usd_m) AS alloc_usd_m_total,
   SUM(iplc_usd_m) AS iplc_usd_m_total,
   SUM(state_usd_m) AS state_usd_m_total
-FROM v_alloc_country
+FROM allocation_country
 GROUP BY un_region
 ORDER BY un_region;
 
-CREATE OR REPLACE VIEW v_alloc_subregion AS
+CREATE OR REPLACE VIEW un_subregion AS
 SELECT
   un_region,
   un_subregion,
@@ -203,11 +206,11 @@ SELECT
   SUM(alloc_usd_m) AS alloc_usd_m_total,
   SUM(iplc_usd_m) AS iplc_usd_m_total,
   SUM(state_usd_m) AS state_usd_m_total
-FROM v_alloc_country
+FROM allocation_country
 GROUP BY un_region, un_subregion
 ORDER BY un_region, un_subregion;
 
-CREATE OR REPLACE VIEW v_alloc_intermediate AS
+CREATE OR REPLACE VIEW allocation_un_intermediate_region AS
 SELECT
   un_region,
   un_subregion,
@@ -216,32 +219,32 @@ SELECT
   SUM(alloc_usd_m) AS alloc_usd_m_total,
   SUM(iplc_usd_m) AS iplc_usd_m_total,
   SUM(state_usd_m) AS state_usd_m_total
-FROM v_alloc_country
+FROM allocation_country
 GROUP BY un_region, un_subregion, COALESCE(CAST(un_intermediate AS VARCHAR), '(none)')
 ORDER BY un_region, un_subregion, COALESCE(CAST(un_intermediate AS VARCHAR), '(none)');
 
-CREATE OR REPLACE VIEW v_alloc_eu AS
+CREATE OR REPLACE VIEW allocation_eu AS
 SELECT *
-FROM v_alloc_country
+FROM allocation_country
 WHERE is_eu27 = TRUE
 ORDER BY party;
 
-CREATE OR REPLACE VIEW v_alloc_eu_total AS
+CREATE OR REPLACE VIEW allocation_eu_total AS
 SELECT
   SUM(alloc_usd_m) AS alloc_usd_m_total,
   SUM(iplc_usd_m) AS iplc_usd_m_total,
   SUM(state_usd_m) AS state_usd_m_total
-FROM v_alloc_country
+FROM allocation_country
 WHERE is_eu27 = TRUE;
 
-CREATE OR REPLACE VIEW v_alloc_devstatus AS
+CREATE OR REPLACE VIEW allocation_devstatus AS
 SELECT
   COALESCE(CAST(dev_status AS VARCHAR), 'unknown') AS dev_status,
   COUNT(*) AS parties_count,
   SUM(alloc_usd_m) AS alloc_usd_m_total,
   SUM(iplc_usd_m) AS iplc_usd_m_total,
   SUM(state_usd_m) AS state_usd_m_total
-FROM v_alloc_country
+FROM allocation_country
 GROUP BY COALESCE(CAST(dev_status AS VARCHAR), 'unknown')
 ORDER BY COALESCE(CAST(dev_status AS VARCHAR), 'unknown');
 
