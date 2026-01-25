@@ -26,9 +26,16 @@ def load_data(params):
     # Read the SQL model
     sql_template = SQL_MODEL_PATH.read_text()
     
+    # Ensure string parameters are quoted for SQL
+    params_quoted = params.copy()
+    if isinstance(params_quoted.get("baseline_recipient"), str):
+        val = params_quoted["baseline_recipient"]
+        if not (val.startswith("'") and val.endswith("'")):
+            params_quoted["baseline_recipient"] = f"'{val}'"
+    
     # Use Jinja2 for robust template rendering
     template = Template(sql_template)
-    rendered_sql = template.render(**params)
+    rendered_sql = template.render(**params_quoted)
     
     # Execute the rendered SQL
     con.execute(rendered_sql)
