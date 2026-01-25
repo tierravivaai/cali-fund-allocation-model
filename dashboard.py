@@ -48,6 +48,7 @@ def load_data(params):
 # Sidebar Navigation
 st.sidebar.title("Journey Progress")
 phases = [
+    "Introduction: CBD Budget Foundation",
     "Phase 1: Raw Inversion Explorer",
     "Phase 2: Moderation Introduction",
     "Phase 3: Lower Bound Protection",
@@ -87,26 +88,70 @@ params = {
 }
 
 # Add controls based on phase
-if st.session_state.current_phase >= 1:
+if st.session_state.current_phase >= 2:
     params["smoothing_exponent"] = st.sidebar.slider("Smoothing Exponent", 0.1, 2.0, 0.5, 0.1)
 
-if st.session_state.current_phase >= 2:
+if st.session_state.current_phase >= 3:
     params["pct_lower_bound"] = st.sidebar.slider("Lower Bound %", 0.0, 0.5, 0.01, 0.005)
 
-if st.session_state.current_phase >= 3:
+if st.session_state.current_phase >= 4:
     params["cap_share"] = st.sidebar.slider("Maximum Cap %", 0.5, 10.0, 2.0, 0.5) / 100.0
 
-if st.session_state.current_phase >= 4:
+if st.session_state.current_phase >= 5:
     params["blend_baseline_share"] = st.sidebar.slider("Baseline Blend Share %", 0, 50, 20, 5) / 100.0
     params["baseline_recipient"] = st.sidebar.selectbox("Baseline Recipient", ["least developed countries (LDC)", "All Parties"])
 
-if st.session_state.current_phase >= 5:
+if st.session_state.current_phase >= 6:
     params["iplc_share"] = st.sidebar.slider("IPLC Share %", 50, 100, 50, 5) / 100.0
 
 # Phase Content
 st.title(phases[st.session_state.current_phase])
 
 if st.session_state.current_phase == 0:
+    st.markdown("""
+    ### CBD Budget Foundation
+    **Goal:** Understand how the current CBD budget is organized.
+    
+    While all Parties are equals as sovereigns, the CBD budget recognizes the different economic circumstances of Parties. 
+    Some Parties contribute a greater proportion of the budget, while others, such as Least Developed Countries (LDCs), contribute the least.
+    
+    This suggests that an equitable approach for the **Cali Fund** could be to **invert** this scale: 
+    Parties with lower contributions to the budget receive the greatest benefit, and those who contribute the most receive the lowest allocations.
+    """)
+    
+    # Load raw budget data
+    budget_df = pd.read_csv("data-raw/cbd_cop16_budget_table.csv")
+    budget_df = budget_df[budget_df['Party'].notna() & (budget_df['Party'].str.lower() != 'total')]
+    budget_df['CBD_scale_with_ceiling_percentage'] = pd.to_numeric(budget_df['CBD_scale_with_ceiling_percentage'], errors='coerce')
+    budget_df_sorted = budget_df.sort_values('CBD_scale_with_ceiling_percentage', ascending=False).reset_index(drop=True)
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.subheader("CBD Assessed Contributions (%)")
+        fig = px.bar(
+            budget_df_sorted,
+            x="Party",
+            y="CBD_scale_with_ceiling_percentage",
+            labels={"CBD_scale_with_ceiling_percentage": "Budget Share (%)", "Party": "Party"},
+            title="CBD Scale of Assessment (Top contributors to the left)"
+        )
+        st.plotly_chart(fig, use_container_width=True)
+        
+    with col2:
+        st.subheader("Budget Statistics")
+        top_contrib = budget_df_sorted.iloc[0]
+        bot_contrib = budget_df_sorted.iloc[-1]
+        
+        st.metric("Highest Contributor", f"{top_contrib['Party']}", f"{top_contrib['CBD_scale_with_ceiling_percentage']}%")
+        st.metric("Lowest Contributor", f"{bot_contrib['Party']}", f"{bot_contrib['CBD_scale_with_ceiling_percentage']}%")
+        
+        st.info("The top 10 contributors account for a significant portion of the budget, while many Parties contribute the minimum amount.")
+
+    st.subheader("CBD Budget Table")
+    st.dataframe(budget_df_sorted[['Party', 'CBD_scale_with_ceiling_percentage', 'CBD_assessed_contribution_usd']], use_container_width=True)
+
+elif st.session_state.current_phase == 1:
     st.markdown("""
     ### The "Ah-ha!" Moment
     **Goal:** Show what pure inverse allocation looks like and why it's impractical.
@@ -174,7 +219,7 @@ if st.session_state.current_phase == 0:
         use_container_width=True
     )
 
-elif st.session_state.current_phase == 1:
+elif st.session_state.current_phase == 2:
     st.markdown("""
     ### The "Why We Need Safety First" Moment
     **Goal:** Introduce the first moderation mechanism: **Smoothing**.
@@ -206,7 +251,7 @@ elif st.session_state.current_phase == 1:
         
     st.info("**Educational Note:** Smoothing reduces extreme outcomes by compressing the range between highest and lowest allocations. A lower exponent results in a flatter distribution.")
 
-elif st.session_state.current_phase == 2:
+elif st.session_state.current_phase == 3:
     st.markdown("""
     ### The "Protecting the Vulnerable Parties" Moment
     **Goal:** Show how the **Lower Bound** prevents micro-contributors from dominating.
@@ -245,7 +290,7 @@ elif st.session_state.current_phase == 2:
     
     st.info("**Educational Note:** Lower bound prevents micro-contributors from getting disproportionately large allocations, protecting the overall distribution.")
 
-elif st.session_state.current_phase == 3:
+elif st.session_state.current_phase == 4:
     st.markdown("""
     ### The "Preventing Monopolies" Moment
     **Goal:** Show how a **Cap** prevents any single Party from dominating.
@@ -273,7 +318,7 @@ elif st.session_state.current_phase == 3:
             
     st.info("**Educational Note:** The Cap prevents any single Party from dominating, ensuring a more proportional distribution among all eligible parties.")
 
-elif st.session_state.current_phase == 4:
+elif st.session_state.current_phase == 5:
     st.markdown("""
     ### The "Supporting the Middle-Income" Moment
     **Goal:** Show how **Baseline Blend** supports least developed and middle-income countries.
@@ -292,7 +337,7 @@ elif st.session_state.current_phase == 4:
     
     st.info("**Educational Note:** Baseline blend reduces concentration and provides a guaranteed minimum for specific categories of countries.")
 
-elif st.session_state.current_phase == 5:
+elif st.session_state.current_phase == 6:
     st.markdown("""
     ### Consolidated Working Model
     **Goal:** Explore all trade-offs in a single view.
