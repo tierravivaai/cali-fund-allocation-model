@@ -16,7 +16,7 @@ DEFAULT_PARAMS = {
     "pct_lower_bound": 0.01,
     "cap_share": 0.02,
     "blend_baseline_share": 0.2,
-    "baseline_recipient": "developing",
+    "baseline_recipient": "least developed countries (LDC)",
 }
 
 
@@ -68,16 +68,18 @@ def _load_unsd_m49(path: Path) -> pd.DataFrame:
     )
     df["party"] = df["party"].astype(str).str.strip()
     dev_status = pd.Series([None] * len(df))
-    for col in [
-        "Least Developed Countries (LDC)",
-        "Land Locked Developing Countries (LLDC)",
-        "Small Island Developing States (SIDS)",
-    ]:
-        if col in df.columns:
-            is_dev = df[col].notna() & (df[col].astype(str).str.upper() != "NA")
-            dev_status = dev_status.where(~is_dev, "developing")
+    sids_status = pd.Series([None] * len(df))
+    for col in df.columns:
+        if col == "Least Developed Countries (LDC)" or col == "Land Locked Developing Countries (LLDC)" or col == "Small Island Developing States (SIDS)":
+            if col in df.columns:
+                is_dev = df[col].notna() & (df[col].astype(str).str.upper() != "NA")
+                dev_status = dev_status.where(~is_dev, "least developed countries (LDC)")
+                if col == "Small Island Developing States (SIDS)":
+                    is_sids = df[col].notna() & (df[col].astype(str).str.upper() != "NA")
+                    sids_status = sids_status.where(~is_sids, "sids")
     df["dev_status"] = dev_status
-    return df[["party", "un_region", "un_subregion", "un_intermediate", "dev_status"]]
+    df["sids_status"] = sids_status
+    return df[["party", "un_region", "un_subregion", "un_intermediate", "dev_status", "sids_status"]]
 
 
 def _load_eu27(path: Path) -> pd.DataFrame:
@@ -120,6 +122,12 @@ def build_database(
     unsd_df = _load_unsd_m49(unsd_path)
     eu_df = _load_eu27(eu_path)
 
+    # Convert categorical/object columns to string type for DuckDB compatibility
+    for df in [cbd_df, unsd_df, eu_df]:
+        for col in df.columns:
+            if df[col].dtype == 'object' or 'str' in str(df[col].dtype):
+                df[col] = df[col].astype('string')
+
     con = duckdb.connect(str(db_path))
     con.register("cbd_assessed_contributions_df", cbd_df)
     con.register("unsd_m49_df", unsd_df)
@@ -131,11 +139,15 @@ def build_database(
 
     if name_map_path.exists():
         name_map_df = _load_manual_name_map(name_map_path)
+        # Convert to string type for DuckDB compatibility
+        for col in name_map_df.columns:
+            if name_map_df[col].dtype == 'object' or 'str' in str(name_map_df[col].dtype):
+                name_map_df[col] = name_map_df[col].astype('string')
     else:
         name_map_df = pd.DataFrame(
             {
-                "party_raw": pd.Series(dtype="string"),
-                "party_mapped": pd.Series(dtype="string"),
+                "party_raw": pd.Series(dtype="string[python]"),
+                "party_mapped": pd.Series(dtype="string[python]"),
             }
         )
     con.register("manual_name_map_df", name_map_df)
@@ -152,12 +164,6 @@ def build_database(
 
     export_views = [
         "allocation_country",
-        "un_region",
-        "un_subregion",
-        "allocation_un_intermediate_region",
-        "allocation_eu",
-        "allocation_eu_total",
-        "allocation_devstatus",
         "allocation_country_internal",
         "allocation_country_public",
     ]

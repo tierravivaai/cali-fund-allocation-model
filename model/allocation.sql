@@ -25,7 +25,7 @@ params AS (
     CAST({{ pct_lower_bound | default(0.01) }} AS DOUBLE)     AS pct_lower_bound,        -- in "percent units" like COP table
     CAST({{ cap_share | default(0.02) }} AS DOUBLE)           AS cap_share,              -- 0.02 = 2%
     CAST({{ blend_baseline_share | default(0.2) }} AS DOUBLE) AS blend_baseline_share,   -- 0.20 baseline
-    CAST({{ baseline_recipient | default("'developing'") }} AS VARCHAR) AS baseline_recipient
+    CAST({{ baseline_recipient | default("'least developed countries (LDC)'") }} AS VARCHAR) AS baseline_recipient
 ),
 params2 AS (
   SELECT
@@ -63,6 +63,7 @@ party_base AS (
     u.un_subregion,
     u.un_intermediate,
     u.dev_status,
+    COALESCE(u.sids_status, 'non_sids') AS sids_status,
     COALESCE(e.is_eu27, FALSE) AS is_eu27
   FROM base_contrib b
   LEFT JOIN unsd_m49 u ON b.party = u.party
@@ -102,8 +103,8 @@ baseline_set AS (
   SELECT
     s.*,
     CASE
-      WHEN (SELECT baseline_recipient FROM params2) = 'developing'
-        THEN CASE WHEN LOWER(COALESCE(CAST(dev_status AS VARCHAR), '')) = 'developing' THEN 1 ELSE 0 END
+      WHEN (SELECT baseline_recipient FROM params2) = 'least developed countries (LDC)'
+        THEN CASE WHEN LOWER(COALESCE(CAST(dev_status AS VARCHAR), '')) = 'least developed countries (LDC)' THEN 1 ELSE 0 END
       ELSE 1
     END AS baseline_eligible
   FROM shares_raw s
@@ -158,6 +159,7 @@ alloc_country AS (
     un_subregion,
     un_intermediate,
     dev_status,
+    sids_status,
     is_eu27,
     is_state,
 
@@ -186,65 +188,4 @@ alloc_country AS (
 SELECT *
 FROM alloc_country
 ORDER BY party;
-
-CREATE OR REPLACE VIEW un_region AS
-SELECT
-  un_region,
-  COUNT(*) AS parties_count,
-  SUM(alloc_usd_m) AS alloc_usd_m_total,
-  SUM(iplc_usd_m) AS iplc_usd_m_total,
-  SUM(state_usd_m) AS state_usd_m_total
-FROM allocation_country
-GROUP BY un_region
-ORDER BY un_region;
-
-CREATE OR REPLACE VIEW un_subregion AS
-SELECT
-  un_region,
-  un_subregion,
-  COUNT(*) AS parties_count,
-  SUM(alloc_usd_m) AS alloc_usd_m_total,
-  SUM(iplc_usd_m) AS iplc_usd_m_total,
-  SUM(state_usd_m) AS state_usd_m_total
-FROM allocation_country
-GROUP BY un_region, un_subregion
-ORDER BY un_region, un_subregion;
-
-CREATE OR REPLACE VIEW allocation_un_intermediate_region AS
-SELECT
-  un_region,
-  un_subregion,
-  COALESCE(CAST(un_intermediate AS VARCHAR), '(none)') AS un_intermediate,
-  COUNT(*) AS parties_count,
-  SUM(alloc_usd_m) AS alloc_usd_m_total,
-  SUM(iplc_usd_m) AS iplc_usd_m_total,
-  SUM(state_usd_m) AS state_usd_m_total
-FROM allocation_country
-GROUP BY un_region, un_subregion, COALESCE(CAST(un_intermediate AS VARCHAR), '(none)')
-ORDER BY un_region, un_subregion, COALESCE(CAST(un_intermediate AS VARCHAR), '(none)');
-
-CREATE OR REPLACE VIEW allocation_eu AS
-SELECT *
-FROM allocation_country
-WHERE is_eu27 = TRUE
-ORDER BY party;
-
-CREATE OR REPLACE VIEW allocation_eu_total AS
-SELECT
-  SUM(alloc_usd_m) AS alloc_usd_m_total,
-  SUM(iplc_usd_m) AS iplc_usd_m_total,
-  SUM(state_usd_m) AS state_usd_m_total
-FROM allocation_country
-WHERE is_eu27 = TRUE;
-
-CREATE OR REPLACE VIEW allocation_devstatus AS
-SELECT
-  COALESCE(CAST(dev_status AS VARCHAR), 'unknown') AS dev_status,
-  COUNT(*) AS parties_count,
-  SUM(alloc_usd_m) AS alloc_usd_m_total,
-  SUM(iplc_usd_m) AS iplc_usd_m_total,
-  SUM(state_usd_m) AS state_usd_m_total
-FROM allocation_country
-GROUP BY COALESCE(CAST(dev_status AS VARCHAR), 'unknown')
-ORDER BY COALESCE(CAST(dev_status AS VARCHAR), 'unknown');
 
