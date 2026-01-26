@@ -37,7 +37,7 @@ iplc_share = st.sidebar.slider(
 
 show_raw = st.sidebar.toggle("Show 'raw inversion' and explanation", value=False)
 
-exclude_hi = st.sidebar.checkbox("Exclude High Income countries from receiving allocations", value=False)
+exclude_hi = st.sidebar.checkbox("Exclude High Income countries from receiving allocations", value=True)
 st.sidebar.markdown("*“When enabled, High Income countries receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged.”*")
 
 if st.sidebar.button("Reset to default"):
