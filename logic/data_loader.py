@@ -22,14 +22,28 @@ def load_data(con):
     con.execute(f"CREATE TABLE name_map AS SELECT * FROM read_csv_auto('{base_path}/manual_name_map.csv')")
 
     # 6. Load CBD Parties List (using the budget table as source of truth for Parties)
-    con.execute(f"CREATE TABLE cbd_parties AS SELECT Party FROM read_csv_auto('{base_path}/cbd_cop16_budget_table.csv')")
+    con.execute(f"""
+        CREATE TABLE cbd_parties_raw AS 
+        SELECT 
+            TRIM(Party) as party_raw 
+        FROM read_csv_auto('{base_path}/cbd_cop16_budget_table.csv')
+        WHERE Party IS NOT NULL AND Party != 'Total'
+    """)
+    
+    con.execute("""
+        CREATE TABLE cbd_parties AS
+        SELECT DISTINCT
+            COALESCE(m.party_mapped, c.party_raw) as Party
+        FROM cbd_parties_raw c
+        LEFT JOIN name_map m ON c.party_raw = m.party_raw
+    """)
 
 def get_base_data(con):
     # Combine and clean data
     sql = r"""
     WITH raw_scale AS (
         SELECT 
-            "Member State" as party_name, 
+            TRIM(REPLACE("Member State", '\n', ' ')) as party_name, 
             CASE 
                 WHEN "2027" = '-' OR "2027" = 'NA' THEN 0.0 
                 ELSE TRY_CAST("2027" AS DOUBLE) 
@@ -41,6 +55,7 @@ def get_base_data(con):
         WHERE party_name IS NOT NULL
           AND party_name != 'Total'
           AND un_share IS NOT NULL
+          AND un_share > 0 -- Filter out states that have disappeared or have no share in 2027
           AND party_name NOT LIKE 'a/%'
           AND party_name NOT LIKE 'b/%'
           AND party_name NOT LIKE 'c/%'
@@ -64,26 +79,30 @@ def get_base_data(con):
     ),
     joined AS (
         SELECT 
-            s.party,
-            s.un_share,
+            COALESCE(s.party, c.Party) as party,
+            COALESCE(s.un_share, 0.0) as un_share,
             r."Region Name" as region,
             r."Sub-region Name" as sub_region,
             r."Intermediate Region Name" as intermediate_region,
             r."Least Developed Countries (LDC)" = 'x' as is_ldc,
             r."Small Island Developing States (SIDS)" = 'x' as is_sids,
-            w."Income group" as income_group,
+            COALESCE(w."Income group", 'Not Available') as "World Bank Income Group",
             e.is_eu27 IS NOT NULL as is_eu_ms,
             c.Party IS NOT NULL OR s.party = 'European Union' as is_cbd_party
         FROM mapped_scale s
-        LEFT JOIN unsd_regions r ON s.party = r."Country or Area"
-        LEFT JOIN wb_income w ON s.party = w.Economy
-        LEFT JOIN eu27 e ON s.party = e.party
-        LEFT JOIN cbd_parties c ON s.party = c.Party
+        FULL OUTER JOIN cbd_parties c ON s.party = c.Party
+        LEFT JOIN unsd_regions r ON COALESCE(s.party, c.Party) = r."Country or Area"
+        LEFT JOIN wb_income w ON COALESCE(s.party, c.Party) = w.Economy
+        LEFT JOIN eu27 e ON COALESCE(s.party, c.Party) = e.party
     )
     SELECT * FROM joined
     """
     # Ensure EU Party entry exists if not already there
     df = con.execute(sql).df()
+    
+    # Clean up NA strings to "Not Available"
+    df['World Bank Income Group'] = df['World Bank Income Group'].replace('NA', 'Not Available')
+    
     if 'European Union' not in df['party'].values:
         eu_entry = pd.DataFrame([{
             'party': 'European Union',
@@ -93,7 +112,7 @@ def get_base_data(con):
             'intermediate_region': 'NA',
             'is_ldc': False,
             'is_sids': False,
-            'income_group': 'High income',
+            'World Bank Income Group': 'High income',
             'is_eu_ms': False,
             'is_cbd_party': True
         }])
