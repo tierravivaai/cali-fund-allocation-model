@@ -57,7 +57,7 @@ tab1, tab2, tab2b, tab2c, tab3, tab4, tab5 = st.tabs([
 
 with tab1:
     st.subheader("Allocations by Party")
-    display_cols = ['party', 'total_allocation', 'iplc_envelope', 'state_envelope', 'income_group']
+    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'income_group']
     if show_raw:
         st.info("Raw inversion shown for explanation. Results can be extreme.")
         display_cols.insert(1, 'un_share')
@@ -70,8 +70,8 @@ with tab1:
         filtered_df[display_cols].sort_values('party'),
         column_config={
             "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
             "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
             "un_share": st.column_config.NumberColumn("UN Share (%)", format="%.4f"),
             "inverted_share": st.column_config.NumberColumn("Inv Share (%)", format="%.4f"),
         },
@@ -86,8 +86,8 @@ with tab2:
         region_df.sort_values('total_allocation', ascending=False),
         column_config={
             "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
             "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
         },
         hide_index=True,
         use_container_width=True
@@ -100,8 +100,8 @@ with tab2b:
         sub_region_df.sort_values('total_allocation', ascending=False),
         column_config={
             "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
             "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
         },
         hide_index=True,
         use_container_width=True
@@ -114,8 +114,8 @@ with tab2c:
         int_region_df.sort_values('total_allocation', ascending=False),
         column_config={
             "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
             "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
         },
         hide_index=True,
         use_container_width=True
@@ -126,11 +126,11 @@ with tab3:
     eu_df, eu_total = aggregate_eu(results_df)
     
     st.dataframe(
-        eu_df[['party', 'total_allocation', 'iplc_envelope', 'state_envelope']].sort_values('party'),
+        eu_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope']].sort_values('party'),
         column_config={
             "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
             "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
         },
         hide_index=True,
         use_container_width=True
@@ -138,15 +138,15 @@ with tab3:
     
     st.metric("EU Block Total Allocation", f"${eu_total['total_allocation']:,.2f}m")
     col1, col2 = st.columns(2)
-    col1.metric("EU Block IPLC Envelope", f"${eu_total['iplc_envelope']:,.2f}m")
-    col2.metric("EU Block State Envelope", f"${eu_total['state_envelope']:,.2f}m")
+    col1.metric("EU Block State Envelope", f"${eu_total['state_envelope']:,.2f}m")
+    col2.metric("EU Block IPLC Envelope", f"${eu_total['iplc_envelope']:,.2f}m")
 
 with tab4:
     st.subheader("Developed vs Least Developed Countries (LDC)")
     ldc_total, _ = aggregate_special_groups(results_df)
     
     # Calculate non-LDC (broadly 'Developed/Other')
-    non_ldc_total = results_df[~results_df['is_ldc']][['total_allocation', 'iplc_envelope', 'state_envelope']].sum()
+    non_ldc_total = results_df[~results_df['is_ldc']][['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
     
     summary_data = pd.DataFrame([
         {"Group": "Least Developed Countries (LDC)", **ldc_total.to_dict()},
@@ -157,8 +157,8 @@ with tab4:
         summary_data,
         column_config={
             "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
             "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
         },
         hide_index=True,
         use_container_width=True
@@ -170,8 +170,8 @@ with tab5:
     
     st.metric("Total SIDS Allocation", f"${sids_total['total_allocation']:,.2f}m")
     col1, col2 = st.columns(2)
-    col1.metric("SIDS IPLC Envelope", f"${sids_total['iplc_envelope']:,.2f}m")
-    col2.metric("SIDS State Envelope", f"${sids_total['state_envelope']:,.2f}m")
+    col1.metric("SIDS State Envelope", f"${sids_total['state_envelope']:,.2f}m")
+    col2.metric("SIDS IPLC Envelope", f"${sids_total['iplc_envelope']:,.2f}m")
 
 st.divider()
 st.markdown("""
