@@ -7,15 +7,21 @@ def calculate_allocations(df, fund_size, iplc_share_pct, show_raw_inversion=Fals
     calc_df = df.copy()
     
     # Inversion logic: only for shares > 0
-    # Parties with 0 share (like EU or others) will get 0 allocation
-    mask = calc_df['un_share'] > 0
+    # The source 'un_share' is expressed as a percentage (e.g. 5.469)
+    # First convert it to a fraction by dividing by 100.
+    mask = (calc_df['un_share'] > 0) & (calc_df['un_share'].notna())
     
-    calc_df.loc[mask, 'inv_weight'] = 1.0 / calc_df.loc[mask, 'un_share']
+    calc_df.loc[mask, 'un_share_fraction'] = calc_df.loc[mask, 'un_share'] / 100.0
+    calc_df.loc[mask, 'inv_weight'] = 1.0 / calc_df.loc[mask, 'un_share_fraction']
+    
+    calc_df.loc[~mask, 'un_share_fraction'] = 0.0
     calc_df.loc[~mask, 'inv_weight'] = 0.0
     
     total_inv_weight = calc_df['inv_weight'].sum()
     
     if total_inv_weight > 0:
+        # Normalize: inverse weight / sum(inverse weights)
+        # These normalized shares will sum to 1.0
         calc_df['inverted_share'] = calc_df['inv_weight'] / total_inv_weight
     else:
         calc_df['inverted_share'] = 0.0

@@ -61,7 +61,8 @@ with tab1:
     if show_raw:
         st.info("Raw inversion shown for explanation. Results can be extreme.")
         display_cols.insert(1, 'un_share')
-        display_cols.insert(2, 'inverted_share')
+        display_cols.insert(2, 'un_share_fraction')
+        display_cols.insert(3, 'inverted_share')
     
     search = st.text_input("Search Party", "")
     filtered_df = results_df[results_df['party'].str.contains(search, case=False)]
@@ -73,7 +74,8 @@ with tab1:
             "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
             "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
             "un_share": st.column_config.NumberColumn("UN Share (%)", format="%.4f"),
-            "inverted_share": st.column_config.NumberColumn("Inv Share (%)", format="%.4f"),
+            "un_share_fraction": st.column_config.NumberColumn("UN Share (fraction)", format="%.6f"),
+            "inverted_share": st.column_config.NumberColumn("Inv Share (normalised)", format="%.6f"),
         },
         hide_index=True,
         use_container_width=True
