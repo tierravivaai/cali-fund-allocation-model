@@ -9,8 +9,10 @@ This interactive tool illustrates how Cali Fund allocations would be distributed
     - Detailed Party-level table.
     - Regional aggregations (UNSD M49).
     - EU Block summary.
+    - Share by World Bank Income Group.
     - Developmental groupings (LDC, SIDS).
-- **Transparency**: Toggle "Raw Inversion" to see the underlying mathematical shares.
+- **High Income Filter**: Ability to toggle High Income countries out of the allocation pool (enabled by default).
+- **Transparency**: Toggle "Raw Inversion and Explanation" to see plain language and technical summaries of the methodology.
 
 ## Installation & Setup
 

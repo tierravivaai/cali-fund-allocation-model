@@ -18,7 +18,13 @@ You are working on a policy-support tool for biodiversity fund allocation (Cali 
    - Display it with 0 USD allocation in individual tables.
    - Include it in the "EU Block" aggregate view along with individual Member States.
 5. **Exclusions**:
-   - Do NOT include Land Locked Developing Countries (LLDC) in the UI or summary stats.
+   - Land Locked Developing Countries (LLDC) are NOT currently explicitly excluded, but the UI focuses on LDC and SIDS.
+   - High Income countries can be toggled on/off (checked by default).
+
+6. **New Features**:
+   - "Plain Language" and "Technical Summary" sections for explaining the model.
+   - "Share by Income Group" tab.
+   - Consistent "State then IPLC" column ordering.
 
 ## Technical Stack
 - **Backend**: DuckDB for SQL-based data transformations.
