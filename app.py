@@ -44,6 +44,8 @@ iplc_share = st.sidebar.slider(
 
 show_raw = st.sidebar.toggle("Show explanation with raw data", value=False)
 
+use_thousands = st.sidebar.toggle("Display small values in thousands (USD '000)", value=False)
+
 exclude_hi = st.sidebar.checkbox("Exclude High Income countries from receiving allocations", value=True)
 st.sidebar.markdown("*“When enabled, High Income countries receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged.”*")
 
@@ -53,6 +55,11 @@ if st.sidebar.button("Reset to default"):
 # Calculations
 fund_size_usd = fund_size_bn * 1_000_000_000
 results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw, exclude_hi)
+
+def format_currency(val):
+    if use_thousands and val < 1.0:
+        return f"${val * 1000:,.2f}k"
+    return f"${val:,.2f}m"
 
 # Main Tabs
 tab1, tab2, tab2b, tab2c, tab3, tab3b, tab4, tab5 = st.tabs([
@@ -128,14 +135,18 @@ After these weights are calculated, the results are scaled so that the total amo
     search = st.text_input("Search Country", "")
     filtered_df = results_df[results_df['party'].str.contains(search, case=False)]
     
+    # Apply formatting to currency columns
+    for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        filtered_df[col] = filtered_df[col].apply(format_currency)
+    
     st.dataframe(
         filtered_df[display_cols + ["eligible"]].sort_values('party'),
         column_config={
             "eligible": None, # Hide this column
             "party": "Country",
-            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
+            "total_allocation": st.column_config.TextColumn("Total (USD)"),
+            "state_envelope": st.column_config.TextColumn("State (USD)"),
+            "iplc_envelope": st.column_config.TextColumn("IPLC (USD)"),
             "un_share": st.column_config.NumberColumn("UN Share (%)", format="%.4f"),
             "un_share_fraction": st.column_config.NumberColumn("UN Share (fraction)", format="%.6f"),
             "inverted_share": st.column_config.NumberColumn("Inv Share (normalised)", format="%.6f"),
@@ -147,12 +158,14 @@ After these weights are calculated, the results are scaled so that the total amo
 with tab2:
     st.subheader("Totals by UN Region")
     region_df = aggregate_by_region(results_df, 'region')
+    for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        region_df[col] = region_df[col].apply(format_currency)
     st.dataframe(
         region_df.sort_values('total_allocation', ascending=False),
         column_config={
-            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
+            "total_allocation": "Total (USD)",
+            "state_envelope": "State (USD)",
+            "iplc_envelope": "IPLC (USD)",
         },
         hide_index=True,
         use_container_width=True
@@ -161,12 +174,14 @@ with tab2:
 with tab2b:
     st.subheader("Totals by UN Sub-region")
     sub_region_df = aggregate_by_region(results_df, 'sub_region')
+    for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        sub_region_df[col] = sub_region_df[col].apply(format_currency)
     st.dataframe(
         sub_region_df.sort_values('total_allocation', ascending=False),
         column_config={
-            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
+            "total_allocation": "Total (USD)",
+            "state_envelope": "State (USD)",
+            "iplc_envelope": "IPLC (USD)",
         },
         hide_index=True,
         use_container_width=True
@@ -175,12 +190,14 @@ with tab2b:
 with tab2c:
     st.subheader("Totals by UN Intermediate Region")
     int_region_df = aggregate_by_region(results_df[results_df['intermediate_region'] != 'NA'], 'intermediate_region')
+    for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        int_region_df[col] = int_region_df[col].apply(format_currency)
     st.dataframe(
         int_region_df.sort_values('total_allocation', ascending=False),
         column_config={
-            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
+            "total_allocation": "Total (USD)",
+            "state_envelope": "State (USD)",
+            "iplc_envelope": "IPLC (USD)",
         },
         hide_index=True,
         use_container_width=True
@@ -190,33 +207,40 @@ with tab3:
     st.subheader("European Union Block View")
     eu_df, eu_total = aggregate_eu(results_df)
     
+    # Show metric with raw values but display table with formatted
+    display_eu_df = eu_df.copy()
+    for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        display_eu_df[col] = display_eu_df[col].apply(format_currency)
+
     st.dataframe(
-        eu_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope']].sort_values('party'),
+        display_eu_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope']].sort_values('party'),
         column_config={
             "party": "Country",
-            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
+            "total_allocation": "Total (USD)",
+            "state_envelope": "State (USD)",
+            "iplc_envelope": "IPLC (USD)",
         },
         hide_index=True,
         use_container_width=True
     )
     
-    st.metric("EU Block Total Allocation", f"${eu_total['total_allocation']:,.2f}m")
+    st.metric("EU Block Total Allocation", format_currency(eu_total['total_allocation']))
     col1, col2 = st.columns(2)
-    col1.metric("EU Block State Envelope", f"${eu_total['state_envelope']:,.2f}m")
-    col2.metric("EU Block IPLC Envelope", f"${eu_total['iplc_envelope']:,.2f}m")
+    col1.metric("EU Block State Envelope", format_currency(eu_total['state_envelope']))
+    col2.metric("EU Block IPLC Envelope", format_currency(eu_total['iplc_envelope']))
 
 with tab3b:
     st.subheader("Totals by World Bank Income Group")
     income_df = aggregate_by_income(results_df)
+    for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        income_df[col] = income_df[col].apply(format_currency)
     st.dataframe(
         income_df.sort_values('total_allocation', ascending=False),
         column_config={
             "World Bank Income Group": "Income Group",
-            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
+            "total_allocation": "Total (USD)",
+            "state_envelope": "State (USD)",
+            "iplc_envelope": "IPLC (USD)",
         },
         hide_index=True,
         use_container_width=True
@@ -233,13 +257,15 @@ with tab4:
         {"Group": "Least Developed Countries (LDC)", **ldc_total.to_dict()},
         {"Group": "Other Countries", **non_ldc_total.to_dict()}
     ])
+    for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        summary_data[col] = summary_data[col].apply(format_currency)
     
     st.dataframe(
         summary_data,
         column_config={
-            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
+            "total_allocation": "Total (USD)",
+            "state_envelope": "State (USD)",
+            "iplc_envelope": "IPLC (USD)",
         },
         hide_index=True,
         use_container_width=True
@@ -249,10 +275,10 @@ with tab5:
     st.subheader("Small Island Developing States (SIDS)")
     _, sids_total = aggregate_special_groups(results_df)
     
-    st.metric("Total SIDS Allocation", f"${sids_total['total_allocation']:,.2f}m")
+    st.metric("Total SIDS Allocation", format_currency(sids_total['total_allocation']))
     col1, col2 = st.columns(2)
-    col1.metric("SIDS State Envelope", f"${sids_total['state_envelope']:,.2f}m")
-    col2.metric("SIDS IPLC Envelope", f"${sids_total['iplc_envelope']:,.2f}m")
+    col1.metric("SIDS State Envelope", format_currency(sids_total['state_envelope']))
+    col2.metric("SIDS IPLC Envelope", format_currency(sids_total['iplc_envelope']))
 
 st.divider()
 st.markdown("""
