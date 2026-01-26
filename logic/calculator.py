@@ -59,3 +59,6 @@ def aggregate_special_groups(df):
     sids = df[df['is_sids']][['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
     
     return ldc, sids
+
+def aggregate_by_income(df):
+    return df.groupby('World Bank Income Group')[['total_allocation', 'state_envelope', 'iplc_envelope']].sum().reset_index()

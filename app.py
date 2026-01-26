@@ -2,7 +2,7 @@ import streamlit as st
 import duckdb
 import pandas as pd
 from logic.data_loader import load_data, get_base_data
-from logic.calculator import calculate_allocations, aggregate_by_region, aggregate_eu, aggregate_special_groups
+from logic.calculator import calculate_allocations, aggregate_by_region, aggregate_eu, aggregate_special_groups, aggregate_by_income
 
 st.set_page_config(page_title="Cali Fund Allocation Model", layout="wide")
 
@@ -55,13 +55,14 @@ fund_size_usd = fund_size_bn * 1_000_000_000
 results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw, exclude_hi)
 
 # Main Tabs
-tab1, tab2, tab2b, tab2c, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab2b, tab2c, tab3, tab3b, tab4, tab5 = st.tabs([
     "By Party (A–Z)", 
     "By UN Region", 
     "By UN Sub-region",
     "By UN Intermediate Region",
     "EU Block", 
-    "Developed vs LDC", 
+    "Share by Income Group",
+    "LDC Share", 
     "SIDS"
 ])
 
@@ -206,8 +207,23 @@ with tab3:
     col1.metric("EU Block State Envelope", f"${eu_total['state_envelope']:,.2f}m")
     col2.metric("EU Block IPLC Envelope", f"${eu_total['iplc_envelope']:,.2f}m")
 
+with tab3b:
+    st.subheader("Totals by World Bank Income Group")
+    income_df = aggregate_by_income(results_df)
+    st.dataframe(
+        income_df.sort_values('total_allocation', ascending=False),
+        column_config={
+            "World Bank Income Group": "Income Group",
+            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
+            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
+        },
+        hide_index=True,
+        use_container_width=True
+    )
+
 with tab4:
-    st.subheader("Developed vs Least Developed Countries (LDC)")
+    st.subheader("LDC Share")
     ldc_total, _ = aggregate_special_groups(results_df)
     
     # Calculate non-LDC (broadly 'Developed/Other')
