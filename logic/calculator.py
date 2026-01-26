@@ -10,7 +10,7 @@ def calculate_allocations(df, fund_size, iplc_share_pct, show_raw_inversion=Fals
     calc_df["eligible"] = calc_df["is_cbd_party"]
     if exclude_high_income:
         # Explicitly exclude "High income" countries among CBD Parties
-        calc_df["eligible"] = calc_df["eligible"] & (calc_df["income_group"] != "High income")
+        calc_df["eligible"] = calc_df["eligible"] & (calc_df["World Bank Income Group"] != "High income")
     
     # Inversion logic: only for eligible parties with shares > 0
     # The source 'un_share' is expressed as a percentage (e.g. 5.469)
@@ -42,20 +42,20 @@ def calculate_allocations(df, fund_size, iplc_share_pct, show_raw_inversion=Fals
     return calc_df
 
 def aggregate_by_region(df, region_col='region'):
-    return df.groupby(region_col)[['total_allocation', 'iplc_envelope', 'state_envelope']].sum().reset_index()
+    return df.groupby(region_col)[['total_allocation', 'state_envelope', 'iplc_envelope']].sum().reset_index()
 
 def aggregate_eu(df):
     ms_df = df[df['is_eu_ms']]
     eu_party = df[df['party'] == 'European Union']
     
     combined = pd.concat([ms_df, eu_party])
-    total_row = combined[['total_allocation', 'iplc_envelope', 'state_envelope']].sum()
+    total_row = combined[['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
     total_row['party'] = 'EU Member States + European Union (total)'
     
     return combined, total_row
 
 def aggregate_special_groups(df):
-    ldc = df[df['is_ldc']][['total_allocation', 'iplc_envelope', 'state_envelope']].sum()
-    sids = df[df['is_sids']][['total_allocation', 'iplc_envelope', 'state_envelope']].sum()
+    ldc = df[df['is_ldc']][['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
+    sids = df[df['is_sids']][['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
     
     return ldc, sids
