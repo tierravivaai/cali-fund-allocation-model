@@ -66,8 +66,8 @@ def get_base_data(con):
             r."Region Name" as region,
             r."Sub-region Name" as sub_region,
             r."Intermediate Region Name" as intermediate_region,
-            r."Least Developed Countries (LDC)" = 'LDC' as is_ldc,
-            r."Small Island Developing States (SIDS)" = 'SIDS' as is_sids,
+            r."Least Developed Countries (LDC)" = 'x' as is_ldc,
+            r."Small Island Developing States (SIDS)" = 'x' as is_sids,
             w."Income group" as income_group,
             e.is_eu27 IS NOT NULL as is_eu_ms
         FROM mapped_scale s
