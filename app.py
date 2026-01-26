@@ -50,12 +50,6 @@ st.sidebar.markdown("*“When enabled, High Income countries receive zero alloca
 if st.sidebar.button("Reset to default"):
     st.rerun()
 
-st.sidebar.divider()
-st.sidebar.markdown("""
-Prepared by Paul Oldham at [TierraViva AI](https://www.tierraviva.ai/) and written with Droid from [Factory AI](https://factory.ai/). 
-Code available on [Github](https://github.com/tierravivaai/cali-fund-allocation-model)
-""")
-
 # Calculations
 fund_size_usd = fund_size_bn * 1_000_000_000
 results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw, exclude_hi)
@@ -264,4 +258,7 @@ st.divider()
 st.markdown("""
 **Notes**  
 The allocations shown are indicative and are generated using an inverted [UN Scale of Assessments](https://digitallibrary.un.org/record/4071844?ln=en&utm_source=chatgpt.com&v=pdf#files) for the years 2025-2027 to support discussion. Definitions of UN regions, Least developed countries (LDC) and Small Island Developing States (SIDS) are from the [UNSD M49](https://unstats.un.org/unsd/methodology/m49/) standard. [World Bank Income Classification groups](https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups) are shown to assist with interpretation and to enable the ability to toggle high income (developed) countries on or off in calculations.
+
+---
+Prepared by Paul Oldham [TierraViva AI](https://www.tierraviva.ai/). Developed with Droid by [Factory AI](https://factory.ai/). Source code available on [Github](https://github.com/tierravivaai/cali-fund-allocation-model)
 """)
