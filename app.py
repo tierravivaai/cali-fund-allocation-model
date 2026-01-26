@@ -81,8 +81,9 @@ with tab1:
         return [''] * len(row)
 
     st.dataframe(
-        filtered_df[display_cols].sort_values('party').style.apply(style_rows, axis=1),
+        filtered_df[display_cols + ["eligible"]].sort_values('party').style.apply(style_rows, axis=1),
         column_config={
+            "eligible": None, # Hide this column
             "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
             "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
             "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
