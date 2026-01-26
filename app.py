@@ -42,7 +42,7 @@ iplc_share = st.sidebar.slider(
     help="This splits each Party’s allocation into an IPLC envelope and a State envelope. Together they equal the total."
 )
 
-show_raw = st.sidebar.toggle("Show 'raw inversion' and explanation", value=False)
+show_raw = st.sidebar.toggle("Show explanation with raw data", value=False)
 
 exclude_hi = st.sidebar.checkbox("Exclude High Income countries from receiving allocations", value=True)
 st.sidebar.markdown("*“When enabled, High Income countries receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged.”*")
