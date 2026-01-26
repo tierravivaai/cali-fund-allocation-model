@@ -8,7 +8,7 @@ st.set_page_config(page_title="Cali Fund Allocation Model", layout="wide")
 
 st.title("Cali Fund Allocation Model (UN Scale)")
 st.markdown("""
-This interactive tool uses the UN Scale of Assessments (2025-2027) as a basis to model potential shares of the Cali Fund. This is achieved by inverting country shares of the United Nations Budget so that countries with a lower share of contributions receive more from the Cali Fund. 
+This interactive tool uses the UN Scale of Assessments (2025–2027) to model indicative shares of the Cali Fund. The model inverts assessed UN budget shares so that countries with smaller assessed shares receive proportionally larger indicative allocations. 
 
 This interactive tool is provided purely for illustrative and exploratory purposes. 
 IPLC figures are shown for illustrative purposes only and do not imply any specific delivery or governance arrangement. This tool has no formal status.
