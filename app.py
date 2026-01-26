@@ -71,15 +71,26 @@ with tab1:
     display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank Income Group', 'Party Status']
     if show_raw:
         st.info("""
-        **How the Calculation Works**
-        
-        This model uses an 'inverted' version of the UN Scale of Assessments. This means countries that usually pay the least to the UN budget receive the most from this fund.
-        
-        *   **Example Country A (Lower Income):** Suppose Country A pays **0.001%** to the UN. Because this is a very small number, its 'inverted' value is very high, resulting in a **larger** share of the Cali Fund.
-        *   **Example Country B (Higher Income):** Suppose Country B pays **10%** to the UN. Because this is a large number, its 'inverted' value is relatively low, resulting in a **smaller** share of the Cali Fund.
-        
-        The final results are adjusted so that the total amount distributed exactly matches the fund size you selected in the sidebar.
-        """)
+    **How the Calculation Works**
+
+This model uses an inverted version of the UN Scale of Assessments, which is a widely used measure of countries’ relative economic capacity.
+
+In simple terms, countries that have a smaller assessed share of the UN budget receive a larger share of this fund, and countries with a larger assessed share receive a smaller share.
+
+Simple examples
+
+**Country A (smaller assessed share)**
+Suppose Country A’s UN assessment is 0.001%. Because this is a very small share, the model gives Country A a relatively large weight, which results in a larger share of the Cali Fund.
+
+**Country B (larger assessed share)**
+Suppose Country B’s UN assessment is 10%. Because this is a much larger share, the model gives Country B a relatively smaller weight, which results in a smaller share of the Cali Fund.
+
+Final step
+
+After these weights are calculated, the results are scaled so that the total amount distributed exactly equals the fund size you select in the sidebar.
+    
+    The final results are adjusted so that the total amount distributed exactly matches the fund size you selected in the sidebar.
+    """)
         
         with st.expander("See the Maths"):
             st.markdown("For those curious about the mathematical details, the calculation follows these steps:")
