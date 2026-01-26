@@ -1,36 +1,33 @@
-# Cali Fund Allocation Model
+# Cali Allocation Model (UN Scale)
 
-## Overview
-Parameterised allocation model using DuckDB and SQL. This project features an **Educational Journey Dashboard** that guides users through the allocation logic in 6 phases.
+This interactive tool illustrates how Cali Fund allocations would be distributed if based on the **latest UN Scale of Assessments (2025-2027)**, inverted to reflect relative need.
 
-## Dashboard
-The dashboard uses Streamlit to visualize the impact of various moderation mechanisms (Smoothing, Lower Bounds, Caps, and Baseline Blends).
+## Features
+- **Adjustable Fund Size**: Scale the annual Cali Fund from $0.1bn to $10.0bn.
+- **IPLC Earmark**: Set the percentage earmarked for Indigenous Peoples & Local Communities (50% to 80%).
+- **Multi-perspective views**:
+    - Detailed Party-level table.
+    - Regional aggregations (UNSD M49).
+    - EU Block summary.
+    - Developmental groupings (LDC, SIDS).
+- **Transparency**: Toggle "Raw Inversion" to see the underlying mathematical shares.
 
-Run the dashboard:
-```bash
-./start_dashboard.sh
-```
+## Installation & Setup
 
-## Data Inputs
-Required CSVs in `data-raw/`:
-- `cbd_cop16_budget_table.csv`
-- `unsd_region_useme.csv`
-- `eu27.csv`
-- Optional: `manual_name_map.csv`
+1. **Clone the repository**
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. **Run the application**:
+   ```bash
+   streamlit run app.py
+   ```
 
-## Model Execution
-Run the model directly to update the DuckDB database and export CSVs:
-```bash
-/Users/pauloldham/Documents/cali-allocation-model/.venv/bin/python scripts/run_duckdb.py --db cali_fund.duckdb
-```
+## Methodology
+The model takes each Party's UN Scale of Assessment share for 2027 and inverts it. This means countries with a smaller UN share (typically lower-income countries) receive a larger portion of the Cali Fund.
 
-## Outputs
-Written to `data/`:
-- `allocation_country.csv`
-- `allocation_country_internal.csv`
-- `allocation_country_public.csv`
-
-## Tests
-```bash
-/Users/pauloldham/Documents/cali-allocation-model/.venv/bin/python -m pytest
-```
+## Data Sources
+- **UN Scale of Assessments**: General assembly resolution 79/225.
+- **Regions**: UNSD M49 standard.
+- **Income Class**: World Bank Country and Lending Groups.

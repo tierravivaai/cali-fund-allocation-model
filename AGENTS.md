@@ -1,20 +1,26 @@
-# AGENTS
+# Agent Instructions: Cali Allocation Model
 
-## Data Locations
-- Source inputs: `data-raw/`
-- Outputs: `data/`
+## Context
+You are working on a policy-support tool for biodiversity fund allocation (Cali Fund). The model uses the inverted UN Scale of Assessments to determine distribution among Parties.
 
-## Structure
-- Dashboard: `dashboard.py` (Streamlit implementation of the 6-phase journey)
-- SQL model: `model/allocation.sql` (Core allocation logic)
-- Public/internal views: `model/public_internal.sql`
-- Scripts: `scripts/run_duckdb.py` (Database build and export)
-- Tests: `tests/`
-- Archive: `archive/` (Old documentation and specs)
+## Core Rules
+1. **Inversion Logic**: 
+   - Weight = `1 / un_share_2027`
+   - Normalise weights so they sum to 1.0 (100%).
+   - `allocation = fund_size * normalised_weight`.
+2. **Data Consistency**:
+   - Total allocations MUST sum to the specified fund size.
+   - `Total = IPLC Envelope + State Envelope`.
+3. **Labels Only**:
+   - World Bank income groups and UNSD regions are for descriptive purposes only. They must NOT influence the calculation logic.
+4. **EU Handling**:
+   - The "European Union" is a Party but usually has 0% on the UN scale. 
+   - Display it with 0 USD allocation in individual tables.
+   - Include it in the "EU Block" aggregate view along with individual Member States.
+5. **Exclusions**:
+   - Do NOT include Land Locked Developing Countries (LLDC) in the UI or summary stats.
 
-## Commands
-```bash
-./start_dashboard.sh
-/Users/pauloldham/Documents/cali-allocation-model/.venv/bin/python scripts/run_duckdb.py --db cali_fund.duckdb
-/Users/pauloldham/Documents/cali-allocation-model/.venv/bin/python -m pytest
-```
+## Technical Stack
+- **Backend**: DuckDB for SQL-based data transformations.
+- **Frontend**: Streamlit for the interactive dashboard.
+- **Testing**: Pytest for mathematical verification.
