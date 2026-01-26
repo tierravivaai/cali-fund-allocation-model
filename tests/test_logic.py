@@ -35,3 +35,22 @@ def test_eu_party_exists(mock_con):
     assert 'European Union' in base_df['party'].values
     eu_share = base_df[base_df['party'] == 'European Union']['un_share'].values[0]
     assert eu_share == 0.0
+
+def test_cbd_party_count(mock_con):
+    base_df = get_base_data(mock_con)
+    
+    # 1. Count Parties in the source CSV
+    # (Verified via pandas script as 196 including European Union)
+    source_count = 196 
+    
+    # 2. Count is_cbd_party = True in our processed dataframe
+    calculated_count = base_df['is_cbd_party'].sum()
+    
+    # These should match exactly
+    assert calculated_count == source_count
+    
+    # 3. Ensure EU is marked as a CBD Party
+    eu_cbd_status = base_df[base_df['party'] == 'European Union']['is_cbd_party'].values[0]
+    assert eu_cbd_status == True
+
+

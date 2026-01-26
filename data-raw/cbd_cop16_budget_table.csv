@@ -19,10 +19,8 @@ Belgium,0.828,1.035,145 723,155 694,301 418
 Belize,0.001,0.001,176,188,364
 Benin,0.005,0.006,880,940,1 820
 Bhutan,0.001,0.001,176,188,364
-"Bolivia (Plurinational
-State of)",0.019,0.024,3 344,3 573,6 917
-"Bosnia and
-Herzegovina",0.012,0.015,2 112,2 256,4 368
+Bolivia (Plurinational State of),0.019,0.024,3 344,3 573,6 917
+Bosnia and Herzegovina,0.012,0.015,2 112,2 256,4 368
 Botswana,0.015,0.019,2 640,2 821,5 460
 Brazil,2.013,2.516,354 277,378 517,732 794
 Brunei Darussalam,0.021,0.026,3 696,3 949,7 645
@@ -33,8 +31,7 @@ Cabo Verde,0.001,0.001,176,188,364
 Cambodia,0.007,0.009,1 232,1 316,2 548
 Cameroon,0.013,0.016,2 288,2 444,4 732
 Canada,2.628,3.285,462 513,494 160,956 673
-"Central African
-Republic",0.001,0.001,176,188,364
+Central African Republic,0.001,0.001,176,188,364
 Chad,0.003,0.004,528,564,1 092
 Chile,0.420,0.525,73 918,78 975,152 893
 China,15.254,19.069,2 684 619,2 868 309,5 552 928
@@ -48,10 +45,8 @@ Croatia,0.091,0.114,16 015,17 111,33 127
 Cuba,0.095,0.119,16 719,17 863,34 583
 Cyprus,0.036,0.045,6 336,6 769,13 105
 Czechia,0.340,0.425,59 838,63 932,123 771
-"Democratic People’s
-Republic of Korea",0.005,0.006,880,940,1 820
-"Democratic Republic
-of the Congo",0.010,0.010,1 408,1 504,2 912
+Democratic People’s Republic of Korea,0.005,0.006,880,940,1 820
+Democratic Republic of the Congo,0.010,0.010,1 408,1 504,2 912
 Denmark,0.553,0.691,97 325,103 984,201 309
 Djibouti,0.001,0.001,176,188,364
 Dominica,0.001,0.001,176,188,364
@@ -85,8 +80,7 @@ Hungary,0.228,0.285,40 127,42 872,82 999
 Iceland,0.036,0.045,6 336,6 769,13 105
 India,1.044,1.305,183 738,196 310,380 048
 Indonesia,0.549,0.686,96 621,103 232,199 853
-"Iran (Islamic Republic
-of)",0.371,0.464,65 294,69 762,135 055
+Iran (Islamic Republic of),0.371,0.464,65 294,69 762,135 055
 Iraq,0.128,0.160,22 527,24 069,46 596
 Ireland,0.439,0.549,77 262,82 548,159 810
 Israel,0.561,0.701,98 733,105 488,204 221
@@ -99,9 +93,7 @@ Kenya,0.030,0.038,5 280,5 641,10 921
 Kiribati,0.001,0.001,176,188,364
 Kuwait,0.234,0.293,41 183,44 001,85 183
 Kyrgyzstan,0.002,0.003,352,376,728
-"Lao People’s
-Democratic
-Republic",0.007,0.009,1 232,1 316,2 548
+Lao People’s Democratic Republic,0.007,0.009,1 232,1 316,2 548
 Latvia,0.050,0.063,8 800,9 402,18 202
 Lebanon,0.036,0.045,6 336,6 769,13 105
 Lesotho,0.001,0.001,176,188,364
@@ -120,8 +112,7 @@ Marshall Islands,0.001,0.001,176,188,364
 Mauritania,0.002,0.003,352,376,728
 Mauritius,0.019,0.024,3 344,3 573,6 917
 Mexico,1.221,1.526,214 889,229 593,444 482
-"Micronesia (Federated
-States of)",0.001,0.001,176,188,364
+Micronesia (Federated States of),0.001,0.001,176,188,364
 Monaco,0.011,0.014,1 936,2 068,4 004
 Mongolia,0.004,0.005,704,752,1 456
 Montenegro,0.004,0.005,704,752,1 456
@@ -131,8 +122,7 @@ Myanmar,0.010,0.010,1 408,1 504,2 912
 Namibia,0.009,0.011,1 584,1 692,3 276
 Nauru,0.001,0.001,176,188,364
 Nepal,0.010,0.010,1 408,1 504,2 912
-"Netherlands (Kingdom
-of the)",1.377,1.721,242 344,258 926,501 271
+Netherlands (Kingdom of the),1.377,1.721,242 344,258 926,501 271
 New Zealand,0.309,0.386,54 382,58 103,112 486
 Nicaragua,0.005,0.006,880,940,1 820
 Niger,0.003,0.004,528,564,1 092
@@ -158,12 +148,10 @@ Russian Federation,1.866,2.333,328 406,350 876,679 282
 Rwanda,0.003,0.004,528,564,1 092
 Saint Kitts and Nevis,0.002,0.003,352,376,728
 Saint Lucia,0.002,0.003,352,376,728
-"Saint Vincent and the
-Grenadines",0.001,0.001,176,188,364
+Saint Vincent and the Grenadines,0.001,0.001,176,188,364
 Samoa,0.001,0.001,176,188,364
 San Marino,0.002,0.003,352,376,728
-"Sao Tome and
-Principe",0.001,0.001,176,188,364
+Sao Tome and Principe,0.001,0.001,176,188,364
 Saudi Arabia,1.184,1.480,208 377,222 635,431 013
 Senegal,0.007,0.009,1 232,1 316,2 548
 Serbia,0.032,0.040,5 632,6 017,11 649
@@ -197,16 +185,12 @@ Tuvalu,0.001,0.001,176,188,364
 Uganda,0.010,0.010,1 408,1 504,2 912
 Ukraine,0.056,0.070,9 856,10 530,20 386
 United Arab Emirates,0.635,0.794,111 756,119 403,231 160
-"United Kingdom of
-Great Britain and
-Northern Ireland",4.375,5.469,769 976,822 660,1 592 635
-"United Republic of
-Tanzania",0.010,0.010,1 408,1 504,2 912
+United Kingdom of Great Britain and Northern Ireland,4.375,5.469,769 976,822 660,1 592 635
+United Republic of Tanzania,0.010,0.010,1 408,1 504,2 912
 Uruguay,0.092,0.115,16 191,17 299,33 491
 Uzbekistan,0.027,0.034,4 752,5 077,9 829
 Vanuatu,0.001,0.001,176,188,364
-"Venezuela (Bolivarian
-Republic of)",0.175,0.219,30 799,32 906,63 705
+Venezuela (Bolivarian Republic of),0.175,0.219,30 799,32 906,63 705
 Viet Nam,0.093,0.116,16 367,17 487,33 855
 Yemen,0.008,0.010,1 408,1 504,2 912
 Zambia,0.008,0.010,1 408,1 504,2 912
