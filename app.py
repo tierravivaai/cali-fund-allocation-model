@@ -80,6 +80,21 @@ with tab1:
         
         The final results are adjusted so that the total amount distributed exactly matches the fund size you selected in the sidebar.
         """)
+        
+        with st.expander("See the Maths"):
+            st.markdown("For those curious about the mathematical details, the calculation follows these steps:")
+            
+            st.latex(r"W_i = \frac{1}{\text{UN Share}_i}")
+            st.markdown("1. **Inversion**: We take the 'reciprocal' of each country's UN Scale percentage ($W_i$). This turns the scale upside down.")
+            
+            st.latex(r"\text{Share}_i = \frac{W_i}{\sum_{j=1}^{n} W_j}")
+            st.markdown("2. **Normalisation**: We sum all these inverted values and find what percentage each country represents of that total. This ensures the total distribution is exactly 100%.")
+            
+            st.latex(r"\text{Allocation}_i = \text{Fund Size} \times \text{Share}_i")
+            st.markdown("3. **Allocation**: We multiply the country's share by the total fund size (e.g. $1 billion) to get the final dollar amount.")
+            
+            st.markdown("4. **Earmarking**: Finally, the total is split into the **State Envelope** and the **IPLC Envelope** based on the percentage selected in the sidebar.")
+        
         display_cols.insert(1, 'un_share')
         display_cols.insert(2, 'un_share_fraction')
         display_cols.insert(3, 'inverted_share')
