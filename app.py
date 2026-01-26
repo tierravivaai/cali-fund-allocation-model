@@ -95,7 +95,7 @@ Suppose Country B’s UN assessment is 10%. Because this is a much larger share,
 
 Final step
 
-After these weights are calculated, the results are scaled so that the total amount distributed exactly equals the fund size you select in the sidebar.
+After these weights are calculated, the results are scaled so that the total amount distributed exactly equals the fund size you select in the sidebar. The total allocation is then split into a State Envelope and an Indigenous Peoples and Local Communities (IPLC) Envelope according to the percentage selected.
     """)
         
         with st.expander("How the calculation works (technical summary)"):
