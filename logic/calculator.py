@@ -30,8 +30,8 @@ def calculate_allocations(df, fund_size, iplc_share_pct, show_raw_inversion=Fals
         
     return calc_df
 
-def aggregate_by_region(df):
-    return df.groupby('region')[['total_allocation', 'iplc_envelope', 'state_envelope']].sum().reset_index()
+def aggregate_by_region(df, region_col='region'):
+    return df.groupby(region_col)[['total_allocation', 'iplc_envelope', 'state_envelope']].sum().reset_index()
 
 def aggregate_eu(df):
     ms_df = df[df['is_eu_ms']]

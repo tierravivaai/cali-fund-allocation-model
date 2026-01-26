@@ -45,9 +45,11 @@ fund_size_usd = fund_size_bn * 1_000_000_000
 results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw)
 
 # Main Tabs
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab2b, tab2c, tab3, tab4, tab5 = st.tabs([
     "By Party (A–Z)", 
     "By UN Region", 
+    "By UN Sub-region",
+    "By UN Intermediate Region",
     "EU Block", 
     "Developed vs LDC", 
     "SIDS"
@@ -79,9 +81,37 @@ with tab1:
 
 with tab2:
     st.subheader("Totals by UN Region")
-    region_df = aggregate_by_region(results_df)
+    region_df = aggregate_by_region(results_df, 'region')
     st.dataframe(
         region_df.sort_values('total_allocation', ascending=False),
+        column_config={
+            "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
+            "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
+        },
+        hide_index=True,
+        use_container_width=True
+    )
+
+with tab2b:
+    st.subheader("Totals by UN Sub-region")
+    sub_region_df = aggregate_by_region(results_df, 'sub_region')
+    st.dataframe(
+        sub_region_df.sort_values('total_allocation', ascending=False),
+        column_config={
+            "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
+            "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
+        },
+        hide_index=True,
+        use_container_width=True
+    )
+
+with tab2c:
+    st.subheader("Totals by UN Intermediate Region")
+    int_region_df = aggregate_by_region(results_df[results_df['intermediate_region'] != 'NA'], 'intermediate_region')
+    st.dataframe(
+        int_region_df.sort_values('total_allocation', ascending=False),
         column_config={
             "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
             "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
