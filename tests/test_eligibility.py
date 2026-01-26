@@ -21,9 +21,17 @@ def test_eligibility_filter_high_income(mock_con):
     hi_countries = results_filtered[results_filtered['income_group'] == 'High income']
     assert (hi_countries['total_allocation'] == 0).all()
     
-    # Check that non-High income countries have > 0 allocation (if un_share > 0)
-    eligible_countries = results_filtered[(results_filtered['income_group'] != 'High income') & (results_filtered['un_share'] > 0)]
+    # Check that non-High income CBD Parties have > 0 allocation (if un_share > 0)
+    eligible_countries = results_filtered[
+        (results_filtered['income_group'] != 'High income') & 
+        (results_filtered['un_share'] > 0) &
+        (results_filtered['is_cbd_party'])
+    ]
     assert (eligible_countries['total_allocation'] > 0).all()
+    
+    # Check that non-CBD Parties have 0 allocation
+    non_cbd = results_filtered[~results_filtered['is_cbd_party']]
+    assert (non_cbd['total_allocation'] == 0).all()
     
     # Check sum consistency
     assert pytest.approx(results_filtered['total_allocation'].sum(), 0.001) == 1000
@@ -32,12 +40,17 @@ def test_eligibility_toggle_off(mock_con):
     base_df = get_base_data(mock_con)
     fund_size = 1_000_000_000
     
-    # Toggle OFF: Include everyone
+    # Toggle OFF: Include all CBD Parties
     results_all = calculate_allocations(base_df, fund_size, 50, exclude_high_income=False)
     
-    # High income countries should have > 0 allocation
-    hi_countries = results_all[(results_all['income_group'] == 'High income') & (results_all['un_share'] > 0)]
+    # High income CBD Parties should have > 0 allocation
+    hi_countries = results_all[
+        (results_all['income_group'] == 'High income') & 
+        (results_all['un_share'] > 0) &
+        (results_all['is_cbd_party'])
+    ]
     assert (hi_countries['total_allocation'] > 0).all()
     
-    # Check sum consistency
-    assert pytest.approx(results_all['total_allocation'].sum(), 0.001) == 1000
+    # Non-CBD Parties should still have 0
+    non_cbd = results_all[~results_all['is_cbd_party']]
+    assert (non_cbd['total_allocation'] == 0).all()

@@ -61,9 +61,14 @@ tab1, tab2, tab2b, tab2c, tab3, tab4, tab5 = st.tabs([
 with tab1:
     st.subheader("Allocations by Party")
     # Add eligibility status column for display
-    results_df["Eligibility status"] = results_df["eligible"].map(
-        lambda x: "Eligible" if x else "Not eligible (High Income)"
-    )
+    def get_status(row):
+        if not row["is_cbd_party"]:
+            return "Non-CBD Party"
+        if not row["eligible"]:
+            return "Not eligible (High Income)"
+        return "Eligible"
+        
+    results_df["Eligibility status"] = results_df.apply(get_status, axis=1)
     
     display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'income_group', 'Eligibility status']
     if show_raw:

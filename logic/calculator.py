@@ -7,10 +7,10 @@ def calculate_allocations(df, fund_size, iplc_share_pct, show_raw_inversion=Fals
     calc_df = df.copy()
     
     # 1. Define eligibility
-    calc_df["eligible"] = True
+    calc_df["eligible"] = calc_df["is_cbd_party"]
     if exclude_high_income:
-        # Explicitly exclude "High income" countries
-        calc_df["eligible"] = calc_df["income_group"] != "High income"
+        # Explicitly exclude "High income" countries among CBD Parties
+        calc_df["eligible"] = calc_df["eligible"] & (calc_df["income_group"] != "High income")
     
     # Inversion logic: only for eligible parties with shares > 0
     # The source 'un_share' is expressed as a percentage (e.g. 5.469)

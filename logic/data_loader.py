@@ -21,6 +21,9 @@ def load_data(con):
     # 5. Load Manual Name Map
     con.execute(f"CREATE TABLE name_map AS SELECT * FROM read_csv_auto('{base_path}/manual_name_map.csv')")
 
+    # 6. Load CBD Parties List (using the budget table as source of truth for Parties)
+    con.execute(f"CREATE TABLE cbd_parties AS SELECT Party FROM read_csv_auto('{base_path}/cbd_cop16_budget_table.csv')")
+
 def get_base_data(con):
     # Combine and clean data
     sql = r"""
@@ -69,11 +72,13 @@ def get_base_data(con):
             r."Least Developed Countries (LDC)" = 'x' as is_ldc,
             r."Small Island Developing States (SIDS)" = 'x' as is_sids,
             w."Income group" as income_group,
-            e.is_eu27 IS NOT NULL as is_eu_ms
+            e.is_eu27 IS NOT NULL as is_eu_ms,
+            c.Party IS NOT NULL OR s.party = 'European Union' as is_cbd_party
         FROM mapped_scale s
         LEFT JOIN unsd_regions r ON s.party = r."Country or Area"
         LEFT JOIN wb_income w ON s.party = w.Economy
         LEFT JOIN eu27 e ON s.party = e.party
+        LEFT JOIN cbd_parties c ON s.party = c.Party
     )
     SELECT * FROM joined
     """
@@ -89,7 +94,8 @@ def get_base_data(con):
             'is_ldc': False,
             'is_sids': False,
             'income_group': 'High income',
-            'is_eu_ms': False
+            'is_eu_ms': False,
+            'is_cbd_party': True
         }])
         df = pd.concat([df, eu_entry], ignore_index=True)
     
