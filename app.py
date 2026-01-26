@@ -71,7 +71,7 @@ with tab1:
     display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank Income Group', 'Party Status']
     if show_raw:
         st.info("""
-    **How the Calculation Works**
+    **How the Calculation Works in Plain Language**
 
 This model uses an inverted version of the UN Scale of Assessments, which is a widely used measure of countries’ relative economic capacity.
 
@@ -88,8 +88,6 @@ Suppose Country B’s UN assessment is 10%. Because this is a much larger share,
 Final step
 
 After these weights are calculated, the results are scaled so that the total amount distributed exactly equals the fund size you select in the sidebar.
-    
-    The final results are adjusted so that the total amount distributed exactly matches the fund size you selected in the sidebar.
     """)
         
         with st.expander("See the Maths"):
