@@ -90,19 +90,31 @@ Final step
 After these weights are calculated, the results are scaled so that the total amount distributed exactly equals the fund size you select in the sidebar.
     """)
         
-        with st.expander("See the Maths"):
-            st.markdown("For those curious about the mathematical details, the calculation follows these steps:")
+        with st.expander("How the calculation works (technical summary)"):
+            st.markdown("For each Party, the calculation proceeds in four steps:")
             
+            st.markdown("""
+            1. **Inversion**
+            Each Party’s UN Scale of Assessments share (expressed as a percentage) is inverted by taking its reciprocal. This means Parties with smaller assessed shares receive larger weights.
+            """)
             st.latex(r"W_i = \frac{1}{\text{UN Share}_i}")
-            st.markdown("1. **Inversion**: We take the 'reciprocal' of each country's UN Scale percentage ($W_i$). This turns the scale upside down.")
             
+            st.markdown("""
+            2. **Normalisation**
+            All inverted values are summed, and each Party’s inverted value is divided by this total. This produces a set of shares that sum exactly to 100%.
+            """)
             st.latex(r"\text{Share}_i = \frac{W_i}{\sum_{j=1}^{n} W_j}")
-            st.markdown("2. **Normalisation**: We sum all these inverted values and find what percentage each country represents of that total. This ensures the total distribution is exactly 100%.")
             
+            st.markdown("""
+            3. **Allocation**
+            Each Party’s share is multiplied by the total fund size (for example, USD 1 billion) to determine its total annual allocation.
+            """)
             st.latex(r"\text{Allocation}_i = \text{Fund Size} \times \text{Share}_i")
-            st.markdown("3. **Allocation**: We multiply the country's share by the total fund size (e.g. $1 billion) to get the final dollar amount.")
             
-            st.markdown("4. **Earmarking**: Finally, the total is split into the **State Envelope** and the **IPLC Envelope** based on the percentage selected in the sidebar.")
+            st.markdown("""
+            4. **Earmarking**
+            The total allocation is then split into a State Envelope and an Indigenous Peoples and Local Communities (IPLC) Envelope according to the percentage selected.
+            """)
         
         display_cols.insert(1, 'un_share')
         display_cols.insert(2, 'un_share_fraction')
