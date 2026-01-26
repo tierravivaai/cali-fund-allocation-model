@@ -120,13 +120,8 @@ After these weights are calculated, the results are scaled so that the total amo
     search = st.text_input("Search Country", "")
     filtered_df = results_df[results_df['party'].str.contains(search, case=False)]
     
-    def style_rows(row):
-        if not row["eligible"]:
-            return ['background-color: #f0f0f0; color: #a0a0a0'] * len(row)
-        return [''] * len(row)
-
     st.dataframe(
-        filtered_df[display_cols + ["eligible"]].sort_values('party').style.apply(style_rows, axis=1),
+        filtered_df[display_cols + ["eligible"]].sort_values('party'),
         column_config={
             "eligible": None, # Hide this column
             "party": "Country",
