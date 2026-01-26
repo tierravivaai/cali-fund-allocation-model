@@ -50,6 +50,12 @@ st.sidebar.markdown("*“When enabled, High Income countries receive zero alloca
 if st.sidebar.button("Reset to default"):
     st.rerun()
 
+st.sidebar.divider()
+st.sidebar.markdown("""
+Prepared by Paul Oldham at [TierraViva AI](https://www.tierraviva.ai/) and written with Droid from [Factory AI](https://factory.ai/). 
+Code available on [Github](https://github.com/tierravivaai/cali-fund-allocation-model)
+""")
+
 # Calculations
 fund_size_usd = fund_size_bn * 1_000_000_000
 results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw, exclude_hi)
