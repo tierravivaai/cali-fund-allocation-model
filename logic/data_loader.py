@@ -23,15 +23,34 @@ def load_data(con):
 
 def get_base_data(con):
     # Combine and clean data
-    sql = """
-    WITH scale_2027 AS (
+    sql = r"""
+    WITH raw_scale AS (
         SELECT 
             "Member State" as party_name, 
             CASE 
                 WHEN "2027" = '-' OR "2027" = 'NA' THEN 0.0 
-                ELSE CAST("2027" AS DOUBLE) 
+                ELSE TRY_CAST("2027" AS DOUBLE) 
             END as un_share
         FROM un_scale
+    ),
+    scale_2027 AS (
+        SELECT * FROM raw_scale
+        WHERE party_name IS NOT NULL
+          AND party_name != 'Total'
+          AND un_share IS NOT NULL
+          AND party_name NOT LIKE 'a/%'
+          AND party_name NOT LIKE 'b/%'
+          AND party_name NOT LIKE 'c/%'
+          AND party_name NOT LIKE 'd/%'
+          AND party_name NOT LIKE 'e/%'
+          AND party_name NOT LIKE 'f/%'
+          AND party_name NOT LIKE 'g/%'
+          AND party_name NOT LIKE 'h/%'
+          AND party_name NOT LIKE 'i/%'
+          AND party_name NOT LIKE 'j/%'
+          AND party_name NOT LIKE 'k/%'
+          AND party_name NOT LIKE 'c:\%'
+          AND party_name !~ '^\d{2}/\d{2}/\d{4}$'
     ),
     mapped_scale AS (
         SELECT 
