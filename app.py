@@ -59,25 +59,32 @@ tab1, tab2, tab2b, tab2c, tab3, tab4, tab5 = st.tabs([
 ])
 
 with tab1:
-    st.subheader("Allocations by Party")
-    # Add eligibility status column for display
+    st.subheader("Allocations by Country")
+    # Add party status column for display
     def get_status(row):
         if not row["is_cbd_party"]:
-            return "Non-CBD Party"
-        if not row["eligible"]:
-            return "Not eligible (High Income)"
-        return "Eligible"
+            return "Non-Party"
+        return "Party"
         
-    results_df["Eligibility status"] = results_df.apply(get_status, axis=1)
+    results_df["Party Status"] = results_df.apply(get_status, axis=1)
     
-    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'income_group', 'Eligibility status']
+    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank Income Group', 'Party Status']
     if show_raw:
-        st.info("Raw inversion shown for explanation. Results can be extreme.")
+        st.info("""
+        **How the Calculation Works**
+        
+        This model uses an 'inverted' version of the UN Scale of Assessments. This means countries that usually pay the least to the UN budget receive the most from this fund.
+        
+        *   **Example Country A (Lower Income):** Suppose Country A pays **0.001%** to the UN. Because this is a very small number, its 'inverted' value is very high, resulting in a **larger** share of the Cali Fund.
+        *   **Example Country B (Higher Income):** Suppose Country B pays **10%** to the UN. Because this is a large number, its 'inverted' value is relatively low, resulting in a **smaller** share of the Cali Fund.
+        
+        The final results are adjusted so that the total amount distributed exactly matches the fund size you selected in the sidebar.
+        """)
         display_cols.insert(1, 'un_share')
         display_cols.insert(2, 'un_share_fraction')
         display_cols.insert(3, 'inverted_share')
     
-    search = st.text_input("Search Party", "")
+    search = st.text_input("Search Country", "")
     filtered_df = results_df[results_df['party'].str.contains(search, case=False)]
     
     def style_rows(row):
@@ -89,9 +96,10 @@ with tab1:
         filtered_df[display_cols + ["eligible"]].sort_values('party').style.apply(style_rows, axis=1),
         column_config={
             "eligible": None, # Hide this column
-            "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
+            "party": "Country",
+            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
+            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
             "un_share": st.column_config.NumberColumn("UN Share (%)", format="%.4f"),
             "un_share_fraction": st.column_config.NumberColumn("UN Share (fraction)", format="%.6f"),
             "inverted_share": st.column_config.NumberColumn("Inv Share (normalised)", format="%.6f"),
@@ -106,9 +114,9 @@ with tab2:
     st.dataframe(
         region_df.sort_values('total_allocation', ascending=False),
         column_config={
-            "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
+            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
+            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
         },
         hide_index=True,
         use_container_width=True
@@ -120,9 +128,9 @@ with tab2b:
     st.dataframe(
         sub_region_df.sort_values('total_allocation', ascending=False),
         column_config={
-            "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
+            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
+            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
         },
         hide_index=True,
         use_container_width=True
@@ -134,9 +142,9 @@ with tab2c:
     st.dataframe(
         int_region_df.sort_values('total_allocation', ascending=False),
         column_config={
-            "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
+            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
+            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
         },
         hide_index=True,
         use_container_width=True
@@ -149,9 +157,10 @@ with tab3:
     st.dataframe(
         eu_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope']].sort_values('party'),
         column_config={
-            "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
+            "party": "Country",
+            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
+            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
         },
         hide_index=True,
         use_container_width=True
@@ -177,9 +186,9 @@ with tab4:
     st.dataframe(
         summary_data,
         column_config={
-            "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USDm)", format="$%.2f"),
+            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
+            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
         },
         hide_index=True,
         use_container_width=True
