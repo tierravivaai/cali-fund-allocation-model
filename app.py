@@ -7,7 +7,14 @@ from logic.calculator import calculate_allocations, aggregate_by_region, aggrega
 st.set_page_config(page_title="Cali Fund Allocation Model", layout="wide")
 
 st.title("Cali Fund Allocation Model (UN Scale)")
-st.markdown("*This interactive tool is provided purely for illustrative and exploratory purposes. It has no status.*")
+st.markdown("""
+This interactive tool uses the UN Scale of Assessments (2025-2027) as a basis to model potential shares of the Cali Fund. This is achieved by inverting country shares of the United Nations Budget so that countries with a lower share of contributions receive more from the Cali Fund. 
+
+This interactive tool is provided purely for illustrative and exploratory purposes. 
+IPLC figures are shown for illustrative purposes only and do not imply any specific delivery or governance arrangement. This tool has no formal status.
+
+A detailed description of the UN Scale of Assessment for 2025-2027 is available [here](https://www.un-ilibrary.org/content/books/9789211069945c004/read) and the latest table is [here](https://digitallibrary.un.org/record/4071844?ln=en&utm_source=chatgpt.com&v=pdf#files).
+""")
 
 # Initialize connection and data
 if 'con' not in st.session_state:
