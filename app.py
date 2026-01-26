@@ -95,21 +95,18 @@ After these weights are calculated, the results are scaled so that the total amo
             
             st.markdown("""
             1. **Inversion**
-            Each Party’s UN Scale of Assessments share (expressed as a percentage) is inverted by taking its reciprocal. This means Parties with smaller assessed shares receive larger weights.
+            Each Party’s UN Scale of Assessments share (expressed as a percentage) is inverted by taking its reciprocal (that is, dividing 1 by the share). This means Parties with smaller assessed shares receive larger weights.
             """)
-            st.latex(r"W_i = \frac{1}{\text{UN Share}_i}")
             
             st.markdown("""
             2. **Normalisation**
             All inverted values are summed, and each Party’s inverted value is divided by this total. This produces a set of shares that sum exactly to 100%.
             """)
-            st.latex(r"\text{Share}_i = \frac{W_i}{\sum_{j=1}^{n} W_j}")
             
             st.markdown("""
             3. **Allocation**
             Each Party’s share is multiplied by the total fund size (for example, USD 1 billion) to determine its total annual allocation.
             """)
-            st.latex(r"\text{Allocation}_i = \text{Fund Size} \times \text{Share}_i")
             
             st.markdown("""
             4. **Earmarking**
