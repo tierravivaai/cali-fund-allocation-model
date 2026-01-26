@@ -37,12 +37,15 @@ iplc_share = st.sidebar.slider(
 
 show_raw = st.sidebar.toggle("Show 'raw inversion' (illustrative only)", value=False)
 
+exclude_hi = st.sidebar.checkbox("Exclude High Income countries from receiving allocations", value=False)
+st.sidebar.markdown("*“When enabled, High Income countries receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged.”*")
+
 if st.sidebar.button("Reset to default"):
     st.rerun()
 
 # Calculations
 fund_size_usd = fund_size_bn * 1_000_000_000
-results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw)
+results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw, exclude_hi)
 
 # Main Tabs
 tab1, tab2, tab2b, tab2c, tab3, tab4, tab5 = st.tabs([
@@ -57,7 +60,12 @@ tab1, tab2, tab2b, tab2c, tab3, tab4, tab5 = st.tabs([
 
 with tab1:
     st.subheader("Allocations by Party")
-    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'income_group']
+    # Add eligibility status column for display
+    results_df["Eligibility status"] = results_df["eligible"].map(
+        lambda x: "Eligible" if x else "Not eligible (High Income)"
+    )
+    
+    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'income_group', 'Eligibility status']
     if show_raw:
         st.info("Raw inversion shown for explanation. Results can be extreme.")
         display_cols.insert(1, 'un_share')
@@ -67,8 +75,13 @@ with tab1:
     search = st.text_input("Search Party", "")
     filtered_df = results_df[results_df['party'].str.contains(search, case=False)]
     
+    def style_rows(row):
+        if not row["eligible"]:
+            return ['background-color: #f0f0f0; color: #a0a0a0'] * len(row)
+        return [''] * len(row)
+
     st.dataframe(
-        filtered_df[display_cols].sort_values('party'),
+        filtered_df[display_cols].sort_values('party').style.apply(style_rows, axis=1),
         column_config={
             "total_allocation": st.column_config.NumberColumn("Total (USDm)", format="$%.2f"),
             "state_envelope": st.column_config.NumberColumn("State (USDm)", format="$%.2f"),
