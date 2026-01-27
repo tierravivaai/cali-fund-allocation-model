@@ -143,8 +143,7 @@ After these weights are calculated, the results are scaled so that the total amo
             """)
         
         display_cols.insert(1, 'un_share')
-        display_cols.insert(2, 'un_share_fraction')
-        display_cols.insert(3, 'inverted_share')
+        display_cols.insert(2, 'inverted_share')
     
     search = st.text_input("Search Country", "")
     filtered_df = results_df[results_df['party'].str.contains(search, case=False)].copy()
