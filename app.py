@@ -104,23 +104,25 @@ with tab1:
     display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank income group', 'CBD Party Status']
     if show_raw:
         st.info("""
-    **How the Calculation Works in Plain Language**
+    **How the Calculation Works (Plain Language)**
 
 This model uses an inverted version of the UN Scale of Assessments, which is a widely used measure of countries’ relative economic capacity.
 
-In simple terms, countries that have a smaller assessed share of the UN budget receive a larger share of this fund, and countries with a larger assessed share receive a smaller share.
+In simple terms, countries with a smaller assessed share of the UN budget receive a larger indicative share of this fund, while countries with a larger assessed share receive a smaller indicative share.
 
 Simple examples
 
-**Country A (smaller assessed share)**
-Suppose Country A’s UN assessment is 0.001%. Because this is a very small share, the model gives Country A a relatively large weight, which results in a larger share of the Cali Fund.
+Country A (smaller assessed share)
+Suppose Country A’s UN assessment is 0.001%. Because this is a very small assessed share, the model assigns Country A a relatively large weight, which results in a larger share of the Cali Fund.
 
-**Country B (larger assessed share)**
-Suppose Country B’s UN assessment is 10%. Because this is a much larger share, the model gives Country B a relatively smaller weight, which results in a smaller share of the Cali Fund.
+Country B (larger assessed share)
+Suppose Country B’s UN assessment is 10%. Because this is a much larger assessed share, the model assigns Country B a relatively smaller weight, which results in a smaller share of the Cali Fund.
+
+(Behind the scenes, assessed shares are first converted from percentages into standard numerical values before being inverted. This is a technical step required for the calculation and does not affect the overall logic.)
 
 Final step
 
-After these weights are calculated, the results are scaled so that the total amount distributed exactly equals the fund size you select in the sidebar. The total allocation is then split into a State Envelope and an Indigenous Peoples and Local Communities (IPLC) Envelope according to the percentage selected.
+After these weights are calculated, they are rescaled so that the total amount distributed exactly equals the fund size selected in the sidebar. Each Party’s total allocation is then divided into a State Envelope and an Indigenous Peoples and Local Communities (IPLC) Envelope according to the selected percentage.
     """)
         
         with st.expander("How the calculation works (technical summary)"):
