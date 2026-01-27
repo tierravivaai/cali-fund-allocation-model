@@ -128,22 +128,18 @@ After these weights are calculated, the results are scaled so that the total amo
             
             st.markdown("""
             1. **Inversion**
-            Each Party’s UN Scale of Assessments share (expressed as a percentage) is inverted by taking its reciprocal (that is, dividing 1 by the share). This means Parties with smaller assessed shares receive larger weights. For Country A, 1 divided by 0.001 is 1000 while for Country B, 1 divided by 10 is 0.1 inverting the share in favour of Country A.
-            """)
-            
-            st.markdown("""
+            Each Party’s UN Scale of Assessments share is first converted from a percentage into a decimal (for example, 0.005% becomes 0.00005).
+
+            The model then inverts this value by taking its reciprocal (that is, dividing 1 by the decimal value). This produces an inverse weight.
+
             2. **Normalisation**
-            All inverted values are summed, and each Party’s inverted value is divided by this total. This produces a set of shares that sum exactly to 100%.
-            """)
-            
-            st.markdown("""
+            All inverse weights are summed, and each Party’s weight is divided by this total. This produces a set of shares that sum exactly to 100%.
+
             3. **Allocation**
-            Each Party’s share is multiplied by the total fund size (for example, USD 1 billion) to determine its total annual allocation.
-            """)
-            
-            st.markdown("""
+            Each Party’s share is multiplied by the total fund size to determine its indicative allocation.
+
             4. **Earmarking**
-            The total allocation is then split into a State Envelope and an Indigenous Peoples and Local Communities (IPLC) Envelope according to the percentage selected.
+            The allocation is then divided into a State envelope and an IPLC envelope according to the selected percentage.
             """)
         
         display_cols.insert(1, 'un_share')
