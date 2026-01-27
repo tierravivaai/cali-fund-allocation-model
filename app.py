@@ -66,16 +66,16 @@ def get_column_config(use_thousands):
     if use_thousands:
         # When using thousands, we must use TextColumn because we mix 'k' and 'm'
         return {
-            "total_allocation": st.column_config.TextColumn("Total (USD)"),
-            "state_envelope": st.column_config.TextColumn("State (USD)"),
-            "iplc_envelope": st.column_config.TextColumn("IPLC (USD)"),
+            "total_allocation": st.column_config.TextColumn("Total Share (USD)"),
+            "state_envelope": st.column_config.TextColumn("State Envelope (USD)"),
+            "iplc_envelope": st.column_config.TextColumn("IPLC Envelope (USD)"),
         }
     else:
         # Standard millions view can use NumberColumn for better sorting
         return {
-            "total_allocation": st.column_config.NumberColumn("Total (USD Millions)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State (USD Millions)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC (USD Millions)", format="$%.2f"),
+            "total_allocation": st.column_config.NumberColumn("Total Share (USD Millions)", format="$%.2f"),
+            "state_envelope": st.column_config.NumberColumn("State Envelope (USD Millions)", format="$%.2f"),
+            "iplc_envelope": st.column_config.NumberColumn("IPLC Envelope (USD Millions)", format="$%.2f"),
         }
 
 # Main Tabs
@@ -98,9 +98,10 @@ with tab1:
             return "Non-Party"
         return "Party"
         
-    results_df["Party Status"] = results_df.apply(get_status, axis=1)
+    results_df["CBD Party Status"] = results_df.apply(get_status, axis=1)
+    results_df["World Bank income group"] = results_df["World Bank Income Group"]
     
-    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank Income Group', 'Party Status']
+    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank income group', 'CBD Party Status']
     if show_raw:
         st.info("""
     **How the Calculation Works in Plain Language**
@@ -160,9 +161,9 @@ After these weights are calculated, the results are scaled so that the total amo
     config = {
         "eligible": None, # Hide this column
         "party": "Country",
-        "un_share": st.column_config.NumberColumn("UN Share (%)", format="%.4f"),
-        "un_share_fraction": st.column_config.NumberColumn("UN Share (fraction)", format="%.6f"),
-        "inverted_share": st.column_config.NumberColumn("Inv Share (normalised)", format="%.6f"),
+        "un_share": st.column_config.NumberColumn("UN assessed share (%)", format="%.4f"),
+        "un_share_fraction": st.column_config.NumberColumn("UN assessed share (fraction)", format="%.6f"),
+        "inverted_share": st.column_config.NumberColumn("Indicative share of Cali Fund (%)", format="%.6f"),
     }
     config.update(get_column_config(use_thousands))
 
