@@ -313,6 +313,14 @@ with tab5b:
     st.subheader("Low Income Countries")
     li_df = results_df[results_df['World Bank Income Group'] == 'Low income'].copy()
     
+    # Add classification specifically for Low Income view
+    def get_li_classification(row):
+        if row["is_ldc"]:
+            return "LDC"
+        return "Low Income"
+    
+    li_df["Classification"] = li_df.apply(get_li_classification, axis=1)
+    
     display_li_df = li_df.copy()
     if use_thousands:
         for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
@@ -322,7 +330,7 @@ with tab5b:
     config.update(get_column_config(use_thousands))
 
     st.dataframe(
-        display_li_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope']].sort_values('party'),
+        display_li_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'Classification']].sort_values('party'),
         column_config=config,
         hide_index=True,
         use_container_width=True

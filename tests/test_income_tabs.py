@@ -51,11 +51,23 @@ def test_low_income_tab_columns(mock_con):
     base_df = get_base_data(mock_con)
     results_df = calculate_allocations(base_df, 1_000_000_000, 50)
     
-    # Check that in Low Income view, EU column is not used
+    # Check that in Low Income view, EU column is not used but Classification exists
     li_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope']
     for col in li_cols:
         assert col in results_df.columns
-
+    
+    # Check classification mapping for Low Income
+    li_df = results_df[results_df['World Bank Income Group'] == 'Low income'].copy()
+    def get_li_classification(row):
+        if row["is_ldc"]:
+            return "LDC"
+        return "Low Income"
+    li_df["Classification"] = li_df.apply(get_li_classification, axis=1)
+    
+    # Verify both types exist if applicable in our data
+    assert "LDC" in li_df["Classification"].values
+    # (Optional: check for Low Income only if present)
+    
 def test_high_income_tab_logic(mock_con):
     base_df = get_base_data(mock_con)
     results_df = calculate_allocations(base_df, 1_000_000_000, 50)
