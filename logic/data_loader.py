@@ -103,6 +103,13 @@ def get_base_data(con):
     # Clean up NA strings to "Not Available"
     df['World Bank Income Group'] = df['World Bank Income Group'].replace('NA', 'Not Available')
     
+    # Manual fixes for known missing income data
+    df.loc[df['party'] == 'Venezuela, RB', 'World Bank Income Group'] = 'Lower middle income' # Classified as LM in latest available datasets, but NA in this CSV
+    df.loc[df['party'] == 'Ethiopia', 'World Bank Income Group'] = 'Low income'
+    df.loc[df['party'] == 'Sao Tome and Principe', 'World Bank Income Group'] = 'Lower middle income'
+    df.loc[df['party'] == 'Cook Islands', 'World Bank Income Group'] = 'High income'
+    df.loc[df['party'] == 'Niue', 'World Bank Income Group'] = 'High income'
+    
     if 'European Union' not in df['party'].values:
         eu_entry = pd.DataFrame([{
             'party': 'European Union',
