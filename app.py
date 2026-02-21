@@ -124,7 +124,7 @@ def get_column_config(use_thousands):
         }
 
 # Main Tabs
-tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5, tab6, tab7 = st.tabs([
+tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5, tab5b, tab6, tab7 = st.tabs([
     "By Party", 
     "By UN Region", 
     "By UN Sub-region",
@@ -132,6 +132,7 @@ tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5, tab6, tab7 = st.tabs([
     "Share by Income Group",
     "LDC Share", 
     "SIDS",
+    "Low Income",
     "Middle Income",
     "High Income"
 ])
@@ -307,6 +308,31 @@ with tab5:
     col1, col2 = st.columns(2)
     col1.metric("SIDS State Envelope", format_currency(sids_total['state_envelope']))
     col2.metric("SIDS IPLC Envelope", format_currency(sids_total['iplc_envelope']))
+
+with tab5b:
+    st.subheader("Low Income Countries")
+    li_df = results_df[results_df['World Bank Income Group'] == 'Low income'].copy()
+    
+    display_li_df = li_df.copy()
+    if use_thousands:
+        for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+            display_li_df[col] = display_li_df[col].apply(format_currency)
+
+    config = {"party": "Country"}
+    config.update(get_column_config(use_thousands))
+
+    st.dataframe(
+        display_li_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope']].sort_values('party'),
+        column_config=config,
+        hide_index=True,
+        use_container_width=True
+    )
+    
+    li_total = li_df[['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
+    st.metric("Low Income Total Allocation", format_currency(li_total['total_allocation']))
+    col1, col2 = st.columns(2)
+    col1.metric("Low Income State Envelope", format_currency(li_total['state_envelope']))
+    col2.metric("Low Income IPLC Envelope", format_currency(li_total['iplc_envelope']))
 
 with tab6:
     st.subheader("Middle Income Countries")

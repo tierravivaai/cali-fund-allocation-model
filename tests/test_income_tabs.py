@@ -23,6 +23,17 @@ def test_middle_income_tab_logic(mock_con):
     assert 'Lower middle income' in mi_df['World Bank Income Group'].values
     assert 'Upper middle income' in mi_df['World Bank Income Group'].values
 
+def test_low_income_tab_logic(mock_con):
+    base_df = get_base_data(mock_con)
+    results_df = calculate_allocations(base_df, 1_000_000_000, 50)
+    
+    # Logic from app.py: Low Income tab
+    li_df = results_df[results_df['World Bank Income Group'] == 'Low income']
+    
+    # Check all included rows are Low income
+    assert all(li_df['World Bank Income Group'] == 'Low income')
+    assert 'Low income' in li_df['World Bank Income Group'].values
+
 def test_middle_income_tab_columns(mock_con):
     base_df = get_base_data(mock_con)
     results_df = calculate_allocations(base_df, 1_000_000_000, 50)
@@ -36,6 +47,15 @@ def test_middle_income_tab_columns(mock_con):
     for col in mi_cols:
         assert col in results_df.columns
     
+def test_low_income_tab_columns(mock_con):
+    base_df = get_base_data(mock_con)
+    results_df = calculate_allocations(base_df, 1_000_000_000, 50)
+    
+    # Check that in Low Income view, EU column is not used
+    li_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope']
+    for col in li_cols:
+        assert col in results_df.columns
+
 def test_high_income_tab_logic(mock_con):
     base_df = get_base_data(mock_con)
     results_df = calculate_allocations(base_df, 1_000_000_000, 50)
