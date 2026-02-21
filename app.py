@@ -27,7 +27,7 @@ st.sidebar.header("Controls")
 
 # Reset to default button
 if st.sidebar.button("Reset to default"):
-    for key in ["fund_size_bn", "iplc_share", "show_raw", "use_thousands", "exclude_hi"]:
+    for key in ["fund_size_bn", "iplc_share", "show_raw", "use_thousands", "exclude_hi", "sort_option"]:
         if key in st.session_state:
             del st.session_state[key]
     st.rerun()
@@ -36,7 +36,7 @@ fund_size_bn = st.sidebar.slider(
     "Annual Cali Fund size (USD billion)",
     min_value=0.002,   # $2m
     max_value=10.0,
-    value=1.0,         # keep default as-is ($1bn)
+    value=1.0,         # Default $1bn
     step=0.001,        # $1m increments
     format="$%.3fbn",
     key="fund_size_bn"
