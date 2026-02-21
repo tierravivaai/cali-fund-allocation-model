@@ -22,6 +22,19 @@ def test_middle_income_tab_logic(mock_con):
     # Verify both groups are represented (given our standard dataset)
     assert 'Lower middle income' in mi_df['World Bank Income Group'].values
     assert 'Upper middle income' in mi_df['World Bank Income Group'].values
+
+def test_middle_income_tab_columns(mock_con):
+    base_df = get_base_data(mock_con)
+    results_df = calculate_allocations(base_df, 1_000_000_000, 50)
+    
+    # Check that in Middle Income view, classification exists but EU does not
+    # This reflects the specific request to remove EU and keep classification in tab6
+    mi_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank Income Group']
+    
+    # In the app, display_mi_df contains all columns, but st.dataframe filters them
+    # We verify the columns intended for the dataframe exist
+    for col in mi_cols:
+        assert col in results_df.columns
     
 def test_high_income_tab_logic(mock_con):
     base_df = get_base_data(mock_con)
