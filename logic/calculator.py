@@ -42,7 +42,7 @@ def calculate_allocations(df, fund_size, iplc_share_pct, show_raw_inversion=Fals
     return calc_df
 
 def aggregate_by_region(df, region_col='region'):
-    return df.groupby(region_col)[['total_allocation', 'state_envelope', 'iplc_envelope']].sum().reset_index()
+    return df.groupby(region_col, dropna=False)[['total_allocation', 'state_envelope', 'iplc_envelope']].sum().reset_index()
 
 def aggregate_eu(df):
     ms_df = df[df['is_eu_ms']]
@@ -61,4 +61,4 @@ def aggregate_special_groups(df):
     return ldc, sids
 
 def aggregate_by_income(df):
-    return df.groupby('World Bank Income Group')[['total_allocation', 'state_envelope', 'iplc_envelope']].sum().reset_index()
+    return df.groupby('World Bank Income Group', dropna=False)[['total_allocation', 'state_envelope', 'iplc_envelope']].sum().reset_index()

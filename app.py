@@ -27,11 +27,11 @@ st.sidebar.header("Controls")
 
 fund_size_bn = st.sidebar.slider(
     "Annual Cali Fund size (USD billion)",
-    min_value=0.1,
+    min_value=0.002,   # $2m
     max_value=10.0,
-    value=1.0,
-    step=0.1,
-    format="$%.1fbn"
+    value=1.0,         # keep default as-is ($1bn)
+    step=0.001,        # $1m increments
+    format="$%.3fbn"
 )
 
 iplc_share = st.sidebar.slider(
@@ -54,6 +54,7 @@ if st.sidebar.button("Reset to default"):
 
 # Calculations
 fund_size_usd = fund_size_bn * 1_000_000_000
+st.sidebar.caption(f"= ${fund_size_usd/1_000_000:,.0f} million per year")
 results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw, exclude_hi)
 
 def format_currency(val):
