@@ -41,6 +41,7 @@ fund_size_bn = st.sidebar.slider(
     format="$%.3fbn",
     key="fund_size_bn"
 )
+st.sidebar.caption(f"= ${fund_size_bn * 1000:,.0f} million per year")
 
 iplc_share = st.sidebar.slider(
     "Share earmarked for Indigenous Peoples & Local Communities (%)",
@@ -60,7 +61,6 @@ st.sidebar.markdown("*“When enabled, High Income countries receive zero alloca
 
 # Calculations
 fund_size_usd = fund_size_bn * 1_000_000_000
-st.sidebar.caption(f"= ${fund_size_usd/1_000_000:,.0f} million per year")
 results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw, exclude_hi)
 
 def format_currency(val):
