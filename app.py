@@ -27,9 +27,12 @@ st.sidebar.header("Controls")
 
 # Reset to default button
 if st.sidebar.button("Reset to default"):
-    for key in ["fund_size_bn", "iplc_share", "show_raw", "use_thousands", "exclude_hi", "sort_option"]:
-        if key in st.session_state:
-            del st.session_state[key]
+    st.session_state["fund_size_bn"] = 1.0
+    st.session_state["iplc_share"] = 50
+    st.session_state["show_raw"] = False
+    st.session_state["use_thousands"] = False
+    st.session_state["exclude_hi"] = True
+    st.session_state["sort_option"] = "Allocation (highest first)"
     st.rerun()
 
 fund_size_bn = st.sidebar.slider(
