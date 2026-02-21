@@ -59,9 +59,30 @@ use_thousands = st.sidebar.toggle("Display small values in thousands (USD '000)"
 exclude_hi = st.sidebar.checkbox("Exclude High Income countries from receiving allocations", value=True, key="exclude_hi")
 st.sidebar.markdown("*“When enabled, High Income countries receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged.”*")
 
+sort_option = st.sidebar.selectbox(
+    "Sort results by",
+    options=["Allocation (highest first)", "Country name (A–Z)"],
+    index=0,
+    key="sort_option"
+)
+
 # Calculations
 fund_size_usd = fund_size_bn * 1_000_000_000
 results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw, exclude_hi)
+
+# Apply sorting
+if sort_option == "Allocation (highest first)":
+    results_df = results_df.sort_values(
+        by=["total_allocation", "party"],
+        ascending=[False, True]
+    ).reset_index(drop=True)
+    results_df.index = results_df.index + 1
+    results_df.index.name = "Rank"
+else:
+    results_df = results_df.sort_values(
+        by="party",
+        ascending=True
+    ).reset_index(drop=True)
 
 def format_currency(val):
     if use_thousands and val < 1.0:
@@ -87,7 +108,7 @@ def get_column_config(use_thousands):
 
 # Main Tabs
 tab1, tab2, tab2b, tab2c, tab3, tab3b, tab4, tab5 = st.tabs([
-    "By Party (A–Z)", 
+    "By Party", 
     "By UN Region", 
     "By UN Sub-region",
     "By UN Intermediate Region",
@@ -171,12 +192,16 @@ After these weights are calculated, they are rescaled so that the total amount d
     }
     config.update(get_column_config(use_thousands))
 
+    # Determine whether to hide index based on sorting
+    hide_index = (sort_option == "Country name (A–Z)")
+
     st.dataframe(
-        filtered_df[display_cols + ["eligible"]].sort_values('party'),
+        filtered_df[display_cols + ["eligible"]],
         column_config=config,
-        hide_index=True,
+        hide_index=hide_index,
         use_container_width=True
     )
+
 
 with tab2:
     st.subheader("Totals by UN Region")
