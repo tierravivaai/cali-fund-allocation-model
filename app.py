@@ -25,13 +25,21 @@ if 'con' not in st.session_state:
 # Sidebar Controls
 st.sidebar.header("Controls")
 
+# Reset to default button
+if st.sidebar.button("Reset to default"):
+    for key in ["fund_size_bn", "iplc_share", "show_raw", "use_thousands", "exclude_hi"]:
+        if key in st.session_state:
+            del st.session_state[key]
+    st.rerun()
+
 fund_size_bn = st.sidebar.slider(
     "Annual Cali Fund size (USD billion)",
     min_value=0.002,   # $2m
     max_value=10.0,
     value=1.0,         # keep default as-is ($1bn)
     step=0.001,        # $1m increments
-    format="$%.3fbn"
+    format="$%.3fbn",
+    key="fund_size_bn"
 )
 
 iplc_share = st.sidebar.slider(
@@ -39,18 +47,16 @@ iplc_share = st.sidebar.slider(
     min_value=50,
     max_value=80,
     value=50,
-    help="This splits each Party’s allocation into an IPLC envelope and a State envelope. Together they equal the total."
+    help="This splits each Party’s allocation into an IPLC envelope and a State envelope. Together they equal the total.",
+    key="iplc_share"
 )
 
-show_raw = st.sidebar.toggle("Show explanation with raw data", value=False)
+show_raw = st.sidebar.toggle("Show explanation with raw data", value=False, key="show_raw")
 
-use_thousands = st.sidebar.toggle("Display small values in thousands (USD '000)", value=False)
+use_thousands = st.sidebar.toggle("Display small values in thousands (USD '000)", value=False, key="use_thousands")
 
-exclude_hi = st.sidebar.checkbox("Exclude High Income countries from receiving allocations", value=True)
+exclude_hi = st.sidebar.checkbox("Exclude High Income countries from receiving allocations", value=True, key="exclude_hi")
 st.sidebar.markdown("*“When enabled, High Income countries receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged.”*")
-
-if st.sidebar.button("Reset to default"):
-    st.rerun()
 
 # Calculations
 fund_size_usd = fund_size_bn * 1_000_000_000
