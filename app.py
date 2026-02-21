@@ -310,7 +310,7 @@ with tab6:
     config.update(get_column_config(use_thousands))
 
     st.dataframe(
-        display_mi_df[['party', 'World Bank Income Group', 'total_allocation', 'state_envelope', 'iplc_envelope', 'EU']].sort_values('party'),
+        display_mi_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank Income Group']].sort_values('party'),
         column_config=config,
         hide_index=True,
         use_container_width=True
