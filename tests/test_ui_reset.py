@@ -13,11 +13,13 @@ def test_reset_button_functionality():
     at.slider(key="fund_size_bn").set_value(5.0).run()
     at.toggle(key="use_thousands").set_value(True).run()
     at.checkbox(key="exclude_hi").set_value(False).run()
+    at.selectbox(key="sort_option").set_value("Country name (A–Z)").run()
     
     # Verify modifications took place
     assert at.slider(key="fund_size_bn").value == 5.0
     assert at.toggle(key="use_thousands").value is True
     assert at.checkbox(key="exclude_hi").value is False
+    assert at.selectbox(key="sort_option").value == "Country name (A–Z)"
     
     # 2. Click the reset button
     # at.button returns a list, we filter it by label
@@ -29,3 +31,4 @@ def test_reset_button_functionality():
     assert at.toggle(key="use_thousands").value is False
     assert at.checkbox(key="exclude_hi").value is True
     assert at.slider(key="iplc_share").value == 50
+    assert at.selectbox(key="sort_option").value == "Allocation (highest first)"
