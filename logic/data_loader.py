@@ -81,18 +81,25 @@ def get_base_data(con):
         SELECT 
             COALESCE(s.party, c.Party) as party,
             COALESCE(s.un_share, 0.0) as un_share,
-            r."Region Name" as region,
-            r."Sub-region Name" as sub_region,
-            r."Intermediate Region Name" as intermediate_region,
-            r."Least Developed Countries (LDC)" = 'x' as is_ldc,
-            r."Small Island Developing States (SIDS)" = 'x' as is_sids,
-            COALESCE(w."Income group", 'Not Available') as "World Bank Income Group",
+            -- Prioritize UNSD Region mapping
+            COALESCE(r_mapped."Region Name", r_raw."Region Name") as region,
+            COALESCE(r_mapped."Sub-region Name", r_raw."Sub-region Name") as sub_region,
+            COALESCE(r_mapped."Intermediate Region Name", r_raw."Intermediate Region Name") as intermediate_region,
+            COALESCE(r_mapped."Least Developed Countries (LDC)", r_raw."Least Developed Countries (LDC)") = 'x' as is_ldc,
+            COALESCE(r_mapped."Small Island Developing States (SIDS)", r_raw."Small Island Developing States (SIDS)") = 'x' as is_sids,
+            -- Prioritize WB Income mapping
+            COALESCE(w_mapped."Income group", w_raw."Income group", 'Not Available') as "World Bank Income Group",
             e.is_eu27 IS NOT NULL as is_eu_ms,
             c.Party IS NOT NULL OR s.party = 'European Union' as is_cbd_party
         FROM mapped_scale s
         FULL OUTER JOIN cbd_parties c ON s.party = c.Party
-        LEFT JOIN unsd_regions r ON COALESCE(s.party, c.Party) = r."Country or Area"
-        LEFT JOIN wb_income w ON COALESCE(s.party, c.Party) = w.Economy
+        -- Map 1: Using the 'mapped' party name (from name_map)
+        LEFT JOIN unsd_regions r_mapped ON COALESCE(s.party, c.Party) = r_mapped."Country or Area"
+        LEFT JOIN wb_income w_mapped ON COALESCE(s.party, c.Party) = w_mapped.Economy
+        -- Map 2: Using the 'raw' party name (from budget table) as a fallback
+        LEFT JOIN unsd_regions r_raw ON c.Party = r_raw."Country or Area"
+        LEFT JOIN wb_income w_raw ON c.Party = w_raw.Economy
+        -- Map 3: EU27 check
         LEFT JOIN eu27 e ON COALESCE(s.party, c.Party) = e.party
     )
     SELECT * FROM joined
@@ -104,11 +111,24 @@ def get_base_data(con):
     df['World Bank Income Group'] = df['World Bank Income Group'].replace('NA', 'Not Available')
     
     # Manual fixes for known missing income data
-    df.loc[df['party'] == 'Venezuela, RB', 'World Bank Income Group'] = 'Lower middle income' # Classified as LM in latest available datasets, but NA in this CSV
+    df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'World Bank Income Group'] = 'Lower middle income' 
     df.loc[df['party'] == 'Ethiopia', 'World Bank Income Group'] = 'Low income'
     df.loc[df['party'] == 'Sao Tome and Principe', 'World Bank Income Group'] = 'Lower middle income'
     df.loc[df['party'] == 'Cook Islands', 'World Bank Income Group'] = 'High income'
     df.loc[df['party'] == 'Niue', 'World Bank Income Group'] = 'High income'
+    df.loc[df['party'] == "Lao People's Democratic Republic", 'World Bank Income Group'] = 'Lower middle income'
+    df.loc[df['party'] == "Democratic People's Republic of Korea", 'World Bank Income Group'] = 'Low income'
+    df.loc[df['party'] == "Slovakia", 'World Bank Income Group'] = 'High income'
+    df.loc[df['party'] == "United Republic of Tanzania", 'World Bank Income Group'] = 'Lower middle income'
+    df.loc[df['party'] == "Bahamas", 'World Bank Income Group'] = 'High income'
+    df.loc[df['party'] == "Saint Lucia", 'World Bank Income Group'] = 'Upper middle income'
+    df.loc[df['party'] == "Saint Vincent and the Grenadines", 'World Bank Income Group'] = 'Upper middle income'
+    df.loc[df['party'] == "Bolivia (Plurinational State of)", 'World Bank Income Group'] = 'Lower middle income'
+    df.loc[df['party'] == "Viet Nam", 'World Bank Income Group'] = 'Lower middle income'
+    df.loc[df['party'] == "State of Palestine", 'World Bank Income Group'] = 'Lower middle income'
+    df.loc[df['party'] == "Yemen", 'World Bank Income Group'] = 'Low income'
+    df.loc[df['party'] == "United Kingdom of Great Britain and Northern Ireland", 'World Bank Income Group'] = 'High income'
+    df.loc[df['party'] == "United States of America", 'World Bank Income Group'] = 'High income'
     
     if 'European Union' not in df['party'].values:
         eu_entry = pd.DataFrame([{
