@@ -70,6 +70,9 @@ sort_option = st.sidebar.selectbox(
 fund_size_usd = fund_size_bn * 1_000_000_000
 results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw, exclude_hi)
 
+# Add EU membership column
+results_df["EU"] = results_df["is_eu_ms"].map({True: "EU Member", False: "Non-EU"})
+
 # Apply sorting
 if sort_option == "Allocation (highest first)":
     results_df = results_df.sort_values(
@@ -107,15 +110,15 @@ def get_column_config(use_thousands):
         }
 
 # Main Tabs
-tab1, tab2, tab2b, tab2c, tab3, tab3b, tab4, tab5 = st.tabs([
+tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5, tab6 = st.tabs([
     "By Party", 
     "By UN Region", 
     "By UN Sub-region",
     "By UN Intermediate Region",
-    "EU Block", 
     "Share by Income Group",
     "LDC Share", 
-    "SIDS"
+    "SIDS",
+    "High Income Countries"
 ])
 
 with tab1:
@@ -129,7 +132,7 @@ with tab1:
     results_df["CBD Party Status"] = results_df.apply(get_status, axis=1)
     results_df["World Bank income group"] = results_df["World Bank Income Group"]
     
-    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank income group', 'CBD Party Status']
+    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank income group', 'CBD Party Status', 'EU']
     if show_raw:
         st.info("""
     **How the Calculation Works (Plain Language)**
@@ -242,30 +245,6 @@ with tab2c:
         use_container_width=True
     )
 
-with tab3:
-    st.subheader("European Union Block View")
-    eu_df, eu_total = aggregate_eu(results_df)
-    
-    display_eu_df = eu_df.copy()
-    if use_thousands:
-        for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
-            display_eu_df[col] = display_eu_df[col].apply(format_currency)
-
-    config = {"party": "Country"}
-    config.update(get_column_config(use_thousands))
-
-    st.dataframe(
-        display_eu_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope']].sort_values('party'),
-        column_config=config,
-        hide_index=True,
-        use_container_width=True
-    )
-    
-    st.metric("EU Block Total Allocation", format_currency(eu_total['total_allocation']))
-    col1, col2 = st.columns(2)
-    col1.metric("EU Block State Envelope", format_currency(eu_total['state_envelope']))
-    col2.metric("EU Block IPLC Envelope", format_currency(eu_total['iplc_envelope']))
-
 with tab3b:
     st.subheader("Totals by World Bank Income Group")
     income_df = aggregate_by_income(results_df)
@@ -313,6 +292,31 @@ with tab5:
     col1, col2 = st.columns(2)
     col1.metric("SIDS State Envelope", format_currency(sids_total['state_envelope']))
     col2.metric("SIDS IPLC Envelope", format_currency(sids_total['iplc_envelope']))
+
+with tab6:
+    st.subheader("High Income Countries")
+    hi_df = results_df[results_df['World Bank Income Group'] == 'High income'].copy()
+    
+    display_hi_df = hi_df.copy()
+    if use_thousands:
+        for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+            display_hi_df[col] = display_hi_df[col].apply(format_currency)
+
+    config = {"party": "Country"}
+    config.update(get_column_config(use_thousands))
+
+    st.dataframe(
+        display_hi_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'EU']].sort_values('party'),
+        column_config=config,
+        hide_index=True,
+        use_container_width=True
+    )
+    
+    hi_total = hi_df[['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
+    st.metric("High Income Countries Total Allocation", format_currency(hi_total['total_allocation']))
+    col1, col2 = st.columns(2)
+    col1.metric("High Income State Envelope", format_currency(hi_total['state_envelope']))
+    col2.metric("High Income IPLC Envelope", format_currency(hi_total['iplc_envelope']))
 
 st.divider()
 st.markdown("""
