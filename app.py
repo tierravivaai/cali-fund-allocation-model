@@ -22,6 +22,20 @@ if 'con' not in st.session_state:
     load_data(st.session_state.con)
     st.session_state.base_df = get_base_data(st.session_state.con)
 
+# Initialize widget states
+if "fund_size_bn" not in st.session_state:
+    st.session_state["fund_size_bn"] = 1.0
+if "iplc_share" not in st.session_state:
+    st.session_state["iplc_share"] = 50
+if "show_raw" not in st.session_state:
+    st.session_state["show_raw"] = False
+if "use_thousands" not in st.session_state:
+    st.session_state["use_thousands"] = False
+if "exclude_hi" not in st.session_state:
+    st.session_state["exclude_hi"] = True
+if "sort_option" not in st.session_state:
+    st.session_state["sort_option"] = "Allocation (highest first)"
+
 # Sidebar Controls
 st.sidebar.header("Controls")
 
@@ -39,7 +53,6 @@ fund_size_bn = st.sidebar.slider(
     "Annual Cali Fund size (USD billion)",
     min_value=0.002,   # $2m
     max_value=10.0,
-    value=1.0,         # Default $1bn
     step=0.001,        # $1m increments
     format="$%.3fbn",
     key="fund_size_bn"
@@ -50,22 +63,20 @@ iplc_share = st.sidebar.slider(
     "Share earmarked for Indigenous Peoples & Local Communities (%)",
     min_value=50,
     max_value=80,
-    value=50,
     help="This splits each Party’s allocation into an IPLC envelope and a State envelope. Together they equal the total.",
     key="iplc_share"
 )
 
-show_raw = st.sidebar.toggle("Show explanation with raw data", value=False, key="show_raw")
+show_raw = st.sidebar.toggle("Show explanation with raw data", key="show_raw")
 
-use_thousands = st.sidebar.toggle("Display small values in thousands (USD '000)", value=False, key="use_thousands")
+use_thousands = st.sidebar.toggle("Display small values in thousands (USD '000)", key="use_thousands")
 
-exclude_hi = st.sidebar.checkbox("Exclude High Income countries from receiving allocations", value=True, key="exclude_hi")
+exclude_hi = st.sidebar.checkbox("Exclude High Income countries from receiving allocations", key="exclude_hi")
 st.sidebar.markdown("*“When enabled, High Income countries receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged.”*")
 
 sort_option = st.sidebar.selectbox(
     "Sort results by",
     options=["Allocation (highest first)", "Country name (A–Z)"],
-    index=0,
     key="sort_option"
 )
 
