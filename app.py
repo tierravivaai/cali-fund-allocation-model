@@ -110,7 +110,7 @@ def get_column_config(use_thousands):
         }
 
 # Main Tabs
-tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5, tab6 = st.tabs([
+tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5, tab6, tab7 = st.tabs([
     "By Party", 
     "By UN Region", 
     "By UN Sub-region",
@@ -118,7 +118,8 @@ tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5, tab6 = st.tabs([
     "Share by Income Group",
     "LDC Share", 
     "SIDS",
-    "High Income Countries"
+    "Middle Income",
+    "High Income"
 ])
 
 with tab1:
@@ -294,6 +295,34 @@ with tab5:
     col2.metric("SIDS IPLC Envelope", format_currency(sids_total['iplc_envelope']))
 
 with tab6:
+    st.subheader("Middle Income Countries")
+    mi_df = results_df[results_df['World Bank Income Group'].isin(['Lower middle income', 'Upper middle income'])].copy()
+    
+    display_mi_df = mi_df.copy()
+    if use_thousands:
+        for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+            display_mi_df[col] = display_mi_df[col].apply(format_currency)
+
+    config = {
+        "party": "Country",
+        "World Bank Income Group": "Classification"
+    }
+    config.update(get_column_config(use_thousands))
+
+    st.dataframe(
+        display_mi_df[['party', 'World Bank Income Group', 'total_allocation', 'state_envelope', 'iplc_envelope', 'EU']].sort_values('party'),
+        column_config=config,
+        hide_index=True,
+        use_container_width=True
+    )
+    
+    mi_total = mi_df[['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
+    st.metric("Middle Income Countries Total Allocation", format_currency(mi_total['total_allocation']))
+    col1, col2 = st.columns(2)
+    col1.metric("Middle Income State Envelope", format_currency(mi_total['state_envelope']))
+    col2.metric("Middle Income IPLC Envelope", format_currency(mi_total['iplc_envelope']))
+
+with tab7:
     st.subheader("High Income Countries")
     hi_df = results_df[results_df['World Bank Income Group'] == 'High income'].copy()
     
@@ -313,7 +342,7 @@ with tab6:
     )
     
     hi_total = hi_df[['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
-    st.metric("High Income Countries Total Allocation", format_currency(hi_total['total_allocation']))
+    st.metric("High Income Total Allocation", format_currency(hi_total['total_allocation']))
     col1, col2 = st.columns(2)
     col1.metric("High Income State Envelope", format_currency(hi_total['state_envelope']))
     col2.metric("High Income IPLC Envelope", format_currency(hi_total['iplc_envelope']))
