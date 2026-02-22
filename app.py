@@ -84,8 +84,9 @@ sort_option = st.sidebar.selectbox(
 fund_size_usd = fund_size_bn * 1_000_000_000
 results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw, exclude_hi)
 
-# Add EU membership column
+# Add descriptive columns
 results_df["EU"] = results_df["is_eu_ms"].map({True: "EU Member", False: "Non-EU"})
+results_df["UN LDC"] = results_df["is_ldc"].map({True: "LDC", False: "-"})
 
 # Apply sorting
 if sort_option == "Allocation (highest first)":
@@ -148,7 +149,7 @@ with tab1:
     results_df["CBD Party Status"] = results_df.apply(get_status, axis=1)
     results_df["World Bank income group"] = results_df["World Bank Income Group"]
     
-    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank income group', 'CBD Party Status', 'EU']
+    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank income group', 'UN LDC', 'CBD Party Status', 'EU']
     if show_raw:
         st.info("""
     **How the Calculation Works (Plain Language)**
@@ -313,24 +314,19 @@ with tab5b:
     st.subheader("Low Income Countries")
     li_df = results_df[results_df['World Bank Income Group'] == 'Low income'].copy()
     
-    # Add classification specifically for Low Income view
-    def get_li_classification(row):
-        if row["is_ldc"]:
-            return "LDC"
-        return "Low Income"
-    
-    li_df["Classification"] = li_df.apply(get_li_classification, axis=1)
-    
     display_li_df = li_df.copy()
     if use_thousands:
         for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
             display_li_df[col] = display_li_df[col].apply(format_currency)
 
-    config = {"party": "Country"}
+    config = {
+        "party": "Country",
+        "World Bank Income Group": "WB Classification"
+    }
     config.update(get_column_config(use_thousands))
 
     st.dataframe(
-        display_li_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'Classification']].sort_values('party'),
+        display_li_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank Income Group', 'UN LDC']].sort_values('party'),
         column_config=config,
         hide_index=True,
         use_container_width=True
@@ -353,12 +349,12 @@ with tab6:
 
     config = {
         "party": "Country",
-        "World Bank Income Group": "Classification"
+        "World Bank Income Group": "WB Classification"
     }
     config.update(get_column_config(use_thousands))
 
     st.dataframe(
-        display_mi_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank Income Group']].sort_values('party'),
+        display_mi_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'UN LDC', 'World Bank Income Group']].sort_values('party'),
         column_config=config,
         hide_index=True,
         use_container_width=True

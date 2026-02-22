@@ -51,23 +51,33 @@ def test_low_income_tab_columns(mock_con):
     base_df = get_base_data(mock_con)
     results_df = calculate_allocations(base_df, 1_000_000_000, 50)
     
-    # Check that in Low Income view, EU column is not used but Classification exists
-    li_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope']
+    # Add UN LDC logic as in app.py
+    results_df["UN LDC"] = results_df["is_ldc"].map({True: "LDC", False: "-"})
+    
+    # Check that in Low Income view, EU column is not used but WB Classification and UN LDC exist
+    li_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank Income Group', 'UN LDC']
     for col in li_cols:
         assert col in results_df.columns
     
-    # Check classification mapping for Low Income
-    li_df = results_df[results_df['World Bank Income Group'] == 'Low income'].copy()
-    def get_li_classification(row):
-        if row["is_ldc"]:
-            return "LDC"
-        return "Low Income"
-    li_df["Classification"] = li_df.apply(get_li_classification, axis=1)
+    # Verify mapping for Low Income
+    li_df = results_df[results_df['World Bank Income Group'] == 'Low income']
+    assert all(li_df['World Bank Income Group'] == 'Low income')
+    assert "LDC" in li_df["UN LDC"].values
     
-    # Verify both types exist if applicable in our data
-    assert "LDC" in li_df["Classification"].values
-    # (Optional: check for Low Income only if present)
-
+def test_middle_income_tab_columns(mock_con):
+    base_df = get_base_data(mock_con)
+    results_df = calculate_allocations(base_df, 1_000_000_000, 50)
+    results_df["UN LDC"] = results_df["is_ldc"].map({True: "LDC", False: "-"})
+    
+    # Verify both classification and UN LDC exist for Middle Income
+    mi_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'UN LDC', 'World Bank Income Group']
+    for col in mi_cols:
+        assert col in results_df.columns
+    
+    # Check for Middle Income LDCs (like Bangladesh)
+    mi_ldcs = results_df[results_df['World Bank Income Group'].isin(['Lower middle income', 'Upper middle income']) & (results_df['UN LDC'] == 'LDC')]
+    assert len(mi_ldcs) > 0
+    
 def test_ldc_consistency_across_tabs(mock_con):
     base_df = get_base_data(mock_con)
     results_df = calculate_allocations(base_df, 1_000_000_000, 50)
