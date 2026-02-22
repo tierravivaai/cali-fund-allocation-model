@@ -67,6 +67,22 @@ def test_low_income_tab_columns(mock_con):
     # Verify both types exist if applicable in our data
     assert "LDC" in li_df["Classification"].values
     # (Optional: check for Low Income only if present)
+
+def test_ldc_consistency_across_tabs(mock_con):
+    base_df = get_base_data(mock_con)
+    results_df = calculate_allocations(base_df, 1_000_000_000, 50)
+    
+    # 1. Total LDC Share from calculator (used in LDC Share tab)
+    from logic.calculator import aggregate_special_groups
+    ldc_total_calc, _ = aggregate_special_groups(results_df)
+    expected_ldc_total = ldc_total_calc['total_allocation']
+    
+    # 2. Total LDCs across ALL income groups
+    # Note: Some LDCs are Middle Income (e.g., Bangladesh, Nepal, Zambia)
+    actual_ldc_total = results_df[results_df['is_ldc']]['total_allocation'].sum()
+    
+    # These must match exactly
+    assert pytest.approx(actual_ldc_total, 0.001) == expected_ldc_total
     
 def test_high_income_tab_logic(mock_con):
     base_df = get_base_data(mock_con)
