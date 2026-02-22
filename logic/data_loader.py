@@ -111,7 +111,33 @@ def get_base_data(con):
     df['WB Income Group'] = df['WB Income Group'].replace('NA', 'Not Available')
     
     # Manual fixes for known missing income data
+    df.loc[df['party'] == 'Venezuela (Bolivarian republic of)', 'WB Income Group'] = 'Lower middle income' 
     df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'WB Income Group'] = 'Lower middle income' 
+    df.loc[df['party'] == 'Venezuela (Bolivarian republic of)', 'region'] = 'Americas'
+    df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'region'] = 'Americas'
+    df.loc[df['party'] == 'Venezuela (Bolivarian republic of)', 'sub_region'] = 'Latin America and the Caribbean'
+    df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'sub_region'] = 'Latin America and the Caribbean'
+    df.loc[df['party'] == 'Venezuela (Bolivarian republic of)', 'intermediate_region'] = 'South America'
+    df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'intermediate_region'] = 'South America'
+    df.loc[df['party'] == 'Venezuela (Bolivarian republic of)', 'is_ldc'] = False
+    df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'is_ldc'] = False
+    df.loc[df['party'] == 'Venezuela (Bolivarian republic of)', 'is_sids'] = False
+    df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'is_sids'] = False
+    
+    df.loc[df['party'] == 'Democratic Republic of the Congo (formerly Zaire)', 'WB Income Group'] = 'Low income'
+    df.loc[df['party'] == 'Democratic Republic of the Congo (formerly Zaire)', 'region'] = 'Africa'
+    df.loc[df['party'] == 'Democratic Republic of the Congo (formerly Zaire)', 'sub_region'] = 'Sub-Saharan Africa'
+    df.loc[df['party'] == 'Democratic Republic of the Congo (formerly Zaire)', 'intermediate_region'] = 'Middle Africa'
+    df.loc[df['party'] == 'Democratic Republic of the Congo (formerly Zaire)', 'is_ldc'] = True
+    df.loc[df['party'] == 'Democratic Republic of the Congo (formerly Zaire)', 'is_sids'] = False
+
+    df.loc[df['party'] == 'European Union', 'WB Income Group'] = 'High income'
+    df.loc[df['party'] == 'European Union', 'region'] = 'Europe'
+    df.loc[df['party'] == 'European Union', 'sub_region'] = 'Western Europe'
+    df.loc[df['party'] == 'European Union', 'intermediate_region'] = 'NA'
+    df.loc[df['party'] == 'European Union', 'is_ldc'] = False
+    df.loc[df['party'] == 'European Union', 'is_sids'] = False
+
     df.loc[df['party'] == 'Ethiopia', 'WB Income Group'] = 'Low income'
     df.loc[df['party'] == 'Sao Tome and Principe', 'WB Income Group'] = 'Lower middle income'
     df.loc[df['party'] == 'Cook Islands', 'WB Income Group'] = 'High income'
@@ -129,20 +155,5 @@ def get_base_data(con):
     df.loc[df['party'] == "Yemen", 'WB Income Group'] = 'Low income'
     df.loc[df['party'] == "United Kingdom of Great Britain and Northern Ireland", 'WB Income Group'] = 'High income'
     df.loc[df['party'] == "United States of America", 'WB Income Group'] = 'High income'
-    
-    if 'European Union' not in df['party'].values:
-        eu_entry = pd.DataFrame([{
-            'party': 'European Union',
-            'un_share': 0.0,
-            'region': 'Europe',
-            'sub_region': 'Western Europe',
-            'intermediate_region': 'NA',
-            'is_ldc': False,
-            'is_sids': False,
-            'WB Income Group': 'High income',
-            'is_eu_ms': False,
-            'is_cbd_party': True
-        }])
-        df = pd.concat([df, eu_entry], ignore_index=True)
     
     return df
