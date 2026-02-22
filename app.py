@@ -147,7 +147,6 @@ with tab1:
         return "Party"
         
     results_df["CBD Party"] = results_df.apply(get_status, axis=1)
-    results_df["WB Income Group"] = results_df["World Bank Income Group"]
     
     display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'WB Income Group', 'UN LDC', 'CBD Party', 'EU']
     if show_raw:

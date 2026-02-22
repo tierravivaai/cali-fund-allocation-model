@@ -53,4 +53,12 @@ def test_cbd_party_count(mock_con):
     eu_cbd_status = base_df[base_df['party'] == 'European Union']['is_cbd_party'].values[0]
     assert eu_cbd_status == True
 
+def test_column_presence_and_renaming(mock_con):
+    base_df = get_base_data(mock_con)
+    # Verify that the data loader now uses 'WB Income Group' and not 'World Bank Income Group'
+    assert 'WB Income Group' in base_df.columns
+    assert 'World Bank Income Group' not in base_df.columns
+    assert 'is_cbd_party' in base_df.columns
+    assert 'is_ldc' in base_df.columns
+
 
