@@ -146,10 +146,10 @@ with tab1:
             return "Non-Party"
         return "Party"
         
-    results_df["CBD Party Status"] = results_df.apply(get_status, axis=1)
-    results_df["World Bank income group"] = results_df["World Bank Income Group"]
+    results_df["CBD Party"] = results_df.apply(get_status, axis=1)
+    results_df["WB Income Group"] = results_df["World Bank Income Group"]
     
-    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank income group', 'UN LDC', 'CBD Party Status', 'EU']
+    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'WB Income Group', 'UN LDC', 'CBD Party', 'EU']
     if show_raw:
         st.info("""
     **How the Calculation Works (Plain Language)**
@@ -269,7 +269,7 @@ with tab3b:
         for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
             income_df[col] = income_df[col].apply(format_currency)
     
-    config = {"World Bank Income Group": "Income Group"}
+    config = {"WB Income Group": "Income Group"}
     config.update(get_column_config(use_thousands))
     
     st.dataframe(
@@ -312,7 +312,7 @@ with tab5:
 
 with tab5b:
     st.subheader("Low Income Countries")
-    li_df = results_df[results_df['World Bank Income Group'] == 'Low income'].copy()
+    li_df = results_df[results_df['WB Income Group'] == 'Low income'].copy()
     
     display_li_df = li_df.copy()
     if use_thousands:
@@ -321,12 +321,12 @@ with tab5b:
 
     config = {
         "party": "Country",
-        "World Bank Income Group": "WB Classification"
+        "WB Income Group": "WB Classification"
     }
     config.update(get_column_config(use_thousands))
 
     st.dataframe(
-        display_li_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank Income Group', 'UN LDC']].sort_values('party'),
+        display_li_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'WB Income Group', 'UN LDC']].sort_values('party'),
         column_config=config,
         hide_index=True,
         use_container_width=True
@@ -340,7 +340,7 @@ with tab5b:
 
 with tab6:
     st.subheader("Middle Income Countries")
-    mi_df = results_df[results_df['World Bank Income Group'].isin(['Lower middle income', 'Upper middle income'])].copy()
+    mi_df = results_df[results_df['WB Income Group'].isin(['Lower middle income', 'Upper middle income'])].copy()
     
     display_mi_df = mi_df.copy()
     if use_thousands:
@@ -349,12 +349,12 @@ with tab6:
 
     config = {
         "party": "Country",
-        "World Bank Income Group": "WB Classification"
+        "WB Income Group": "WB Classification"
     }
     config.update(get_column_config(use_thousands))
 
     st.dataframe(
-        display_mi_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'UN LDC', 'World Bank Income Group']].sort_values('party'),
+        display_mi_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'UN LDC', 'WB Income Group']].sort_values('party'),
         column_config=config,
         hide_index=True,
         use_container_width=True
@@ -368,7 +368,7 @@ with tab6:
 
 with tab7:
     st.subheader("High Income Countries")
-    hi_df = results_df[results_df['World Bank Income Group'] == 'High income'].copy()
+    hi_df = results_df[results_df['WB Income Group'] == 'High income'].copy()
     
     display_hi_df = hi_df.copy()
     if use_thousands:

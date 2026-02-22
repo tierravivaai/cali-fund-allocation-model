@@ -12,7 +12,7 @@ You are working on a policy-support tool for biodiversity fund allocation (Cali 
    - Total allocations MUST sum to the specified fund size.
    - `Total = IPLC Envelope + State Envelope`.
 3. **Labels Only**:
-   - World Bank income groups and UNSD regions are for descriptive purposes only. They must NOT influence the calculation logic.
+   - WB income groups and UNSD regions are for descriptive purposes only. They must NOT influence the calculation logic.
 4. **EU Handling**:
    - The "European Union" is a Party but usually has 0% on the UN scale. 
    - Display it with 0 USD allocation in individual tables.

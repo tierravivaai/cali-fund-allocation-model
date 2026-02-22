@@ -10,7 +10,7 @@ def calculate_allocations(df, fund_size, iplc_share_pct, show_raw_inversion=Fals
     calc_df["eligible"] = calc_df["is_cbd_party"]
     if exclude_high_income:
         # Explicitly exclude "High income" countries among CBD Parties
-        calc_df["eligible"] = calc_df["eligible"] & (calc_df["World Bank Income Group"] != "High income")
+        calc_df["eligible"] = calc_df["eligible"] & (calc_df["WB Income Group"] != "High income")
     
     # Inversion logic: only for eligible parties with shares > 0
     # The source 'un_share' is expressed as a percentage (e.g. 5.469)
@@ -62,5 +62,5 @@ def aggregate_special_groups(df):
     return ldc, sids
 
 def aggregate_by_income(df):
-    agg = df.groupby('World Bank Income Group', dropna=False)[['total_allocation', 'state_envelope', 'iplc_envelope']].sum().reset_index()
+    agg = df.groupby('WB Income Group', dropna=False)[['total_allocation', 'state_envelope', 'iplc_envelope']].sum().reset_index()
     return agg[agg['total_allocation'] > 0]

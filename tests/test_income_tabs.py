@@ -15,24 +15,24 @@ def test_middle_income_tab_logic(mock_con):
     results_df = calculate_allocations(base_df, 1_000_000_000, 50)
     
     # Logic from app.py: Middle Income includes 'Lower middle income' and 'Upper middle income'
-    mi_df = results_df[results_df['World Bank Income Group'].isin(['Lower middle income', 'Upper middle income'])]
+    mi_df = results_df[results_df['WB Income Group'].isin(['Lower middle income', 'Upper middle income'])]
     
     # Check if all included rows belong to those groups
-    assert all(mi_df['World Bank Income Group'].isin(['Lower middle income', 'Upper middle income']))
+    assert all(mi_df['WB Income Group'].isin(['Lower middle income', 'Upper middle income']))
     # Verify both groups are represented (given our standard dataset)
-    assert 'Lower middle income' in mi_df['World Bank Income Group'].values
-    assert 'Upper middle income' in mi_df['World Bank Income Group'].values
+    assert 'Lower middle income' in mi_df['WB Income Group'].values
+    assert 'Upper middle income' in mi_df['WB Income Group'].values
 
 def test_low_income_tab_logic(mock_con):
     base_df = get_base_data(mock_con)
     results_df = calculate_allocations(base_df, 1_000_000_000, 50)
     
     # Logic from app.py: Low Income tab
-    li_df = results_df[results_df['World Bank Income Group'] == 'Low income']
+    li_df = results_df[results_df['WB Income Group'] == 'Low income']
     
     # Check all included rows are Low income
-    assert all(li_df['World Bank Income Group'] == 'Low income')
-    assert 'Low income' in li_df['World Bank Income Group'].values
+    assert all(li_df['WB Income Group'] == 'Low income')
+    assert 'Low income' in li_df['WB Income Group'].values
 
 def test_middle_income_tab_columns(mock_con):
     base_df = get_base_data(mock_con)
@@ -40,7 +40,7 @@ def test_middle_income_tab_columns(mock_con):
     
     # Check that in Middle Income view, classification exists but EU does not
     # This reflects the specific request to remove EU and keep classification in tab6
-    mi_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank Income Group']
+    mi_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'WB Income Group']
     
     # In the app, display_mi_df contains all columns, but st.dataframe filters them
     # We verify the columns intended for the dataframe exist
@@ -55,13 +55,13 @@ def test_low_income_tab_columns(mock_con):
     results_df["UN LDC"] = results_df["is_ldc"].map({True: "LDC", False: "-"})
     
     # Check that in Low Income view, EU column is not used but WB Classification and UN LDC exist
-    li_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'World Bank Income Group', 'UN LDC']
+    li_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'WB Income Group', 'UN LDC']
     for col in li_cols:
         assert col in results_df.columns
     
     # Verify mapping for Low Income
-    li_df = results_df[results_df['World Bank Income Group'] == 'Low income']
-    assert all(li_df['World Bank Income Group'] == 'Low income')
+    li_df = results_df[results_df['WB Income Group'] == 'Low income']
+    assert all(li_df['WB Income Group'] == 'Low income')
     assert "LDC" in li_df["UN LDC"].values
     
 def test_middle_income_tab_columns(mock_con):
@@ -70,12 +70,12 @@ def test_middle_income_tab_columns(mock_con):
     results_df["UN LDC"] = results_df["is_ldc"].map({True: "LDC", False: "-"})
     
     # Verify both classification and UN LDC exist for Middle Income
-    mi_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'UN LDC', 'World Bank Income Group']
+    mi_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'UN LDC', 'WB Income Group']
     for col in mi_cols:
         assert col in results_df.columns
     
     # Check for Middle Income LDCs (like Bangladesh)
-    mi_ldcs = results_df[results_df['World Bank Income Group'].isin(['Lower middle income', 'Upper middle income']) & (results_df['UN LDC'] == 'LDC')]
+    mi_ldcs = results_df[results_df['WB Income Group'].isin(['Lower middle income', 'Upper middle income']) & (results_df['UN LDC'] == 'LDC')]
     assert len(mi_ldcs) > 0
     
 def test_ldc_consistency_across_tabs(mock_con):
@@ -99,11 +99,11 @@ def test_high_income_tab_logic(mock_con):
     results_df = calculate_allocations(base_df, 1_000_000_000, 50)
     
     # Logic from app.py: High Income tab
-    hi_df = results_df[results_df['World Bank Income Group'] == 'High income']
+    hi_df = results_df[results_df['WB Income Group'] == 'High income']
     
     # Check all included rows are High income
-    assert all(hi_df['World Bank Income Group'] == 'High income')
-    assert 'High income' in hi_df['World Bank Income Group'].values
+    assert all(hi_df['WB Income Group'] == 'High income')
+    assert 'High income' in hi_df['WB Income Group'].values
 
 def test_allocation_sorting_logic(mock_con):
     base_df = get_base_data(mock_con)

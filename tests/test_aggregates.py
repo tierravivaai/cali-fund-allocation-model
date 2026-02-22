@@ -22,13 +22,13 @@ def test_aggregate_by_income_sums(mock_con):
     
     # "Not Available" group should no longer exist as all Parties have been mapped
     # (except for EU which is now handled separately or mapped to High Income)
-    assert "Not Available" not in income_df['World Bank Income Group'].values
+    assert "Not Available" not in income_df['WB Income Group'].values
 
 def test_aggregate_by_income_structure(mock_con):
     base_df = get_base_data(mock_con)
     results_df = calculate_allocations(base_df, 1_000_000_000, 50)
     income_df = aggregate_by_income(results_df)
     
-    required_cols = ['World Bank Income Group', 'total_allocation', 'state_envelope', 'iplc_envelope']
+    required_cols = ['WB Income Group', 'total_allocation', 'state_envelope', 'iplc_envelope']
     for col in required_cols:
         assert col in income_df.columns

@@ -35,7 +35,7 @@ def cross_check_cbd_parties():
             missing_in_df.append(f"{party} (Mapped as: {mapped_party})")
         else:
             row = party_data.iloc[0]
-            if pd.isna(row['region']) or row['World Bank Income Group'] == 'Not Available':
+            if pd.isna(row['region']) or row['WB Income Group'] == 'Not Available':
                 missing_metadata.append(mapped_party)
                 
     print(f"\nParties from Budget Table NOT found in base_df: {len(missing_in_df)}")
@@ -45,7 +45,7 @@ def cross_check_cbd_parties():
     print(f"\nParties with missing metadata (Region or Income): {len(missing_metadata)}")
     for p in missing_metadata:
         row = df[df['party'] == p].iloc[0]
-        print(f"- {p} (Region: {row['region']}, Income: {row['World Bank Income Group']})")
+        print(f"- {p} (Region: {row['region']}, Income: {row['WB Income Group']})")
 
 if __name__ == "__main__":
     cross_check_cbd_parties()
