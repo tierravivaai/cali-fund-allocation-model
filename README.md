@@ -3,7 +3,7 @@
 This interactive tool illustrates how Cali Fund allocations would be distributed if based on the **latest UN Scale of Assessments (2025-2027)**, inverted to reflect relative need.
 
 ## Features
-- **Adjustable Fund Size**: Scale the annual Cali Fund from $0.1bn to $10.0bn.
+- **Adjustable Fund Size**: Scale the annual Cali Fund from $0.002bn ($2m) to $10.0bn.
 - **IPLC Earmark**: Set the percentage earmarked for Indigenous Peoples & Local Communities (50% to 80%).
 - **Multi-perspective views**:
     - Detailed Party-level table.
