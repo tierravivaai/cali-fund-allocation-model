@@ -18,12 +18,12 @@ def test_eligibility_filter_high_income(mock_con):
     results_filtered = calculate_allocations(base_df, fund_size, 50, exclude_high_income=True)
     
     # Check that High income countries have 0 allocation
-    hi_countries = results_filtered[results_filtered['World Bank Income Group'] == 'High income']
+    hi_countries = results_filtered[results_filtered['WB Income Group'] == 'High income']
     assert (hi_countries['total_allocation'] == 0).all()
     
     # Check that non-High income CBD Parties have > 0 allocation (if un_share > 0)
     eligible_countries = results_filtered[
-        (results_filtered['World Bank Income Group'] != 'High income') & 
+        (results_filtered['WB Income Group'] != 'High income') & 
         (results_filtered['un_share'] > 0) &
         (results_filtered['is_cbd_party'])
     ]
@@ -45,7 +45,7 @@ def test_eligibility_toggle_off(mock_con):
     
     # High income CBD Parties should have > 0 allocation
     hi_countries = results_all[
-        (results_all['World Bank Income Group'] == 'High income') & 
+        (results_all['WB Income Group'] == 'High income') & 
         (results_all['un_share'] > 0) &
         (results_all['is_cbd_party'])
     ]

@@ -1,34 +1,39 @@
 party_raw,party_mapped
-"Bolivia (Plurinational State of)",Bolivia
-"Belarus (formerly Byelorussian Soviet Socialist Republic)",Belarus
-"Cambodia (formerly Democratic Kampuchea)",Cambodia
-"Cote d'Ivoire",Côte d’Ivoire
-"Czech Republic",Czechia
-"Democratic People's Republic of Korea","Democratic People’s Republic of Korea"
-"Democratic Republic of the Congo (formerly Zaire)",Democratic Republic of the Congo
-"Iran (Islamic Republic of)","Iran (Islamic Republic of)"
-"Lao People's Democratic Republic","Lao People’s Democratic Republic"
-"Micronesia (Federated States of)","Micronesia (Federated States of)"
-"Netherlands (Kingdom of the)","Netherlands (Kingdom of the)"
-"Saint Vincent and the Grenadines","St. Vincent and the Grenadines"
-"Sao Tome and Principe","São Tomé and Príncipe"
-"United Kingdom of Great Britain and Northern Ireland",United Kingdom
-"United Republic of Tanzania",Tanzania
-"Venezuela (Bolivarian Republic of)","Venezuela, RB"
-SierraLeone,Sierra Leone
-"Democratic People’s Republic of Korea","Democratic People’s Republic of Korea"
-"Lao People’s Democratic Republic","Lao People’s Democratic Republic"
-"Eswatini (formerly Swaziland)",Eswatini
-"Myanmar (formerly  Burma)",Myanmar
+"Bahamas, The","Bahamas"
+"Bahamas","Bahamas"
+"Belarus (formerly Byelorussian Soviet Socialist Republic)","Belarus"
+"Bolivia (Plurinational State of)","Bolivia (Plurinational State of)"
+"Bolivia","Bolivia (Plurinational State of)"
+"Cambodia (formerly Democratic Kampuchea)","Cambodia"
+"Cote d'Ivoire","Côte d’Ivoire"
+"Côte d'Ivoire","Côte d’Ivoire"
+"Czech Republic","Czechia"
+"Democratic People’s Republic of Korea","Democratic People's Republic of Korea"
+"Eswatini (formerly Swaziland)","Eswatini"
+"Ethiopia","Ethiopia"
+"Lao People’s Democratic Republic","Lao People's Democratic Republic"
+"Lao People’s Republic","Lao People's Democratic Republic"
+"Myanmar (formerly  Burma)","Myanmar"
 "Netherlands","Netherlands (Kingdom of the)"
-"North Macedonia (formerly the former Yugoslav Republic of Macedonia)",North Macedonia
-"Serbia (formerly Yugoslavia) f/",Serbia
-"Türkiye (formerly Turkey)",Türkiye
-"Ukraine (formerly Ukrainian Soviet Socialist Republic)",Ukraine
-"Venezuela (Bolivarian republic of)","Venezuela, RB"
-"Yemen","Yemen, Rep."
-"Slovakia","Slovak Republic"
-"Bahamas","Bahamas, The"
-"Saint Lucia","St. Lucia"
-"Viet Nam","Vietnam"
-"State of Palestine","West Bank and Gaza"
+"North Macedonia (formerly the former Yugoslav Republic of Macedonia)","North Macedonia"
+"Saint Lucia","Saint Lucia"
+"São Tomé and Príncipe","Sao Tome and Principe"
+"Serbia (formerly Yugoslavia) f/","Serbia"
+"SierraLeone","Sierra Leone"
+"Slovak Republic","Slovakia"
+"Slovakia","Slovakia"
+"St. Lucia","Saint Lucia"
+"St. Vincent and the Grenadines","Saint Vincent and the Grenadines"
+"State of Palestine","State of Palestine"
+"Tanzania","United Republic of Tanzania"
+"Türkiye (formerly Turkey)","Türkiye"
+"Ukraine (formerly Ukrainian Soviet Socialist Republic)","Ukraine"
+"United Kingdom","United Kingdom of Great Britain and Northern Ireland"
+"United States of America","United States of America"
+"United States","United States of America"
+"Venezuela, RB","Venezuela (Bolivarian Republic of)"
+"Viet Nam","Viet Nam"
+"Vietnam","Viet Nam"
+"West Bank and Gaza","State of Palestine"
+"Yemen, Rep.","Yemen"
+"Yemen","Yemen"
