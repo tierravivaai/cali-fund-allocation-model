@@ -29,6 +29,6 @@ def test_aggregate_by_income_structure(mock_con):
     results_df = calculate_allocations(base_df, 1_000_000_000, 50)
     income_df = aggregate_by_income(results_df)
     
-    required_cols = ['WB Income Group', 'total_allocation', 'state_envelope', 'iplc_envelope']
+    required_cols = ['WB Income Group', 'total_allocation', 'state_component', 'iplc_component']
     for col in required_cols:
         assert col in income_df.columns

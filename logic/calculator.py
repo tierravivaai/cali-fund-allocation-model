@@ -32,17 +32,17 @@ def calculate_allocations(df, fund_size, iplc_share_pct, show_raw_inversion=Fals
         calc_df.loc[mask, 'inverted_share'] = calc_df.loc[mask, 'inv_weight'] / total_inv_weight
         
     calc_df['total_allocation'] = calc_df['inverted_share'] * fund_size
-    calc_df['iplc_envelope'] = calc_df['total_allocation'] * (iplc_share_pct / 100.0)
-    calc_df['state_envelope'] = calc_df['total_allocation'] - calc_df['iplc_envelope']
+    calc_df['iplc_component'] = calc_df['total_allocation'] * (iplc_share_pct / 100.0)
+    calc_df['state_component'] = calc_df['total_allocation'] - calc_df['iplc_component']
     
     # Convert to millions for display
-    for col in ['total_allocation', 'iplc_envelope', 'state_envelope']:
+    for col in ['total_allocation', 'iplc_component', 'state_component']:
         calc_df[col] = calc_df[col] / 1_000_000.0
         
     return calc_df
 
 def aggregate_by_region(df, region_col='region'):
-    agg = df.groupby(region_col, dropna=False)[['total_allocation', 'state_envelope', 'iplc_envelope']].sum().reset_index()
+    agg = df.groupby(region_col, dropna=False)[['total_allocation', 'state_component', 'iplc_component']].sum().reset_index()
     return agg[agg['total_allocation'] > 0]
 
 def aggregate_eu(df):
@@ -50,17 +50,17 @@ def aggregate_eu(df):
     eu_party = df[df['party'] == 'European Union']
     
     combined = pd.concat([ms_df, eu_party])
-    total_row = combined[['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
+    total_row = combined[['total_allocation', 'state_component', 'iplc_component']].sum()
     total_row['party'] = 'EU Member States + European Union (total)'
     
     return combined, total_row
 
 def aggregate_special_groups(df):
-    ldc = df[df['is_ldc']][['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
-    sids = df[df['is_sids']][['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
+    ldc = df[df['is_ldc']][['total_allocation', 'state_component', 'iplc_component']].sum()
+    sids = df[df['is_sids']][['total_allocation', 'state_component', 'iplc_component']].sum()
     
     return ldc, sids
 
 def aggregate_by_income(df):
-    agg = df.groupby('WB Income Group', dropna=False)[['total_allocation', 'state_envelope', 'iplc_envelope']].sum().reset_index()
+    agg = df.groupby('WB Income Group', dropna=False)[['total_allocation', 'state_component', 'iplc_component']].sum().reset_index()
     return agg[agg['total_allocation'] > 0]

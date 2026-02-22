@@ -40,7 +40,7 @@ def test_middle_income_tab_columns(mock_con):
     
     # Check that in Middle Income view, classification exists but EU does not
     # This reflects the specific request to remove EU and keep classification in tab6
-    mi_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'WB Income Group']
+    mi_cols = ['party', 'total_allocation', 'state_component', 'iplc_component', 'WB Income Group']
     
     # In the app, display_mi_df contains all columns, but st.dataframe filters them
     # We verify the columns intended for the dataframe exist
@@ -55,7 +55,7 @@ def test_low_income_tab_columns(mock_con):
     results_df["UN LDC"] = results_df["is_ldc"].map({True: "LDC", False: "-"})
     
     # Check that in Low Income view, EU column is not used but WB Classification and UN LDC exist
-    li_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'WB Income Group', 'UN LDC']
+    li_cols = ['party', 'total_allocation', 'state_component', 'iplc_component', 'WB Income Group', 'UN LDC']
     for col in li_cols:
         assert col in results_df.columns
     
@@ -70,7 +70,7 @@ def test_middle_income_tab_columns(mock_con):
     results_df["UN LDC"] = results_df["is_ldc"].map({True: "LDC", False: "-"})
     
     # Verify both classification and UN LDC exist for Middle Income
-    mi_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'UN LDC', 'WB Income Group']
+    mi_cols = ['party', 'total_allocation', 'state_component', 'iplc_component', 'UN LDC', 'WB Income Group']
     for col in mi_cols:
         assert col in results_df.columns
     

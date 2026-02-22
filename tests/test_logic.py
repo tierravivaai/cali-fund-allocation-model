@@ -24,11 +24,11 @@ def test_iplc_state_consistency(mock_con):
     results = calculate_allocations(base_df, fund_size, 60)
     
     # iplc + state should equal total
-    check = results['iplc_envelope'] + results['state_envelope']
+    check = results['iplc_component'] + results['state_component']
     pd.testing.assert_series_equal(check, results['total_allocation'], check_names=False)
     
     # iplc should be 60% of total
-    assert pytest.approx(results['iplc_envelope'].sum(), 0.001) == 600
+    assert pytest.approx(results['iplc_component'].sum(), 0.001) == 600
 
 def test_eu_party_exists(mock_con):
     base_df = get_base_data(mock_con)

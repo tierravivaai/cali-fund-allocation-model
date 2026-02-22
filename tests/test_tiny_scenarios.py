@@ -26,7 +26,7 @@ def test_fund_sums_consistency(mock_con, fund_size_usd, exclude_high_income):
     assert pytest.approx(actual_total_m, abs=0.001) == expected_total_m
     
     # 2. IPLC + State = Total for every row
-    check = results['iplc_envelope'] + results['state_envelope']
+    check = results['iplc_component'] + results['state_component']
     pd.testing.assert_series_equal(check, results['total_allocation'], check_names=False)
     
     # 3. Regional totals sum to the actual total allocation

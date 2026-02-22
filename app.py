@@ -8,10 +8,11 @@ st.set_page_config(page_title="Cali Fund Allocation Model", layout="wide")
 
 st.title("Cali Fund Allocation Model (UN Scale)")
 st.markdown("""
-This interactive tool uses the UN Scale of Assessments (2025–2027) to model indicative shares of the Cali Fund. The model inverts assessed UN budget shares so that countries with smaller assessed shares receive proportionally larger indicative allocations. 
+This interactive application uses the UN Scale of Assessments (2025–2027) to model indicative shares of the Cali Fund. The model inverts assessed UN budget shares so that countries with smaller assessed shares receive proportionally larger indicative allocations. 
 
-This interactive tool is provided purely for illustrative and exploratory purposes. 
-IPLC figures are shown for illustrative purposes only and do not imply any specific delivery or governance arrangement. This tool has no formal status.
+All figures are illustrative modelling outputs for exploratory purposes. They do not represent entitlements or predetermined disbursements.
+The IPLC component reflects the share of resources expected to support indigenous peoples and local communities consistent with existing COP decisions. 
+Governance arrangements are determined separately. The model has no formal status.
 
 A detailed description of the UN Scale of Assessment for 2025-2027 is available [here](https://www.un-ilibrary.org/content/books/9789211069945c004/read) and the latest table is [here](https://digitallibrary.un.org/record/4071844?ln=en&utm_source=chatgpt.com&v=pdf#files).
 """)
@@ -63,7 +64,7 @@ iplc_share = st.sidebar.slider(
     "Share earmarked for Indigenous Peoples & Local Communities (%)",
     min_value=50,
     max_value=80,
-    help="This splits each Party’s allocation into an IPLC envelope and a State envelope. Together they equal the total.",
+    help="This splits each Party’s allocation into an IPLC component and a State component. Together they equal the total.",
     key="iplc_share"
 )
 
@@ -113,15 +114,15 @@ def get_column_config(use_thousands):
         # When using thousands, we must use TextColumn because we mix 'k' and 'm'
         return {
             "total_allocation": st.column_config.TextColumn("Total Share (USD)"),
-            "state_envelope": st.column_config.TextColumn("State Envelope (USD)"),
-            "iplc_envelope": st.column_config.TextColumn("IPLC Envelope (USD)"),
+            "state_component": st.column_config.TextColumn("State Component (USD)"),
+            "iplc_component": st.column_config.TextColumn("IPLC Component (USD)"),
         }
     else:
         # Standard millions view can use NumberColumn for better sorting
         return {
             "total_allocation": st.column_config.NumberColumn("Total Share (USD Millions)", format="$%.2f"),
-            "state_envelope": st.column_config.NumberColumn("State Envelope (USD Millions)", format="$%.2f"),
-            "iplc_envelope": st.column_config.NumberColumn("IPLC Envelope (USD Millions)", format="$%.2f"),
+            "state_component": st.column_config.NumberColumn("State Component (USD Millions)", format="$%.2f"),
+            "iplc_component": st.column_config.NumberColumn("IPLC Component (USD Millions)", format="$%.2f"),
         }
 
 # Main Tabs
@@ -148,7 +149,7 @@ with tab1:
         
     results_df["CBD Party"] = results_df.apply(get_status, axis=1)
     
-    display_cols = ['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'WB Income Group', 'UN LDC', 'CBD Party', 'EU']
+    display_cols = ['party', 'total_allocation', 'state_component', 'iplc_component', 'WB Income Group', 'UN LDC', 'CBD Party', 'EU']
     if show_raw:
         st.info("""
     **How the Calculation Works (Plain Language)**
@@ -169,7 +170,7 @@ Suppose Country B’s UN assessment is 10%. Because this is a much larger assess
 
 Final step
 
-After these weights are calculated, they are rescaled so that the total amount distributed exactly equals the fund size selected in the sidebar. Each Party’s total allocation is then divided into a State Envelope and an Indigenous Peoples and Local Communities (IPLC) Envelope according to the selected percentage.
+After these weights are calculated, they are rescaled so that the total amount distributed exactly equals the fund size selected in the sidebar. Each Party’s total allocation is then divided into a State Component and an Indigenous Peoples and Local Communities (IPLC) Envelope according to the selected percentage.
     """)
         
         with st.expander("How the calculation works (technical summary)"):
@@ -199,7 +200,7 @@ After these weights are calculated, they are rescaled so that the total amount d
     
     # Only apply string formatting if toggle is ON; otherwise use numeric for sorting
     if use_thousands:
-        for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
             filtered_df[col] = filtered_df[col].apply(format_currency)
     
     config = {
@@ -226,7 +227,7 @@ with tab2:
     st.subheader("Totals by UN Region")
     region_df = aggregate_by_region(results_df, 'region')
     if use_thousands:
-        for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
             region_df[col] = region_df[col].apply(format_currency)
     st.dataframe(
         region_df.sort_values('total_allocation', ascending=False),
@@ -239,7 +240,7 @@ with tab2b:
     st.subheader("Totals by UN Sub-region")
     sub_region_df = aggregate_by_region(results_df, 'sub_region')
     if use_thousands:
-        for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
             sub_region_df[col] = sub_region_df[col].apply(format_currency)
     st.dataframe(
         sub_region_df.sort_values('total_allocation', ascending=False),
@@ -252,7 +253,7 @@ with tab2c:
     st.subheader("Totals by UN Intermediate Region")
     int_region_df = aggregate_by_region(results_df[results_df['intermediate_region'] != 'NA'], 'intermediate_region')
     if use_thousands:
-        for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
             int_region_df[col] = int_region_df[col].apply(format_currency)
     st.dataframe(
         int_region_df.sort_values('total_allocation', ascending=False),
@@ -265,7 +266,7 @@ with tab3b:
     st.subheader("Totals by World Bank Income Group")
     income_df = aggregate_by_income(results_df)
     if use_thousands:
-        for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
             income_df[col] = income_df[col].apply(format_currency)
     
     config = {"WB Income Group": "Income Group"}
@@ -284,14 +285,14 @@ with tab4:
     ldc_total, _ = aggregate_special_groups(results_df)
     
     # Calculate non-LDC (broadly 'Developed/Other')
-    non_ldc_total = results_df[~results_df['is_ldc']][['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
+    non_ldc_total = results_df[~results_df['is_ldc']][['total_allocation', 'state_component', 'iplc_component']].sum()
     
     summary_data = pd.DataFrame([
         {"Group": "Least Developed Countries (LDC)", **ldc_total.to_dict()},
         {"Group": "Other Countries", **non_ldc_total.to_dict()}
     ])
     if use_thousands:
-        for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
             summary_data[col] = summary_data[col].apply(format_currency)
     
     st.dataframe(
@@ -307,7 +308,7 @@ with tab5b:
     
     display_li_df = li_df.copy()
     if use_thousands:
-        for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
             display_li_df[col] = display_li_df[col].apply(format_currency)
 
     config = {
@@ -317,17 +318,17 @@ with tab5b:
     config.update(get_column_config(use_thousands))
 
     st.dataframe(
-        display_li_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'WB Income Group', 'UN LDC']].sort_values('party'),
+        display_li_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'WB Income Group', 'UN LDC']].sort_values('party'),
         column_config=config,
         hide_index=True,
         use_container_width=True
     )
     
-    li_total = li_df[['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
+    li_total = li_df[['total_allocation', 'state_component', 'iplc_component']].sum()
     st.metric("Low Income Total Allocation", format_currency(li_total['total_allocation']))
     col1, col2 = st.columns(2)
-    col1.metric("Low Income State Envelope", format_currency(li_total['state_envelope']))
-    col2.metric("Low Income IPLC Envelope", format_currency(li_total['iplc_envelope']))
+    col1.metric("Low Income State Component", format_currency(li_total['state_component']))
+    col2.metric("Low Income IPLC Component", format_currency(li_total['iplc_component']))
 
 with tab6:
     st.subheader("Middle Income Countries")
@@ -335,7 +336,7 @@ with tab6:
     
     display_mi_df = mi_df.copy()
     if use_thousands:
-        for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
             display_mi_df[col] = display_mi_df[col].apply(format_currency)
 
     config = {
@@ -345,17 +346,17 @@ with tab6:
     config.update(get_column_config(use_thousands))
 
     st.dataframe(
-        display_mi_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'UN LDC', 'WB Income Group']].sort_values('party'),
+        display_mi_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'UN LDC', 'WB Income Group']].sort_values('party'),
         column_config=config,
         hide_index=True,
         use_container_width=True
     )
     
-    mi_total = mi_df[['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
+    mi_total = mi_df[['total_allocation', 'state_component', 'iplc_component']].sum()
     st.metric("Middle Income Countries Total Allocation", format_currency(mi_total['total_allocation']))
     col1, col2 = st.columns(2)
-    col1.metric("Middle Income State Envelope", format_currency(mi_total['state_envelope']))
-    col2.metric("Middle Income IPLC Envelope", format_currency(mi_total['iplc_envelope']))
+    col1.metric("Middle Income State Component", format_currency(mi_total['state_component']))
+    col2.metric("Middle Income IPLC Component", format_currency(mi_total['iplc_component']))
 
 with tab7:
     st.subheader("High Income Countries")
@@ -363,24 +364,24 @@ with tab7:
     
     display_hi_df = hi_df.copy()
     if use_thousands:
-        for col in ['total_allocation', 'state_envelope', 'iplc_envelope']:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
             display_hi_df[col] = display_hi_df[col].apply(format_currency)
 
     config = {"party": "Country"}
     config.update(get_column_config(use_thousands))
 
     st.dataframe(
-        display_hi_df[['party', 'total_allocation', 'state_envelope', 'iplc_envelope', 'EU']].sort_values('party'),
+        display_hi_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'EU']].sort_values('party'),
         column_config=config,
         hide_index=True,
         use_container_width=True
     )
     
-    hi_total = hi_df[['total_allocation', 'state_envelope', 'iplc_envelope']].sum()
+    hi_total = hi_df[['total_allocation', 'state_component', 'iplc_component']].sum()
     st.metric("High Income Total Allocation", format_currency(hi_total['total_allocation']))
     col1, col2 = st.columns(2)
-    col1.metric("High Income State Envelope", format_currency(hi_total['state_envelope']))
-    col2.metric("High Income IPLC Envelope", format_currency(hi_total['iplc_envelope']))
+    col1.metric("High Income State Component", format_currency(hi_total['state_component']))
+    col2.metric("High Income IPLC Component", format_currency(hi_total['iplc_component']))
 
 with tab5:
     st.subheader("Small Island Developing States (SIDS)")
@@ -388,8 +389,8 @@ with tab5:
     
     st.metric("Total SIDS Allocation", format_currency(sids_total['total_allocation']))
     col1, col2 = st.columns(2)
-    col1.metric("SIDS State Envelope", format_currency(sids_total['state_envelope']))
-    col2.metric("SIDS IPLC Envelope", format_currency(sids_total['iplc_envelope']))
+    col1.metric("SIDS State Component", format_currency(sids_total['state_component']))
+    col2.metric("SIDS IPLC Component", format_currency(sids_total['iplc_component']))
 
 st.divider()
 st.markdown("""
