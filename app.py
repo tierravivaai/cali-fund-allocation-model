@@ -125,17 +125,17 @@ def get_column_config(use_thousands):
         }
 
 # Main Tabs
-tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5, tab5b, tab6, tab7 = st.tabs([
+tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5b, tab6, tab7, tab5 = st.tabs([
     "By Party", 
     "By UN Region", 
     "By UN Sub-region",
     "By UN Intermediate Region",
     "Share by Income Group",
     "LDC Share", 
-    "SIDS",
     "Low Income",
     "Middle Income",
-    "High Income"
+    "High Income",
+    "SIDS"
 ])
 
 with tab1:
@@ -301,15 +301,6 @@ with tab4:
         use_container_width=True
     )
 
-with tab5:
-    st.subheader("Small Island Developing States (SIDS)")
-    _, sids_total = aggregate_special_groups(results_df)
-    
-    st.metric("Total SIDS Allocation", format_currency(sids_total['total_allocation']))
-    col1, col2 = st.columns(2)
-    col1.metric("SIDS State Envelope", format_currency(sids_total['state_envelope']))
-    col2.metric("SIDS IPLC Envelope", format_currency(sids_total['iplc_envelope']))
-
 with tab5b:
     st.subheader("Low Income Countries")
     li_df = results_df[results_df['WB Income Group'] == 'Low income'].copy()
@@ -390,6 +381,15 @@ with tab7:
     col1, col2 = st.columns(2)
     col1.metric("High Income State Envelope", format_currency(hi_total['state_envelope']))
     col2.metric("High Income IPLC Envelope", format_currency(hi_total['iplc_envelope']))
+
+with tab5:
+    st.subheader("Small Island Developing States (SIDS)")
+    _, sids_total = aggregate_special_groups(results_df)
+    
+    st.metric("Total SIDS Allocation", format_currency(sids_total['total_allocation']))
+    col1, col2 = st.columns(2)
+    col1.metric("SIDS State Envelope", format_currency(sids_total['state_envelope']))
+    col2.metric("SIDS IPLC Envelope", format_currency(sids_total['iplc_envelope']))
 
 st.divider()
 st.markdown("""
