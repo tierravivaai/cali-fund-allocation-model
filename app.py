@@ -1,6 +1,7 @@
 import streamlit as st
 import duckdb
 import pandas as pd
+import altair as alt
 from logic.data_loader import load_data, get_base_data
 from logic.calculator import calculate_allocations, aggregate_by_region, aggregate_eu, aggregate_special_groups, aggregate_by_income, add_total_row
 
@@ -224,8 +225,9 @@ def get_column_config(use_thousands, include_country_count=False):
     return config
 
 # Main Tabs
-tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5b, tab6, tab7, tab5 = st.tabs([
+tab1, tab1v, tab2, tab2b, tab2c, tab3b, tab4, tab5b, tab6, tab7, tab5 = st.tabs([
     "By Party", 
+    "Visualizations",
     "By UN Region", 
     "By UN Sub-region",
     "By UN Intermediate Region",
@@ -333,6 +335,42 @@ For more detailed information see this [walkthrough](https://github.com/tierravi
         width="stretch"
     )
 
+with tab1v:
+    st.subheader("Top 20 Indicative Allocations")
+    
+    # Prepare data for Altair (melt for stacked chart)
+    chart_data = results_df.head(20).copy()
+    
+    # We want to stack State Component and IPLC Component
+    melted_df = chart_data.melt(
+        id_vars=['party'],
+        value_vars=['state_component', 'iplc_component'],
+        var_name='Component',
+        value_name='Allocation'
+    )
+    
+    # Map component names for display
+    melted_df['Component'] = melted_df['Component'].map({
+        'state_component': 'State Component',
+        'iplc_component': 'IPLC Component'
+    })
+
+    # Create Altair chart
+    chart = alt.Chart(melted_df).mark_bar().encode(
+        y=alt.Y('party:N', sort='-x', title='Country'),
+        x=alt.X('Allocation:Q', title='Allocation (USD Millions)'),
+        color=alt.Color('Component:N', 
+                       scale=alt.Scale(range=['#1f77b4', '#ff7f0e']), # Blue and Orange
+                       legend=alt.Legend(orient='bottom')),
+        tooltip=['party', 'Component', alt.Tooltip('Allocation', format='$,.2f')]
+    ).properties(
+        height=600
+    ).configure_axis(
+        labelFontSize=12,
+        titleFontSize=14
+    )
+
+    st.altair_chart(chart, use_container_width=True)
 
 with tab2:
     st.subheader("Totals by UN Region")
