@@ -92,16 +92,16 @@ Assuming a total fund size of **USD 1 billion per year**:
 If we assume **50%** of each allocation is earmarked for Indigenous Peoples and Local Communities (IPLCs):
 
 * **Country A:**
-  ≈ USD **499.0 million** IPLC envelope
-  ≈ USD **499.0 million** State envelope
+  ≈ USD **499.0 million** IPLC component
+  ≈ USD **499.0 million** State component
 
 * **Country B:**
-  ≈ USD **0.85 million** IPLC envelope
-  ≈ USD **0.85 million** State envelope
+  ≈ USD **0.85 million** IPLC component
+  ≈ USD **0.85 million** State component
 
 * **Country C:**
-  ≈ USD **0.10 million** IPLC envelope
-  ≈ USD **0.10 million** State envelope
+  ≈ USD **0.10 million** IPLC component
+  ≈ USD **0.10 million** State component
 
 ---
 
