@@ -87,3 +87,23 @@ def test_party_tab_total_sum(mock_con):
     
     total_allocation = total_df.iloc[-1]['total_allocation']
     assert pytest.approx(total_allocation, 0.01) == 1000.0
+
+def test_aggregation_column_order(mock_con):
+    base_df = get_base_data(mock_con)
+    fund_size = 1_000_000_000
+    results_df = calculate_allocations(base_df, fund_size, 50, exclude_high_income=False)
+    
+    # Check By Region
+    region_agg = aggregate_by_region(results_df, "region")
+    # In app.py we use: ["region", "Countries (number)", "total_allocation", "state_component", "iplc_component"]
+    # Here we check if the expected columns exist and can be ordered
+    cols = list(region_agg.columns)
+    # The aggregator returns ['region', 'total_allocation', 'state_component', 'iplc_component', 'Countries (number)']
+    # We want to ensure it is in the dataframe that is displayed.
+    # Actually, we should test the reordering logic itself or just that the column exists to be reordered.
+    assert "Countries (number)" in cols
+    
+    # Test the specific reordering logic used in app.py
+    display_cols = ["region", "Countries (number)", "total_allocation", "state_component", "iplc_component"]
+    reordered = region_agg[display_cols]
+    assert list(reordered.columns)[1] == "Countries (number)"

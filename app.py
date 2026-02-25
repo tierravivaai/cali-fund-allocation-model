@@ -338,8 +338,10 @@ with tab2:
         for col in ["total_allocation", "state_component", "iplc_component"]:
             region_df[col] = region_df[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
 
+    # Reorder to ensure Countries (number) is second
+    display_cols_region = ["region", "Countries (number)", "total_allocation", "state_component", "iplc_component"]
     st.dataframe(
-        region_df,
+        region_df[display_cols_region],
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True,
@@ -404,8 +406,9 @@ with tab2b:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             sub_region_df[col] = sub_region_df[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
             
+    display_cols_sub = ["sub_region", "Countries (number)", "total_allocation", "state_component", "iplc_component"]
     st.dataframe(
-        sub_region_df,
+        sub_region_df[display_cols_sub],
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
@@ -470,8 +473,9 @@ with tab2c:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             int_region_df[col] = int_region_df[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
             
+    display_cols_int = ["intermediate_region", "Countries (number)", "total_allocation", "state_component", "iplc_component"]
     st.dataframe(
-        int_region_df,
+        int_region_df[display_cols_int],
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
@@ -570,8 +574,9 @@ with tab4:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             summary_data[col] = summary_data[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
     
+    display_cols_summary = ["Group", "Countries (number)", "total_allocation", "state_component", "iplc_component"]
     st.dataframe(
-        summary_data,
+        summary_data[display_cols_summary],
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
@@ -597,8 +602,9 @@ with tab5:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             summary_data_sids[col] = summary_data_sids[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
             
+    display_cols_summary_sids = ["Group", "Countries (number)", "total_allocation", "state_component", "iplc_component"]
     st.dataframe(
-        summary_data_sids,
+        summary_data_sids[display_cols_summary_sids],
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
