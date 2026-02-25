@@ -620,11 +620,6 @@ with tab5:
         hide_index=True,
         width="stretch"
     )
-    
-    st.metric("Total SIDS Allocation", format_currency(sids_total['total_allocation']))
-    col1, col2 = st.columns(2)
-    col1.metric("SIDS State Component", format_currency(sids_total['state_component']))
-    col2.metric("SIDS IPLC Component", format_currency(sids_total['iplc_component']))
 
     # SIDS Detail Selector
     st.divider()

@@ -154,3 +154,35 @@ def test_sids_filtering_logic(mock_con):
     
     # Total check
     assert len(sids_df) + len(non_sids_df) == 196
+
+def test_sids_membership_completeness(mock_con):
+    base_df = get_base_data(mock_con)
+    # Check that all SIDS in base data are marked as CBD Parties (or handled correctly)
+    sids_cbd = base_df[base_df["is_sids"] & base_df["is_cbd_party"]]
+    sids_total = base_df[base_df["is_sids"]]
+    
+    # In this dataset, all SIDS should be CBD Parties
+    assert len(sids_cbd) == len(sids_total)
+    # Check for a few known SIDS
+    known_sids = ["Fiji", "Mauritius", "Samoa", "Bahamas"]
+    for country in known_sids:
+        assert any(base_df["party"].str.contains(country, case=False))
+
+def test_sids_totals_accuracy(mock_con):
+    base_df = get_base_data(mock_con)
+    fund_size = 1_000_000_000
+    results_df = calculate_allocations(base_df, fund_size, 50, exclude_high_income=False)
+    
+    from logic.calculator import aggregate_special_groups
+    _, sids_agg = aggregate_special_groups(results_df)
+    
+    # Manual sum
+    sids_df = results_df[results_df["is_sids"]]
+    manual_total = sids_df["total_allocation"].sum()
+    manual_state = sids_df["state_component"].sum()
+    manual_iplc = sids_df["iplc_component"].sum()
+    
+    assert pytest.approx(sids_agg["total_allocation"], 0.01) == manual_total
+    assert pytest.approx(sids_agg["state_component"], 0.01) == manual_state
+    assert pytest.approx(sids_agg["iplc_component"], 0.01) == manual_iplc
+    assert sids_agg["Countries (number)"] == len(sids_df)
