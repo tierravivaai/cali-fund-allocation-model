@@ -171,6 +171,8 @@ Suppose Country B’s UN assessment is 10%. Because this is a much larger assess
 Final step
 
 After these weights are calculated, they are rescaled so that the total amount distributed exactly equals the fund size selected in the sidebar. Each Party’s total allocation is then divided into a State Component and an Indigenous Peoples and Local Communities (IPLC) Component according to the selected percentage.
+
+For more detailed information see this [walkthrough](https://github.com/tierravivaai/cali-fund-allocation-model/blob/main/walkthrough.md)
     """)
         
         with st.expander("How the calculation works (technical summary)"):
@@ -190,6 +192,8 @@ After these weights are calculated, they are rescaled so that the total amount d
 
             4. **Earmarking**
             The allocation is then divided into a State component and an IPLC component according to the selected percentage.
+
+            For more detailed information see this [walkthrough](https://github.com/tierravivaai/cali-fund-allocation-model/blob/main/walkthrough.md)
             """)
         
         display_cols.insert(1, 'un_share')
