@@ -315,15 +315,22 @@ For more detailed information see this [walkthrough](https://github.com/tierravi
         "un_share_fraction": st.column_config.NumberColumn("UN assessed share (fraction)", format="%.6f"),
         "inverted_share": st.column_config.NumberColumn("Indicative share of Cali Fund (%)", format="%.6f"),
     }
-    config.update(get_column_config(use_thousands))
+    config.update(get_column_config(use_thousands, include_country_count=True))
 
     # Determine whether to hide index based on sorting
     # Always hide index in tab1 now that we have a Total row at the bottom
+    filtered_df.insert(1, "Countries (number)", 1)
+    # The total row for 'Countries (number)' will be the count of countries in the filtered list
+    # but the '1' in each row serves as the counter.
+    # Note: add_total_row sums the numeric columns.
+    
+    # Hide Countries (number) for the 'Total' row label if needed, but it's fine.
+    
     st.dataframe(
-        filtered_df[display_cols + ["eligible"]],
+        filtered_df[display_cols[:1] + ["Countries (number)"] + display_cols[1:]],
         column_config=config,
         hide_index=True,
-        use_container_width=True
+        width="stretch"
     )
 
 
@@ -344,7 +351,7 @@ with tab2:
         region_df[display_cols_region],
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
-        use_container_width=True,
+        width="stretch",
     )
 
     # Region selector (acts as the "click Africa" interaction)
@@ -394,7 +401,7 @@ with tab2:
         region_countries[display_cols],
         column_config=config,
         hide_index=hide_index,
-        use_container_width=True,
+        width="stretch",
     )
 
 with tab2b:
@@ -411,7 +418,7 @@ with tab2b:
         sub_region_df[display_cols_sub],
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
-        use_container_width=True
+        width="stretch"
     )
 
     # Sub-region selector
@@ -461,7 +468,7 @@ with tab2b:
         sub_region_countries[display_cols],
         column_config=config,
         hide_index=hide_index,
-        use_container_width=True,
+        width="stretch",
     )
 
 with tab2c:
@@ -482,7 +489,7 @@ with tab2c:
         int_region_df[display_cols_int],
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
-        use_container_width=True
+        width="stretch"
     )
 
     # Intermediate region selector
@@ -533,7 +540,7 @@ with tab2c:
             int_region_countries[display_cols],
             column_config=config,
             hide_index=hide_index,
-            use_container_width=True,
+            width="stretch",
         )
 
 with tab3b:
@@ -548,12 +555,12 @@ with tab3b:
     config = {"WB Income Group": "Income Group"}
     config.update(get_column_config(use_thousands, include_country_count=True))
     
-    display_cols = ['WB Income Group', 'Countries (number)', 'total_allocation', 'state_component', 'iplc_component']
+    display_cols_income = ['WB Income Group', 'Countries (number)', 'total_allocation', 'state_component', 'iplc_component']
     st.dataframe(
-        income_df[display_cols],
+        income_df[display_cols_income],
         column_config=config,
         hide_index=True,
-        use_container_width=True
+        width="stretch"
     )
 
 with tab4:
@@ -583,7 +590,7 @@ with tab4:
         summary_data[display_cols_summary],
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
-        use_container_width=True
+        width="stretch"
     )
 
 with tab5:
@@ -611,7 +618,7 @@ with tab5:
         summary_data_sids[display_cols_summary_sids],
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
-        use_container_width=True
+        width="stretch"
     )
     
     st.metric("Total SIDS Allocation", format_currency(sids_total['total_allocation']))
@@ -632,22 +639,18 @@ with tab5b:
         "party": "Country",
         "WB Income Group": "WB Classification"
     }
-    config.update(get_column_config(use_thousands))
+    config.update(get_column_config(use_thousands, include_country_count=True))
 
     li_total = li_df[['total_allocation', 'state_component', 'iplc_component']].sum()
     li_count = len(li_df)
     
-    # Optional: Display a small summary table with Total at the bottom if desired
-    # But the user specifically asked for "a total row on each tab". 
-    # For individual country tables, a summary row at the bottom is helpful.
-    
     display_cols_li = ['party', 'total_allocation', 'state_component', 'iplc_component', 'WB Income Group', 'UN LDC']
     li_table = display_li_df[display_cols_li].sort_values('party')
+    # Add country count for every row (1) so it sums correctly in Total row
+    li_table.insert(1, "Countries (number)", 1)
     li_table = add_total_row(li_table, "party")
 
     if use_thousands:
-        # Re-apply formatting to the total row specifically if needed, 
-        # or just format the whole table again.
         for col in ['total_allocation', 'state_component', 'iplc_component']:
              li_table[col] = li_table[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
 
@@ -655,7 +658,7 @@ with tab5b:
         li_table,
         column_config=config,
         hide_index=True,
-        use_container_width=True
+        width="stretch"
     )
     st.metric("Low Income Total Allocation", format_currency(li_total['total_allocation']))
     col1, col2 = st.columns(2)
@@ -675,12 +678,13 @@ with tab6:
         "party": "Country",
         "WB Income Group": "WB Classification"
     }
-    config.update(get_column_config(use_thousands))
+    config.update(get_column_config(use_thousands, include_country_count=True))
 
     mi_total = mi_df[['total_allocation', 'state_component', 'iplc_component']].sum()
     mi_count = len(mi_df)
     
     mi_table = display_mi_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'UN LDC', 'WB Income Group']].sort_values('party')
+    mi_table.insert(1, "Countries (number)", 1)
     mi_table = add_total_row(mi_table, "party")
 
     if use_thousands:
@@ -691,7 +695,7 @@ with tab6:
         mi_table,
         column_config=config,
         hide_index=True,
-        use_container_width=True
+        width="stretch"
     )
     st.metric("Middle Income Countries Total Allocation", format_currency(mi_total['total_allocation']))
     col1, col2 = st.columns(2)
@@ -708,12 +712,13 @@ with tab7:
             display_hi_df[col] = display_hi_df[col].apply(format_currency)
 
     config = {"party": "Country"}
-    config.update(get_column_config(use_thousands))
+    config.update(get_column_config(use_thousands, include_country_count=True))
 
     hi_total = hi_df[['total_allocation', 'state_component', 'iplc_component']].sum()
     hi_count = len(hi_df)
     
     hi_table = display_hi_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'EU']].sort_values('party')
+    hi_table.insert(1, "Countries (number)", 1)
     hi_table = add_total_row(hi_table, "party")
 
     if use_thousands:
@@ -724,7 +729,7 @@ with tab7:
         hi_table,
         column_config=config,
         hide_index=True,
-        use_container_width=True
+        width="stretch"
     )
     st.metric("High Income Total Allocation", format_currency(hi_total['total_allocation']))
     col1, col2 = st.columns(2)

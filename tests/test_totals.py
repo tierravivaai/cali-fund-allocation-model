@@ -120,3 +120,17 @@ def test_aggregation_column_order(mock_con):
     display_cols = ["region", "Countries (number)", "total_allocation", "state_component", "iplc_component"]
     reordered = region_agg[display_cols]
     assert list(reordered.columns)[1] == "Countries (number)"
+
+def test_detail_tab_country_counts(mock_con):
+    base_df = get_base_data(mock_con)
+    fund_size = 1_000_000_000
+    results_df = calculate_allocations(base_df, fund_size, 50, exclude_high_income=False)
+    
+    # Low Income Detail
+    li_df = results_df[results_df['WB Income Group'] == 'Low income'].copy()
+    li_table = li_df.copy()
+    li_table.insert(1, "Countries (number)", 1)
+    total_li = add_total_row(li_table, "party")
+    
+    # Total row should show sum of '1's
+    assert total_li.iloc[-1]['Countries (number)'] == len(li_df)
