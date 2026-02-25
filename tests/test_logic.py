@@ -97,4 +97,16 @@ def test_strict_data_integrity(mock_con):
     # un_share must be >= 0.0
     assert (base_df['un_share'] >= 0.0).all()
 
+def test_venezuela_consolidation(mock_con):
+    base_df = get_base_data(mock_con)
+    # Check that Venezuela exists only once
+    venezuela_rows = base_df[base_df['party'].str.contains('Venezuela', case=False)]
+    assert len(venezuela_rows) == 1, f"Found multiple Venezuela rows: {venezuela_rows['party'].tolist()}"
+    
+    # Check that the single row has the correct normalized name
+    assert venezuela_rows.iloc[0]['party'] == 'Venezuela (Bolivarian Republic of)'
+    
+    # Check that it has an un_share (it was 0.069 in the UN scale)
+    assert venezuela_rows.iloc[0]['un_share'] > 0
+
 

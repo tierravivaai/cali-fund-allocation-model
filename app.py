@@ -72,14 +72,6 @@ fund_size_bn = st.sidebar.slider(
 )
 st.sidebar.caption(f"= ${fund_size_bn * 1000:,.0f} million per year")
 
-iplc_share = st.sidebar.slider(
-    "Share earmarked for Indigenous Peoples & Local Communities (%)",
-    min_value=50,
-    max_value=80,
-    help="This splits each Party’s allocation into an IPLC component and a State component. Together they equal the total.",
-    key="iplc_share"
-)
-
 # Calculations Pre-setup
 fund_size_usd = fund_size_bn * 1_000_000_000
 
@@ -140,7 +132,7 @@ if enable_ceiling:
             "Maximum share per eligible country (% of total fund) — extended range",
             min_value=5.00,
             max_value=20.00,
-            value=st.session_state.get("ceiling_pct_ext", max(5.0, ceiling_pct)),
+            value=st.session_state.get("ceiling_pct_ext", max(5.0, 2.0)), # default 2.0
             step=0.50,
             format="%.2f",
             key="ceiling_pct_ext"
@@ -155,6 +147,16 @@ if enable_ceiling:
 else:
     ceiling_pct = None
 
+iplc_share = st.sidebar.slider(
+    "Share earmarked for Indigenous Peoples & Local Communities (%)",
+    min_value=50,
+    max_value=80,
+    help="This splits each Party’s allocation into an IPLC component and a State component. Together they equal the total.",
+    key="iplc_share"
+)
+
+st.sidebar.divider()
+st.sidebar.header("Helper Controls")
 
 show_raw = st.sidebar.toggle("Show explanation with raw data", key="show_raw")
 
@@ -200,21 +202,26 @@ def format_currency(val):
     return f"${val:,.2f}m"
 
 # Helper for dataframe formatting
-def get_column_config(use_thousands):
+def get_column_config(use_thousands, include_country_count=False):
+    config = {}
+    if include_country_count:
+        config["Countries (number)"] = st.column_config.NumberColumn("Countries (number)", format="%d")
+        
     if use_thousands:
         # When using thousands, we must use TextColumn because we mix 'k' and 'm'
-        return {
+        config.update({
             "total_allocation": st.column_config.TextColumn("Total Share (USD)"),
             "state_component": st.column_config.TextColumn("State Component (USD)"),
             "iplc_component": st.column_config.TextColumn("IPLC Component (USD)"),
-        }
+        })
     else:
         # Standard millions view can use NumberColumn for better sorting
-        return {
+        config.update({
             "total_allocation": st.column_config.NumberColumn("Total Share (USD Millions)", format="$%.2f"),
             "state_component": st.column_config.NumberColumn("State Component (USD Millions)", format="$%.2f"),
             "iplc_component": st.column_config.NumberColumn("IPLC Component (USD Millions)", format="$%.2f"),
-        }
+        })
+    return config
 
 # Main Tabs
 tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5b, tab6, tab7, tab5 = st.tabs([
@@ -320,15 +327,68 @@ For more detailed information see this [walkthrough](https://github.com/tierravi
 
 with tab2:
     st.subheader("Totals by UN Region")
-    region_df = aggregate_by_region(results_df, 'region')
+
+    region_df = aggregate_by_region(results_df, "region")
+
     if use_thousands:
-        for col in ['total_allocation', 'state_component', 'iplc_component']:
+        for col in ["total_allocation", "state_component", "iplc_component"]:
             region_df[col] = region_df[col].apply(format_currency)
+
     st.dataframe(
-        region_df.sort_values('total_allocation', ascending=False),
-        column_config=get_column_config(use_thousands),
+        region_df.sort_values("total_allocation", ascending=False),
+        column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
-        use_container_width=True
+        use_container_width=True,
+    )
+
+    # Region selector (acts as the "click Africa" interaction)
+    region_list = (
+        aggregate_by_region(results_df, "region")["region"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+    region_list = sorted(region_list)
+
+    selected_region = st.selectbox(
+        "Show countries in region",
+        options=region_list,
+        index=0,
+        key="selected_region",
+    )
+
+    region_countries = results_df[results_df["region"] == selected_region].copy()
+
+    if sort_option == "Allocation (highest first)":
+        region_countries = region_countries.sort_values(
+            by=["total_allocation", "party"],
+            ascending=[False, True],
+        ).reset_index(drop=True)
+        region_countries.index = region_countries.index + 1
+        region_countries.index.name = "Rank"
+        hide_index = False
+    else:
+        region_countries = region_countries.sort_values(
+            by="party",
+            ascending=True,
+        ).reset_index(drop=True)
+        hide_index = True
+
+    display_cols = ["party", "total_allocation", "state_component", "iplc_component", "WB Income Group", "UN LDC", "EU"]
+
+    if use_thousands:
+        for col in ["total_allocation", "state_component", "iplc_component"]:
+            region_countries[col] = region_countries[col].apply(format_currency)
+
+    config = {"party": "Country"}
+    config.update(get_column_config(use_thousands))
+
+    st.dataframe(
+        region_countries[display_cols],
+        column_config=config,
+        hide_index=hide_index,
+        use_container_width=True,
     )
 
 with tab2b:
@@ -337,11 +397,62 @@ with tab2b:
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             sub_region_df[col] = sub_region_df[col].apply(format_currency)
+            
     st.dataframe(
         sub_region_df.sort_values('total_allocation', ascending=False),
-        column_config=get_column_config(use_thousands),
+        column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
+    )
+
+    # Sub-region selector
+    sub_region_list = (
+        aggregate_by_region(results_df, "sub_region")["sub_region"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+    sub_region_list = sorted(sub_region_list)
+
+    selected_sub_region = st.selectbox(
+        "Show countries in sub-region",
+        options=sub_region_list,
+        index=0,
+        key="selected_sub_region",
+    )
+
+    sub_region_countries = results_df[results_df["sub_region"] == selected_sub_region].copy()
+
+    if sort_option == "Allocation (highest first)":
+        sub_region_countries = sub_region_countries.sort_values(
+            by=["total_allocation", "party"],
+            ascending=[False, True],
+        ).reset_index(drop=True)
+        sub_region_countries.index = sub_region_countries.index + 1
+        sub_region_countries.index.name = "Rank"
+        hide_index = False
+    else:
+        sub_region_countries = sub_region_countries.sort_values(
+            by="party",
+            ascending=True,
+        ).reset_index(drop=True)
+        hide_index = True
+
+    display_cols = ["party", "total_allocation", "state_component", "iplc_component", "WB Income Group", "UN LDC", "EU"]
+
+    if use_thousands:
+        for col in ["total_allocation", "state_component", "iplc_component"]:
+            sub_region_countries[col] = sub_region_countries[col].apply(format_currency)
+
+    config = {"party": "Country"}
+    config.update(get_column_config(use_thousands))
+
+    st.dataframe(
+        sub_region_countries[display_cols],
+        column_config=config,
+        hide_index=hide_index,
+        use_container_width=True,
     )
 
 with tab2c:
@@ -350,12 +461,64 @@ with tab2c:
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             int_region_df[col] = int_region_df[col].apply(format_currency)
+            
     st.dataframe(
         int_region_df.sort_values('total_allocation', ascending=False),
-        column_config=get_column_config(use_thousands),
+        column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
     )
+
+    # Intermediate region selector
+    int_region_list = (
+        aggregate_by_region(results_df[results_df['intermediate_region'] != 'NA'], "intermediate_region")["intermediate_region"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+    int_region_list = sorted(int_region_list)
+
+    if int_region_list:
+        selected_int_region = st.selectbox(
+            "Show countries in intermediate region",
+            options=int_region_list,
+            index=0,
+            key="selected_int_region",
+        )
+
+        int_region_countries = results_df[results_df["intermediate_region"] == selected_int_region].copy()
+
+        if sort_option == "Allocation (highest first)":
+            int_region_countries = int_region_countries.sort_values(
+                by=["total_allocation", "party"],
+                ascending=[False, True],
+            ).reset_index(drop=True)
+            int_region_countries.index = int_region_countries.index + 1
+            int_region_countries.index.name = "Rank"
+            hide_index = False
+        else:
+            int_region_countries = int_region_countries.sort_values(
+                by="party",
+                ascending=True,
+            ).reset_index(drop=True)
+            hide_index = True
+
+        display_cols = ["party", "total_allocation", "state_component", "iplc_component", "WB Income Group", "UN LDC", "EU"]
+
+        if use_thousands:
+            for col in ["total_allocation", "state_component", "iplc_component"]:
+                int_region_countries[col] = int_region_countries[col].apply(format_currency)
+
+        config = {"party": "Country"}
+        config.update(get_column_config(use_thousands))
+
+        st.dataframe(
+            int_region_countries[display_cols],
+            column_config=config,
+            hide_index=hide_index,
+            use_container_width=True,
+        )
 
 with tab3b:
     st.subheader("Totals by World Bank Income Group")
@@ -365,10 +528,11 @@ with tab3b:
             income_df[col] = income_df[col].apply(format_currency)
     
     config = {"WB Income Group": "Income Group"}
-    config.update(get_column_config(use_thousands))
+    config.update(get_column_config(use_thousands, include_country_count=True))
     
+    display_cols = ['WB Income Group', 'Countries (number)', 'total_allocation', 'state_component', 'iplc_component']
     st.dataframe(
-        income_df.sort_values('total_allocation', ascending=False),
+        income_df[display_cols].sort_values('total_allocation', ascending=False),
         column_config=config,
         hide_index=True,
         use_container_width=True
@@ -380,11 +544,13 @@ with tab4:
     ldc_total, _ = aggregate_special_groups(results_df)
     
     # Calculate non-LDC (broadly 'Developed/Other')
-    non_ldc_total = results_df[~results_df['is_ldc']][['total_allocation', 'state_component', 'iplc_component']].sum()
+    non_ldc_df = results_df[(~results_df['is_ldc']) & (results_df['total_allocation'] > 0)]
+    non_ldc_total = non_ldc_df[['total_allocation', 'state_component', 'iplc_component']].sum()
+    non_ldc_count = len(non_ldc_df)
     
     summary_data = pd.DataFrame([
-        {"Group": "Least Developed Countries (LDC)", **ldc_total.to_dict()},
-        {"Group": "Other Countries", **non_ldc_total.to_dict()}
+        {"Group": "Least Developed Countries (LDC)", "Countries (number)": ldc_total['Countries (number)'], **ldc_total.drop('Countries (number)').to_dict()},
+        {"Group": "Other Countries", "Countries (number)": non_ldc_count, **non_ldc_total.to_dict()}
     ])
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
@@ -392,10 +558,40 @@ with tab4:
     
     st.dataframe(
         summary_data,
-        column_config=get_column_config(use_thousands),
+        column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
     )
+
+with tab5:
+    st.subheader("Small Island Developing States (SIDS)")
+    _, sids_total = aggregate_special_groups(results_df)
+    
+    # Calculate non-SIDS
+    non_sids_df = results_df[(~results_df['is_sids']) & (results_df['total_allocation'] > 0)]
+    non_sids_total = non_sids_df[['total_allocation', 'state_component', 'iplc_component']].sum()
+    non_sids_count = len(non_sids_df)
+    
+    summary_data_sids = pd.DataFrame([
+        {"Group": "Small Island Developing States (SIDS)", "Countries (number)": sids_total['Countries (number)'], **sids_total.drop('Countries (number)').to_dict()},
+        {"Group": "Other Countries", "Countries (number)": non_sids_count, **non_sids_total.to_dict()}
+    ])
+    
+    if use_thousands:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
+            summary_data_sids[col] = summary_data_sids[col].apply(format_currency)
+            
+    st.dataframe(
+        summary_data_sids,
+        column_config=get_column_config(use_thousands, include_country_count=True),
+        hide_index=True,
+        use_container_width=True
+    )
+    
+    st.metric("Total SIDS Allocation", format_currency(sids_total['total_allocation']))
+    col1, col2 = st.columns(2)
+    col1.metric("SIDS State Component", format_currency(sids_total['state_component']))
+    col2.metric("SIDS IPLC Component", format_currency(sids_total['iplc_component']))
 
 with tab5b:
     st.subheader("Low Income Countries")
@@ -478,14 +674,6 @@ with tab7:
     col1.metric("High Income State Component", format_currency(hi_total['state_component']))
     col2.metric("High Income IPLC Component", format_currency(hi_total['iplc_component']))
 
-with tab5:
-    st.subheader("Small Island Developing States (SIDS)")
-    _, sids_total = aggregate_special_groups(results_df)
-    
-    st.metric("Total SIDS Allocation", format_currency(sids_total['total_allocation']))
-    col1, col2 = st.columns(2)
-    col1.metric("SIDS State Component", format_currency(sids_total['state_component']))
-    col2.metric("SIDS IPLC Component", format_currency(sids_total['iplc_component']))
 
 st.divider()
 st.markdown("""
