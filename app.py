@@ -327,17 +327,69 @@ For more detailed information see this [walkthrough](https://github.com/tierravi
 
 with tab2:
     st.subheader("Totals by UN Region")
-    region_df = aggregate_by_region(results_df, 'region')
+
+    region_df = aggregate_by_region(results_df, "region")
+
     if use_thousands:
-        for col in ['total_allocation', 'state_component', 'iplc_component']:
+        for col in ["total_allocation", "state_component", "iplc_component"]:
             region_df[col] = region_df[col].apply(format_currency)
-            
-    display_cols = ['region', 'Countries (number)', 'total_allocation', 'state_component', 'iplc_component']
+
     st.dataframe(
-        region_df[display_cols].sort_values('total_allocation', ascending=False),
+        region_df.sort_values("total_allocation", ascending=False),
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
-        use_container_width=True
+        use_container_width=True,
+    )
+
+    # Region selector (acts as the "click Africa" interaction)
+    region_list = (
+        aggregate_by_region(results_df, "region")["region"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+    region_list = sorted(region_list)
+
+    selected_region = st.radio(
+        "Show countries in region",
+        options=region_list,
+        horizontal=True,
+        index=0,
+        key="selected_region",
+    )
+
+    region_countries = results_df[results_df["region"] == selected_region].copy()
+
+    if sort_option == "Allocation (highest first)":
+        region_countries = region_countries.sort_values(
+            by=["total_allocation", "party"],
+            ascending=[False, True],
+        ).reset_index(drop=True)
+        region_countries.index = region_countries.index + 1
+        region_countries.index.name = "Rank"
+        hide_index = False
+    else:
+        region_countries = region_countries.sort_values(
+            by="party",
+            ascending=True,
+        ).reset_index(drop=True)
+        hide_index = True
+
+    display_cols = ["party", "total_allocation", "state_component", "iplc_component", "WB Income Group", "UN LDC", "EU"]
+
+    if use_thousands:
+        for col in ["total_allocation", "state_component", "iplc_component"]:
+            region_countries[col] = region_countries[col].apply(format_currency)
+
+    config = {"party": "Country"}
+    config.update(get_column_config(use_thousands))
+
+    st.dataframe(
+        region_countries[display_cols],
+        column_config=config,
+        hide_index=hide_index,
+        use_container_width=True,
     )
 
 with tab2b:
