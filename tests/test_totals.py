@@ -134,3 +134,23 @@ def test_detail_tab_country_counts(mock_con):
     
     # Total row should show sum of '1's
     assert total_li.iloc[-1]['Countries (number)'] == len(li_df)
+
+def test_sids_filtering_logic(mock_con):
+    base_df = get_base_data(mock_con)
+    fund_size = 1_000_000_000
+    results_df = calculate_allocations(base_df, fund_size, 50, exclude_high_income=False)
+    
+    # SIDS filter
+    sids_df = results_df[results_df["is_sids"]].copy()
+    # There are 39 SIDS usually in this dataset (verify count or just check logic)
+    assert len(sids_df) > 0
+    assert all(sids_df["is_sids"])
+    
+    # Non-SIDS filter (CBD Parties only)
+    mask_cbd = results_df['is_cbd_party']
+    non_sids_df = results_df[mask_cbd & (~results_df["is_sids"])].copy()
+    assert len(non_sids_df) > 0
+    assert not any(non_sids_df["is_sids"])
+    
+    # Total check
+    assert len(sids_df) + len(non_sids_df) == 196

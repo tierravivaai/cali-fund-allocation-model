@@ -626,6 +626,51 @@ with tab5:
     col1.metric("SIDS State Component", format_currency(sids_total['state_component']))
     col2.metric("SIDS IPLC Component", format_currency(sids_total['iplc_component']))
 
+    # SIDS Detail Selector
+    st.divider()
+    sids_group_option = st.selectbox(
+        "Show countries in group",
+        options=["Small Island Developing States (SIDS)", "Other Countries"],
+        index=0,
+        key="selected_sids_group"
+    )
+
+    if sids_group_option == "Small Island Developing States (SIDS)":
+        sids_filtered_df = results_df[results_df["is_sids"]].copy()
+    else:
+        sids_filtered_df = results_df[mask_cbd & (~results_df["is_sids"])].copy()
+
+    if sort_option == "Allocation (highest first)":
+        sids_filtered_df = sids_filtered_df.sort_values(
+            by=["total_allocation", "party"],
+            ascending=[False, True],
+        ).reset_index(drop=True)
+        sids_filtered_df.index = sids_filtered_df.index + 1
+        sids_filtered_df.index.name = "Rank"
+        hide_index = False
+    else:
+        sids_filtered_df = sids_filtered_df.sort_values(
+            by="party",
+            ascending=True,
+        ).reset_index(drop=True)
+        hide_index = True
+
+    display_cols = ["party", "total_allocation", "state_component", "iplc_component", "WB Income Group", "UN LDC", "EU"]
+
+    if use_thousands:
+        for col in ["total_allocation", "state_component", "iplc_component"]:
+            sids_filtered_df[col] = sids_filtered_df[col].apply(format_currency)
+
+    config = {"party": "Country"}
+    config.update(get_column_config(use_thousands))
+
+    st.dataframe(
+        sids_filtered_df[display_cols],
+        column_config=config,
+        hide_index=hide_index,
+        width="stretch",
+    )
+
 with tab5b:
     st.subheader("Low Income Countries")
     li_df = results_df[results_df['WB Income Group'] == 'Low income'].copy()
