@@ -170,7 +170,7 @@ Suppose Country B’s UN assessment is 10%. Because this is a much larger assess
 
 Final step
 
-After these weights are calculated, they are rescaled so that the total amount distributed exactly equals the fund size selected in the sidebar. Each Party’s total allocation is then divided into a State Component and an Indigenous Peoples and Local Communities (IPLC) Envelope according to the selected percentage.
+After these weights are calculated, they are rescaled so that the total amount distributed exactly equals the fund size selected in the sidebar. Each Party’s total allocation is then divided into a State Component and an Indigenous Peoples and Local Communities (IPLC) Component according to the selected percentage.
     """)
         
         with st.expander("How the calculation works (technical summary)"):
@@ -189,7 +189,7 @@ After these weights are calculated, they are rescaled so that the total amount d
             Each Party’s share is multiplied by the total fund size to determine its indicative allocation.
 
             4. **Earmarking**
-            The allocation is then divided into a State envelope and an IPLC envelope according to the selected percentage.
+            The allocation is then divided into a State component and an IPLC component according to the selected percentage.
             """)
         
         display_cols.insert(1, 'un_share')
