@@ -53,7 +53,12 @@ The mathematical core ensures that the sum of individual allocations matches the
 - **Validation Rule**: `Sum(State Component + IPLC Component) = Total Fund Size`.
 - **Location**: `tests/test_logic.py` -> `test_allocation_sums_to_fund_size` and `test_tiny_scenarios.py`.
 
-### 4. Cross-Reference Mapping
+### 4. Constraint Validation (Floor/Ceiling)
+The model supports user-defined floor and ceiling constraints on individual party shares.
+- **Validation Rule**: All eligible parties must receive a share within `[floor, ceiling]` while maintaining a total sum of 100%.
+- **Location**: `tests/test_floor_ceiling.py`.
+
+### 5. Cross-Reference Mapping
 A systematic mapping layer (`manual_name_map.csv`) standardizes Party names across UN, World Bank, and CBD datasets.
 - **Illustration of the Join Strategy**:
   ```sql
