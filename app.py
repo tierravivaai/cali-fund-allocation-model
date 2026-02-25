@@ -351,10 +351,9 @@ with tab2:
     )
     region_list = sorted(region_list)
 
-    selected_region = st.radio(
+    selected_region = st.selectbox(
         "Show countries in region",
         options=region_list,
-        horizontal=True,
         index=0,
         key="selected_region",
     )
