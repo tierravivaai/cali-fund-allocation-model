@@ -88,6 +88,19 @@ def test_party_tab_total_sum(mock_con):
     total_allocation = total_df.iloc[-1]['total_allocation']
     assert pytest.approx(total_allocation, 0.01) == 1000.0
 
+def test_intermediate_region_total_sum(mock_con):
+    base_df = get_base_data(mock_con)
+    fund_size = 1_000_000_000
+    results_df = calculate_allocations(base_df, fund_size, 50, exclude_high_income=False)
+    
+    # Aggregator should include 'NA'
+    int_region_agg = aggregate_by_region(results_df, "intermediate_region")
+    total_int_region = add_total_row(int_region_agg, "intermediate_region")
+    
+    total_countries = total_int_region.iloc[-1]['Countries (number)']
+    assert total_countries == 196
+    assert pytest.approx(total_int_region.iloc[-1]['total_allocation'], 0.01) == 1000.0
+
 def test_aggregation_column_order(mock_con):
     base_df = get_base_data(mock_con)
     fund_size = 1_000_000_000

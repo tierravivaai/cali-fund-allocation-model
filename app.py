@@ -466,7 +466,11 @@ with tab2b:
 
 with tab2c:
     st.subheader("Totals by UN Intermediate Region")
-    int_region_df = aggregate_by_region(results_df[results_df['intermediate_region'] != 'NA'], 'intermediate_region')
+    # Include all countries, including those with 'NA' intermediate_region
+    # but rename 'NA' for clearer display
+    int_region_df = aggregate_by_region(results_df, 'intermediate_region')
+    int_region_df['intermediate_region'] = int_region_df['intermediate_region'].replace('NA', 'Not Categorized')
+    
     int_region_df = int_region_df.sort_values('total_allocation', ascending=False)
     int_region_df = add_total_row(int_region_df, "intermediate_region")
     if use_thousands:
@@ -483,7 +487,7 @@ with tab2c:
 
     # Intermediate region selector
     int_region_list = (
-        aggregate_by_region(results_df[results_df['intermediate_region'] != 'NA'], "intermediate_region")["intermediate_region"]
+        aggregate_by_region(results_df, "intermediate_region")["intermediate_region"]
         .dropna()
         .astype(str)
         .unique()
