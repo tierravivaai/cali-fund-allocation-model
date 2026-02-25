@@ -72,14 +72,6 @@ fund_size_bn = st.sidebar.slider(
 )
 st.sidebar.caption(f"= ${fund_size_bn * 1000:,.0f} million per year")
 
-iplc_share = st.sidebar.slider(
-    "Share earmarked for Indigenous Peoples & Local Communities (%)",
-    min_value=50,
-    max_value=80,
-    help="This splits each Party’s allocation into an IPLC component and a State component. Together they equal the total.",
-    key="iplc_share"
-)
-
 # Calculations Pre-setup
 fund_size_usd = fund_size_bn * 1_000_000_000
 
@@ -140,7 +132,7 @@ if enable_ceiling:
             "Maximum share per eligible country (% of total fund) — extended range",
             min_value=5.00,
             max_value=20.00,
-            value=st.session_state.get("ceiling_pct_ext", max(5.0, ceiling_pct)),
+            value=st.session_state.get("ceiling_pct_ext", max(5.0, 2.0)), # default 2.0
             step=0.50,
             format="%.2f",
             key="ceiling_pct_ext"
@@ -155,6 +147,16 @@ if enable_ceiling:
 else:
     ceiling_pct = None
 
+iplc_share = st.sidebar.slider(
+    "Share earmarked for Indigenous Peoples & Local Communities (%)",
+    min_value=50,
+    max_value=80,
+    help="This splits each Party’s allocation into an IPLC component and a State component. Together they equal the total.",
+    key="iplc_share"
+)
+
+st.sidebar.divider()
+st.sidebar.header("Helper Controls")
 
 show_raw = st.sidebar.toggle("Show explanation with raw data", key="show_raw")
 
@@ -200,21 +202,26 @@ def format_currency(val):
     return f"${val:,.2f}m"
 
 # Helper for dataframe formatting
-def get_column_config(use_thousands):
+def get_column_config(use_thousands, include_country_count=False):
+    config = {}
+    if include_country_count:
+        config["Countries (number)"] = st.column_config.NumberColumn("Countries (number)", format="%d")
+        
     if use_thousands:
         # When using thousands, we must use TextColumn because we mix 'k' and 'm'
-        return {
+        config.update({
             "total_allocation": st.column_config.TextColumn("Total Share (USD)"),
             "state_component": st.column_config.TextColumn("State Component (USD)"),
             "iplc_component": st.column_config.TextColumn("IPLC Component (USD)"),
-        }
+        })
     else:
         # Standard millions view can use NumberColumn for better sorting
-        return {
+        config.update({
             "total_allocation": st.column_config.NumberColumn("Total Share (USD Millions)", format="$%.2f"),
             "state_component": st.column_config.NumberColumn("State Component (USD Millions)", format="$%.2f"),
             "iplc_component": st.column_config.NumberColumn("IPLC Component (USD Millions)", format="$%.2f"),
-        }
+        })
+    return config
 
 # Main Tabs
 tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5b, tab6, tab7, tab5 = st.tabs([
@@ -324,9 +331,11 @@ with tab2:
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             region_df[col] = region_df[col].apply(format_currency)
+            
+    display_cols = ['region', 'Countries (number)', 'total_allocation', 'state_component', 'iplc_component']
     st.dataframe(
-        region_df.sort_values('total_allocation', ascending=False),
-        column_config=get_column_config(use_thousands),
+        region_df[display_cols].sort_values('total_allocation', ascending=False),
+        column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
     )
@@ -337,9 +346,11 @@ with tab2b:
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             sub_region_df[col] = sub_region_df[col].apply(format_currency)
+            
+    display_cols = ['sub_region', 'Countries (number)', 'total_allocation', 'state_component', 'iplc_component']
     st.dataframe(
-        sub_region_df.sort_values('total_allocation', ascending=False),
-        column_config=get_column_config(use_thousands),
+        sub_region_df[display_cols].sort_values('total_allocation', ascending=False),
+        column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
     )
@@ -350,9 +361,11 @@ with tab2c:
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             int_region_df[col] = int_region_df[col].apply(format_currency)
+            
+    display_cols = ['intermediate_region', 'Countries (number)', 'total_allocation', 'state_component', 'iplc_component']
     st.dataframe(
-        int_region_df.sort_values('total_allocation', ascending=False),
-        column_config=get_column_config(use_thousands),
+        int_region_df[display_cols].sort_values('total_allocation', ascending=False),
+        column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
     )
@@ -365,10 +378,11 @@ with tab3b:
             income_df[col] = income_df[col].apply(format_currency)
     
     config = {"WB Income Group": "Income Group"}
-    config.update(get_column_config(use_thousands))
+    config.update(get_column_config(use_thousands, include_country_count=True))
     
+    display_cols = ['WB Income Group', 'Countries (number)', 'total_allocation', 'state_component', 'iplc_component']
     st.dataframe(
-        income_df.sort_values('total_allocation', ascending=False),
+        income_df[display_cols].sort_values('total_allocation', ascending=False),
         column_config=config,
         hide_index=True,
         use_container_width=True
@@ -380,11 +394,13 @@ with tab4:
     ldc_total, _ = aggregate_special_groups(results_df)
     
     # Calculate non-LDC (broadly 'Developed/Other')
-    non_ldc_total = results_df[~results_df['is_ldc']][['total_allocation', 'state_component', 'iplc_component']].sum()
+    non_ldc_df = results_df[(~results_df['is_ldc']) & (results_df['total_allocation'] > 0)]
+    non_ldc_total = non_ldc_df[['total_allocation', 'state_component', 'iplc_component']].sum()
+    non_ldc_count = len(non_ldc_df)
     
     summary_data = pd.DataFrame([
-        {"Group": "Least Developed Countries (LDC)", **ldc_total.to_dict()},
-        {"Group": "Other Countries", **non_ldc_total.to_dict()}
+        {"Group": "Least Developed Countries (LDC)", "Countries (number)": ldc_total['Countries (number)'], **ldc_total.drop('Countries (number)').to_dict()},
+        {"Group": "Other Countries", "Countries (number)": non_ldc_count, **non_ldc_total.to_dict()}
     ])
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
@@ -392,100 +408,41 @@ with tab4:
     
     st.dataframe(
         summary_data,
-        column_config=get_column_config(use_thousands),
+        column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
     )
-
-with tab5b:
-    st.subheader("Low Income Countries")
-    li_df = results_df[results_df['WB Income Group'] == 'Low income'].copy()
-    
-    display_li_df = li_df.copy()
-    if use_thousands:
-        for col in ['total_allocation', 'state_component', 'iplc_component']:
-            display_li_df[col] = display_li_df[col].apply(format_currency)
-
-    config = {
-        "party": "Country",
-        "WB Income Group": "WB Classification"
-    }
-    config.update(get_column_config(use_thousands))
-
-    st.dataframe(
-        display_li_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'WB Income Group', 'UN LDC']].sort_values('party'),
-        column_config=config,
-        hide_index=True,
-        use_container_width=True
-    )
-    
-    li_total = li_df[['total_allocation', 'state_component', 'iplc_component']].sum()
-    st.metric("Low Income Total Allocation", format_currency(li_total['total_allocation']))
-    col1, col2 = st.columns(2)
-    col1.metric("Low Income State Component", format_currency(li_total['state_component']))
-    col2.metric("Low Income IPLC Component", format_currency(li_total['iplc_component']))
-
-with tab6:
-    st.subheader("Middle Income Countries")
-    mi_df = results_df[results_df['WB Income Group'].isin(['Lower middle income', 'Upper middle income'])].copy()
-    
-    display_mi_df = mi_df.copy()
-    if use_thousands:
-        for col in ['total_allocation', 'state_component', 'iplc_component']:
-            display_mi_df[col] = display_mi_df[col].apply(format_currency)
-
-    config = {
-        "party": "Country",
-        "WB Income Group": "WB Classification"
-    }
-    config.update(get_column_config(use_thousands))
-
-    st.dataframe(
-        display_mi_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'UN LDC', 'WB Income Group']].sort_values('party'),
-        column_config=config,
-        hide_index=True,
-        use_container_width=True
-    )
-    
-    mi_total = mi_df[['total_allocation', 'state_component', 'iplc_component']].sum()
-    st.metric("Middle Income Countries Total Allocation", format_currency(mi_total['total_allocation']))
-    col1, col2 = st.columns(2)
-    col1.metric("Middle Income State Component", format_currency(mi_total['state_component']))
-    col2.metric("Middle Income IPLC Component", format_currency(mi_total['iplc_component']))
-
-with tab7:
-    st.subheader("High Income Countries")
-    hi_df = results_df[results_df['WB Income Group'] == 'High income'].copy()
-    
-    display_hi_df = hi_df.copy()
-    if use_thousands:
-        for col in ['total_allocation', 'state_component', 'iplc_component']:
-            display_hi_df[col] = display_hi_df[col].apply(format_currency)
-
-    config = {"party": "Country"}
-    config.update(get_column_config(use_thousands))
-
-    st.dataframe(
-        display_hi_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'EU']].sort_values('party'),
-        column_config=config,
-        hide_index=True,
-        use_container_width=True
-    )
-    
-    hi_total = hi_df[['total_allocation', 'state_component', 'iplc_component']].sum()
-    st.metric("High Income Total Allocation", format_currency(hi_total['total_allocation']))
-    col1, col2 = st.columns(2)
-    col1.metric("High Income State Component", format_currency(hi_total['state_component']))
-    col2.metric("High Income IPLC Component", format_currency(hi_total['iplc_component']))
 
 with tab5:
     st.subheader("Small Island Developing States (SIDS)")
     _, sids_total = aggregate_special_groups(results_df)
     
+    # Calculate non-SIDS
+    non_sids_df = results_df[(~results_df['is_sids']) & (results_df['total_allocation'] > 0)]
+    non_sids_total = non_sids_df[['total_allocation', 'state_component', 'iplc_component']].sum()
+    non_sids_count = len(non_sids_df)
+    
+    summary_data_sids = pd.DataFrame([
+        {"Group": "Small Island Developing States (SIDS)", "Countries (number)": sids_total['Countries (number)'], **sids_total.drop('Countries (number)').to_dict()},
+        {"Group": "Other Countries", "Countries (number)": non_sids_count, **non_sids_total.to_dict()}
+    ])
+    
+    if use_thousands:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
+            summary_data_sids[col] = summary_data_sids[col].apply(format_currency)
+            
+    st.dataframe(
+        summary_data_sids,
+        column_config=get_column_config(use_thousands, include_country_count=True),
+        hide_index=True,
+        use_container_width=True
+    )
+    
     st.metric("Total SIDS Allocation", format_currency(sids_total['total_allocation']))
     col1, col2 = st.columns(2)
     col1.metric("SIDS State Component", format_currency(sids_total['state_component']))
     col2.metric("SIDS IPLC Component", format_currency(sids_total['iplc_component']))
+
 
 st.divider()
 st.markdown("""

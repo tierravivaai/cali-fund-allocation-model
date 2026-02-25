@@ -29,6 +29,19 @@ def test_aggregate_by_income_structure(mock_con):
     results_df = calculate_allocations(base_df, 1_000_000_000, 50)
     income_df = aggregate_by_income(results_df)
     
-    required_cols = ['WB Income Group', 'total_allocation', 'state_component', 'iplc_component']
+    required_cols = ['WB Income Group', 'total_allocation', 'state_component', 'iplc_component', 'Countries (number)']
     for col in required_cols:
         assert col in income_df.columns
+
+def test_aggregate_country_counts(mock_con):
+    base_df = get_base_data(mock_con)
+    # Exclude High Income to see if counts change
+    results_df = calculate_allocations(base_df, 1_000_000_000, 50, exclude_high_income=True)
+    
+    income_df = aggregate_by_income(results_df)
+    assert "High income" not in income_df['WB Income Group'].values
+    
+    # Check that countries with allocation > 0 are counted
+    total_countries = income_df['Countries (number)'].sum()
+    actual_positive_allocations = (results_df['total_allocation'] > 0).sum()
+    assert total_countries == actual_positive_allocations
