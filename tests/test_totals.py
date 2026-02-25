@@ -186,3 +186,15 @@ def test_sids_totals_accuracy(mock_con):
     assert pytest.approx(sids_agg["state_component"], 0.01) == manual_state
     assert pytest.approx(sids_agg["iplc_component"], 0.01) == manual_iplc
     assert sids_agg["Countries (number)"] == len(sids_df)
+
+def test_sids_share_with_default_ceiling(mock_con):
+    base_df = get_base_data(mock_con)
+    fund_size = 1_000_000_000
+    # 1.0% ceiling, exclude HI
+    from logic.calculator import calculate_allocations, aggregate_special_groups
+    results_df = calculate_allocations(base_df, fund_size, 50, exclude_high_income=True, ceiling_pct=1.0)
+    _, sids_agg = aggregate_special_groups(results_df)
+    
+    # SIDS should get approx 25.46% of $1000m
+    sids_pct = (sids_agg["total_allocation"] / 1000) * 100
+    assert 25.0 <= sids_pct <= 26.0

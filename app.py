@@ -39,9 +39,9 @@ if "enable_floor" not in st.session_state:
 if "floor_pct" not in st.session_state:
     st.session_state["floor_pct"] = 0.05
 if "enable_ceiling" not in st.session_state:
-    st.session_state["enable_ceiling"] = False
+    st.session_state["enable_ceiling"] = True
 if "ceiling_pct" not in st.session_state:
-    st.session_state["ceiling_pct"] = 2.0
+    st.session_state["ceiling_pct"] = 1.0
 if "sort_option" not in st.session_state:
     st.session_state["sort_option"] = "Allocation (highest first)"
 
@@ -57,8 +57,8 @@ if st.sidebar.button("Reset to default"):
     st.session_state["exclude_hi"] = True
     st.session_state["enable_floor"] = False
     st.session_state["floor_pct"] = 0.05
-    st.session_state["enable_ceiling"] = False
-    st.session_state["ceiling_pct"] = 2.0
+    st.session_state["enable_ceiling"] = True
+    st.session_state["ceiling_pct"] = 1.0
     st.session_state["sort_option"] = "Allocation (highest first)"
     st.rerun()
 
@@ -117,7 +117,7 @@ enable_ceiling = st.sidebar.checkbox("Enable maximum share (ceiling)", key="enab
 if enable_ceiling:
     ceiling_pct = st.sidebar.slider(
         "Maximum share per eligible country (% of total fund)",
-        min_value=0.50,
+        min_value=0.10,
         max_value=5.00,
         step=0.10,
         format="%.2f",
@@ -132,7 +132,7 @@ if enable_ceiling:
             "Maximum share per eligible country (% of total fund) — extended range",
             min_value=5.00,
             max_value=20.00,
-            value=st.session_state.get("ceiling_pct_ext", max(5.0, 2.0)), # default 2.0
+            value=st.session_state.get("ceiling_pct_ext", max(5.0, 1.0)), # default 1.0
             step=0.50,
             format="%.2f",
             key="ceiling_pct_ext"
