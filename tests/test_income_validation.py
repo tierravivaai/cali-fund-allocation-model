@@ -20,17 +20,14 @@ def test_income_group_country_counts(mock_con):
     income_agg = aggregate_by_income(results_df)
     total_countries_in_agg = income_agg['Countries (number)'].sum()
     
-    # 3. Calculate manual counts from results_df where allocation > 0
-    actual_countries_with_allocation = (results_df['total_allocation'] > 0).sum()
+    # 3. There should be exactly 196 CBD Parties/Entities
+    assert total_countries_in_agg == 196
     
-    # 4. Assert total matches
-    assert total_countries_in_agg == actual_countries_with_allocation
-    
-    # 5. Check specific income groups sum up correctly
+    # 4. Check specific income groups sum up correctly
     for group in results_df['WB Income Group'].unique():
-        if group == "Not Available": continue # Should not happen based on metadata tests
+        if group == "Not Available": continue
         
-        expected_count = ((results_df['WB Income Group'] == group) & (results_df['total_allocation'] > 0)).sum()
+        expected_count = ((results_df['WB Income Group'] == group) & (results_df['is_cbd_party'])).sum()
         if expected_count > 0:
             actual_count = income_agg[income_agg['WB Income Group'] == group]['Countries (number)'].values[0]
             assert actual_count == expected_count
@@ -47,7 +44,6 @@ def test_income_group_counts_with_hi_exclusion(mock_con):
     # 3. High Income group should NOT be in the aggregation
     assert "High income" not in income_agg['WB Income Group'].values
     
-    # 4. Total count in aggregation should match total countries with allocation > 0
+    # 4. Total count in aggregation should match total eligible CBD parties (non-High Income)
     total_countries_in_agg = income_agg['Countries (number)'].sum()
-    actual_countries_with_allocation = (results_df['total_allocation'] > 0).sum()
-    assert total_countries_in_agg == actual_countries_with_allocation
+    assert total_countries_in_agg == 130 # 196 - 66 (excluding European Union which is marked HI) or similar

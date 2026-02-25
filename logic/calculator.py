@@ -113,8 +113,10 @@ def calculate_allocations(
     return calc_df
 
 def aggregate_by_region(df, region_col='region'):
-    # We only count countries that are eligible and have a positive allocation
-    mask = df['total_allocation'] > 0
+    # We count all CBD parties that are eligible for the calculation
+    # Even if they have 0 allocation (e.g. they had 0 UN share or are the EU entity)
+    # BUT we only show those that are "eligible" based on the current toggle (e.g. not HI if excluded)
+    mask = df['is_cbd_party'] & df['eligible']
     
     agg_sums = df[mask].groupby(region_col, dropna=False)[['total_allocation', 'state_component', 'iplc_component']].sum()
     agg_counts = df[mask].groupby(region_col, dropna=False)['party'].count()
@@ -122,7 +124,8 @@ def aggregate_by_region(df, region_col='region'):
     agg = agg_sums.merge(agg_counts, left_index=True, right_index=True).reset_index()
     agg = agg.rename(columns={'party': 'Countries (number)'})
     
-    return agg[agg['total_allocation'] > 0]
+    # Filter to only show groups that have at least one party
+    return agg[agg['Countries (number)'] > 0]
 
 def aggregate_eu(df):
     ms_df = df[df['is_eu_ms']]
@@ -136,7 +139,8 @@ def aggregate_eu(df):
     return combined, total_row
 
 def aggregate_special_groups(df):
-    mask = df['total_allocation'] > 0
+    # Count all CBD parties in these groups that are eligible
+    mask = df['is_cbd_party'] & df['eligible']
     
     ldc_df = df[df['is_ldc'] & mask]
     sids_df = df[df['is_sids'] & mask]
@@ -150,7 +154,8 @@ def aggregate_special_groups(df):
     return ldc_sum, sids_sum
 
 def aggregate_by_income(df):
-    mask = df['total_allocation'] > 0
+    # Count all CBD parties that are eligible
+    mask = df['is_cbd_party'] & df['eligible']
     
     agg_sums = df[mask].groupby('WB Income Group', dropna=False)[['total_allocation', 'state_component', 'iplc_component']].sum()
     agg_counts = df[mask].groupby('WB Income Group', dropna=False)['party'].count()
@@ -158,4 +163,4 @@ def aggregate_by_income(df):
     agg = agg_sums.merge(agg_counts, left_index=True, right_index=True).reset_index()
     agg = agg.rename(columns={'party': 'Countries (number)'})
     
-    return agg[agg['total_allocation'] > 0]
+    return agg[agg['Countries (number)'] > 0]
