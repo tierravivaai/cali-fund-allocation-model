@@ -399,12 +399,61 @@ with tab2b:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             sub_region_df[col] = sub_region_df[col].apply(format_currency)
             
-    display_cols = ['sub_region', 'Countries (number)', 'total_allocation', 'state_component', 'iplc_component']
     st.dataframe(
-        sub_region_df[display_cols].sort_values('total_allocation', ascending=False),
+        sub_region_df.sort_values('total_allocation', ascending=False),
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
+    )
+
+    # Sub-region selector
+    sub_region_list = (
+        aggregate_by_region(results_df, "sub_region")["sub_region"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+    sub_region_list = sorted(sub_region_list)
+
+    selected_sub_region = st.selectbox(
+        "Show countries in sub-region",
+        options=sub_region_list,
+        index=0,
+        key="selected_sub_region",
+    )
+
+    sub_region_countries = results_df[results_df["sub_region"] == selected_sub_region].copy()
+
+    if sort_option == "Allocation (highest first)":
+        sub_region_countries = sub_region_countries.sort_values(
+            by=["total_allocation", "party"],
+            ascending=[False, True],
+        ).reset_index(drop=True)
+        sub_region_countries.index = sub_region_countries.index + 1
+        sub_region_countries.index.name = "Rank"
+        hide_index = False
+    else:
+        sub_region_countries = sub_region_countries.sort_values(
+            by="party",
+            ascending=True,
+        ).reset_index(drop=True)
+        hide_index = True
+
+    display_cols = ["party", "total_allocation", "state_component", "iplc_component", "WB Income Group", "UN LDC", "EU"]
+
+    if use_thousands:
+        for col in ["total_allocation", "state_component", "iplc_component"]:
+            sub_region_countries[col] = sub_region_countries[col].apply(format_currency)
+
+    config = {"party": "Country"}
+    config.update(get_column_config(use_thousands))
+
+    st.dataframe(
+        sub_region_countries[display_cols],
+        column_config=config,
+        hide_index=hide_index,
+        use_container_width=True,
     )
 
 with tab2c:
@@ -414,13 +463,63 @@ with tab2c:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             int_region_df[col] = int_region_df[col].apply(format_currency)
             
-    display_cols = ['intermediate_region', 'Countries (number)', 'total_allocation', 'state_component', 'iplc_component']
     st.dataframe(
-        int_region_df[display_cols].sort_values('total_allocation', ascending=False),
+        int_region_df.sort_values('total_allocation', ascending=False),
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
     )
+
+    # Intermediate region selector
+    int_region_list = (
+        aggregate_by_region(results_df[results_df['intermediate_region'] != 'NA'], "intermediate_region")["intermediate_region"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+    int_region_list = sorted(int_region_list)
+
+    if int_region_list:
+        selected_int_region = st.selectbox(
+            "Show countries in intermediate region",
+            options=int_region_list,
+            index=0,
+            key="selected_int_region",
+        )
+
+        int_region_countries = results_df[results_df["intermediate_region"] == selected_int_region].copy()
+
+        if sort_option == "Allocation (highest first)":
+            int_region_countries = int_region_countries.sort_values(
+                by=["total_allocation", "party"],
+                ascending=[False, True],
+            ).reset_index(drop=True)
+            int_region_countries.index = int_region_countries.index + 1
+            int_region_countries.index.name = "Rank"
+            hide_index = False
+        else:
+            int_region_countries = int_region_countries.sort_values(
+                by="party",
+                ascending=True,
+            ).reset_index(drop=True)
+            hide_index = True
+
+        display_cols = ["party", "total_allocation", "state_component", "iplc_component", "WB Income Group", "UN LDC", "EU"]
+
+        if use_thousands:
+            for col in ["total_allocation", "state_component", "iplc_component"]:
+                int_region_countries[col] = int_region_countries[col].apply(format_currency)
+
+        config = {"party": "Country"}
+        config.update(get_column_config(use_thousands))
+
+        st.dataframe(
+            int_region_countries[display_cols],
+            column_config=config,
+            hide_index=hide_index,
+            use_container_width=True,
+        )
 
 with tab3b:
     st.subheader("Totals by World Bank Income Group")
