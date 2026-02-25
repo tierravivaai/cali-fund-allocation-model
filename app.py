@@ -300,10 +300,13 @@ For more detailed information see this [walkthrough](https://github.com/tierravi
     search = st.text_input("Search Country", "")
     filtered_df = results_df[results_df['party'].str.contains(search, case=False)].copy()
     
+    # Add Total row for validation
+    filtered_df = add_total_row(filtered_df, "party")
+
     # Only apply string formatting if toggle is ON; otherwise use numeric for sorting
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
-            filtered_df[col] = filtered_df[col].apply(format_currency)
+            filtered_df[col] = filtered_df[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
     
     config = {
         "eligible": None, # Hide this column
@@ -315,12 +318,11 @@ For more detailed information see this [walkthrough](https://github.com/tierravi
     config.update(get_column_config(use_thousands))
 
     # Determine whether to hide index based on sorting
-    hide_index = (sort_option == "Country name (A–Z)")
-
+    # Always hide index in tab1 now that we have a Total row at the bottom
     st.dataframe(
         filtered_df[display_cols + ["eligible"]],
         column_config=config,
-        hide_index=hide_index,
+        hide_index=True,
         use_container_width=True
     )
 
@@ -329,14 +331,15 @@ with tab2:
     st.subheader("Totals by UN Region")
 
     region_df = aggregate_by_region(results_df, "region")
+    region_df = region_df.sort_values("total_allocation", ascending=False)
     region_df = add_total_row(region_df, "region")
 
     if use_thousands:
         for col in ["total_allocation", "state_component", "iplc_component"]:
-            region_df[col] = region_df[col].apply(format_currency)
+            region_df[col] = region_df[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
 
     st.dataframe(
-        region_df.sort_values("total_allocation", ascending=False),
+        region_df,
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True,
@@ -395,13 +398,14 @@ with tab2:
 with tab2b:
     st.subheader("Totals by UN Sub-region")
     sub_region_df = aggregate_by_region(results_df, 'sub_region')
+    sub_region_df = sub_region_df.sort_values('total_allocation', ascending=False)
     sub_region_df = add_total_row(sub_region_df, "sub_region")
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
-            sub_region_df[col] = sub_region_df[col].apply(format_currency)
+            sub_region_df[col] = sub_region_df[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
             
     st.dataframe(
-        sub_region_df.sort_values('total_allocation', ascending=False),
+        sub_region_df,
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
@@ -460,13 +464,14 @@ with tab2b:
 with tab2c:
     st.subheader("Totals by UN Intermediate Region")
     int_region_df = aggregate_by_region(results_df[results_df['intermediate_region'] != 'NA'], 'intermediate_region')
+    int_region_df = int_region_df.sort_values('total_allocation', ascending=False)
     int_region_df = add_total_row(int_region_df, "intermediate_region")
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
-            int_region_df[col] = int_region_df[col].apply(format_currency)
+            int_region_df[col] = int_region_df[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
             
     st.dataframe(
-        int_region_df.sort_values('total_allocation', ascending=False),
+        int_region_df,
         column_config=get_column_config(use_thousands, include_country_count=True),
         hide_index=True,
         use_container_width=True
@@ -526,17 +531,18 @@ with tab2c:
 with tab3b:
     st.subheader("Totals by World Bank Income Group")
     income_df = aggregate_by_income(results_df)
+    income_df = income_df.sort_values('total_allocation', ascending=False)
     income_df = add_total_row(income_df, "WB Income Group")
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
-            income_df[col] = income_df[col].apply(format_currency)
+            income_df[col] = income_df[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
     
     config = {"WB Income Group": "Income Group"}
     config.update(get_column_config(use_thousands, include_country_count=True))
     
     display_cols = ['WB Income Group', 'Countries (number)', 'total_allocation', 'state_component', 'iplc_component']
     st.dataframe(
-        income_df[display_cols].sort_values('total_allocation', ascending=False),
+        income_df[display_cols],
         column_config=config,
         hide_index=True,
         use_container_width=True
@@ -562,7 +568,7 @@ with tab4:
 
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
-            summary_data[col] = summary_data[col].apply(format_currency)
+            summary_data[col] = summary_data[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
     
     st.dataframe(
         summary_data,
@@ -589,7 +595,7 @@ with tab5:
     
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
-            summary_data_sids[col] = summary_data_sids[col].apply(format_currency)
+            summary_data_sids[col] = summary_data_sids[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
             
     st.dataframe(
         summary_data_sids,

@@ -75,3 +75,15 @@ def test_ldc_sids_total_sum(mock_con):
     
     total_countries_sids_view = sids_total['Countries (number)'] + non_sids_count
     assert total_countries_sids_view == 196
+
+def test_party_tab_total_sum(mock_con):
+    base_df = get_base_data(mock_con)
+    fund_size = 1_000_000_000
+    results_df = calculate_allocations(base_df, fund_size, 50, exclude_high_income=False)
+    
+    # Simulate tab1 filtering (no search)
+    filtered_df = results_df.copy()
+    total_df = add_total_row(filtered_df, "party")
+    
+    total_allocation = total_df.iloc[-1]['total_allocation']
+    assert pytest.approx(total_allocation, 0.01) == 1000.0
