@@ -593,6 +593,87 @@ with tab5:
     col1.metric("SIDS State Component", format_currency(sids_total['state_component']))
     col2.metric("SIDS IPLC Component", format_currency(sids_total['iplc_component']))
 
+with tab5b:
+    st.subheader("Low Income Countries")
+    li_df = results_df[results_df['WB Income Group'] == 'Low income'].copy()
+    
+    display_li_df = li_df.copy()
+    if use_thousands:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
+            display_li_df[col] = display_li_df[col].apply(format_currency)
+
+    config = {
+        "party": "Country",
+        "WB Income Group": "WB Classification"
+    }
+    config.update(get_column_config(use_thousands))
+
+    st.dataframe(
+        display_li_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'WB Income Group', 'UN LDC']].sort_values('party'),
+        column_config=config,
+        hide_index=True,
+        use_container_width=True
+    )
+    
+    li_total = li_df[['total_allocation', 'state_component', 'iplc_component']].sum()
+    st.metric("Low Income Total Allocation", format_currency(li_total['total_allocation']))
+    col1, col2 = st.columns(2)
+    col1.metric("Low Income State Component", format_currency(li_total['state_component']))
+    col2.metric("Low Income IPLC Component", format_currency(li_total['iplc_component']))
+
+with tab6:
+    st.subheader("Middle Income Countries")
+    mi_df = results_df[results_df['WB Income Group'].isin(['Lower middle income', 'Upper middle income'])].copy()
+    
+    display_mi_df = mi_df.copy()
+    if use_thousands:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
+            display_mi_df[col] = display_mi_df[col].apply(format_currency)
+
+    config = {
+        "party": "Country",
+        "WB Income Group": "WB Classification"
+    }
+    config.update(get_column_config(use_thousands))
+
+    st.dataframe(
+        display_mi_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'UN LDC', 'WB Income Group']].sort_values('party'),
+        column_config=config,
+        hide_index=True,
+        use_container_width=True
+    )
+    
+    mi_total = mi_df[['total_allocation', 'state_component', 'iplc_component']].sum()
+    st.metric("Middle Income Countries Total Allocation", format_currency(mi_total['total_allocation']))
+    col1, col2 = st.columns(2)
+    col1.metric("Middle Income State Component", format_currency(mi_total['state_component']))
+    col2.metric("Middle Income IPLC Component", format_currency(mi_total['iplc_component']))
+
+with tab7:
+    st.subheader("High Income Countries")
+    hi_df = results_df[results_df['WB Income Group'] == 'High income'].copy()
+    
+    display_hi_df = hi_df.copy()
+    if use_thousands:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
+            display_hi_df[col] = display_hi_df[col].apply(format_currency)
+
+    config = {"party": "Country"}
+    config.update(get_column_config(use_thousands))
+
+    st.dataframe(
+        display_hi_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'EU']].sort_values('party'),
+        column_config=config,
+        hide_index=True,
+        use_container_width=True
+    )
+    
+    hi_total = hi_df[['total_allocation', 'state_component', 'iplc_component']].sum()
+    st.metric("High Income Total Allocation", format_currency(hi_total['total_allocation']))
+    col1, col2 = st.columns(2)
+    col1.metric("High Income State Component", format_currency(hi_total['state_component']))
+    col2.metric("High Income IPLC Component", format_currency(hi_total['iplc_component']))
+
 
 st.divider()
 st.markdown("""

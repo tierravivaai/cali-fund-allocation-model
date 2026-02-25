@@ -41,7 +41,7 @@ def test_aggregate_country_counts(mock_con):
     income_df = aggregate_by_income(results_df)
     assert "High income" not in income_df['WB Income Group'].values
     
-    # Check that countries with allocation > 0 are counted
+    # Check that eligible CBD parties are counted
     total_countries = income_df['Countries (number)'].sum()
-    actual_positive_allocations = (results_df['total_allocation'] > 0).sum()
-    assert total_countries == actual_positive_allocations
+    actual_eligible_parties = (results_df['is_cbd_party'] & results_df['eligible']).sum()
+    assert total_countries == actual_eligible_parties
