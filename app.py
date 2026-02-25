@@ -34,6 +34,14 @@ if "use_thousands" not in st.session_state:
     st.session_state["use_thousands"] = False
 if "exclude_hi" not in st.session_state:
     st.session_state["exclude_hi"] = True
+if "enable_floor" not in st.session_state:
+    st.session_state["enable_floor"] = False
+if "floor_pct" not in st.session_state:
+    st.session_state["floor_pct"] = 0.05
+if "enable_ceiling" not in st.session_state:
+    st.session_state["enable_ceiling"] = False
+if "ceiling_pct" not in st.session_state:
+    st.session_state["ceiling_pct"] = 2.0
 if "sort_option" not in st.session_state:
     st.session_state["sort_option"] = "Allocation (highest first)"
 
@@ -47,6 +55,10 @@ if st.sidebar.button("Reset to default"):
     st.session_state["show_raw"] = False
     st.session_state["use_thousands"] = False
     st.session_state["exclude_hi"] = True
+    st.session_state["enable_floor"] = False
+    st.session_state["floor_pct"] = 0.05
+    st.session_state["enable_ceiling"] = False
+    st.session_state["ceiling_pct"] = 2.0
     st.session_state["sort_option"] = "Allocation (highest first)"
     st.rerun()
 
@@ -68,12 +80,85 @@ iplc_share = st.sidebar.slider(
     key="iplc_share"
 )
 
+# Calculations Pre-setup
+fund_size_usd = fund_size_bn * 1_000_000_000
+
+exclude_hi = st.sidebar.checkbox(
+    "Exclude High Income countries from receiving allocations", 
+    key="exclude_hi",
+    help="When enabled, High Income countries receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged."
+)
+
+enable_floor = st.sidebar.checkbox("Enable minimum share (floor)", key="enable_floor")
+if enable_floor:
+    eligible_mask = st.session_state.base_df["is_cbd_party"].astype(bool)
+    if exclude_hi:
+        eligible_mask = eligible_mask & (st.session_state.base_df["WB Income Group"] != "High income")
+
+    n_eligible = int(eligible_mask.sum())
+    max_floor_pct = 0.0 if n_eligible <= 0 else (100.0 / n_eligible)
+
+    floor_pct = st.sidebar.slider(
+        "Minimum share per eligible country (% of total fund)",
+        min_value=0.00,
+        max_value=float(max_floor_pct),
+        value=min(0.05, float(max_floor_pct)),
+        step=0.01,
+        format="%.2f",
+        help=(
+            "Sets a minimum percentage of the total fund for each eligible country. "
+            "The maximum possible value is automatically limited to 100% divided by the number of eligible countries "
+            "to ensure the model remains feasible."
+        ),
+        key="floor_pct"
+    )
+
+    st.sidebar.caption(
+        f"Eligible countries: {n_eligible} • "
+        f"Max feasible floor: {max_floor_pct:.2f}% • "
+        f"Floor ≈ ${fund_size_usd * (floor_pct/100) / 1_000_000:,.2f}m per eligible country"
+    )
+else:
+    floor_pct = 0.0
+
+enable_ceiling = st.sidebar.checkbox("Enable maximum share (ceiling)", key="enable_ceiling")
+if enable_ceiling:
+    ceiling_pct = st.sidebar.slider(
+        "Maximum share per eligible country (% of total fund)",
+        min_value=0.50,
+        max_value=5.00,
+        step=0.10,
+        format="%.2f",
+        key="ceiling_pct"
+    )
+    st.sidebar.caption(
+        f"≈ ${fund_size_usd * (ceiling_pct/100) / 1_000_000:,.2f}m per eligible country"
+    )
+
+    with st.sidebar.expander("More ceiling options"):
+        ceiling_pct_ext = st.slider(
+            "Maximum share per eligible country (% of total fund) — extended range",
+            min_value=5.00,
+            max_value=20.00,
+            value=st.session_state.get("ceiling_pct_ext", max(5.0, ceiling_pct)),
+            step=0.50,
+            format="%.2f",
+            key="ceiling_pct_ext"
+        )
+        # Use the extended one if the primary one is at its max
+        if ceiling_pct >= 5.0:
+            ceiling_pct = ceiling_pct_ext
+            
+        st.caption(
+            f"≈ ${fund_size_usd * (ceiling_pct/100) / 1_000_000:,.2f}m per eligible country"
+        )
+else:
+    ceiling_pct = None
+
+
 show_raw = st.sidebar.toggle("Show explanation with raw data", key="show_raw")
 
 use_thousands = st.sidebar.toggle("Display small values in thousands (USD '000)", key="use_thousands")
-
-exclude_hi = st.sidebar.checkbox("Exclude High Income countries from receiving allocations", key="exclude_hi")
-st.sidebar.markdown("*“When enabled, High Income countries receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged.”*")
 
 sort_option = st.sidebar.selectbox(
     "Sort results by",
@@ -81,9 +166,15 @@ sort_option = st.sidebar.selectbox(
     key="sort_option"
 )
 
-# Calculations
-fund_size_usd = fund_size_bn * 1_000_000_000
-results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw, exclude_hi)
+results_df = calculate_allocations(
+    st.session_state.base_df,
+    fund_size_usd,
+    iplc_share,
+    show_raw,
+    exclude_hi,
+    floor_pct=floor_pct,
+    ceiling_pct=ceiling_pct
+)
 
 # Add descriptive columns
 results_df["EU"] = results_df["is_eu_ms"].map({True: "EU Member", False: "Non-EU"})
