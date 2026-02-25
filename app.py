@@ -83,8 +83,11 @@ iplc_share = st.sidebar.slider(
 # Calculations Pre-setup
 fund_size_usd = fund_size_bn * 1_000_000_000
 
-exclude_hi = st.sidebar.checkbox("Exclude High Income countries from receiving allocations", key="exclude_hi")
-st.sidebar.markdown("*“When enabled, High Income countries receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged.”*")
+exclude_hi = st.sidebar.checkbox(
+    "Exclude High Income countries from receiving allocations", 
+    key="exclude_hi",
+    help="When enabled, High Income countries receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged."
+)
 
 enable_floor = st.sidebar.checkbox("Enable minimum share (floor)", key="enable_floor")
 if enable_floor:
