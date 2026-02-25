@@ -164,3 +164,22 @@ def aggregate_by_income(df):
     agg = agg.rename(columns={'party': 'Countries (number)'})
     
     return agg[agg['Countries (number)'] > 0]
+
+def add_total_row(df, label_col, label="Total"):
+    """Adds a summary 'Total' row to an aggregated dataframe."""
+    if df.empty:
+        return df
+        
+    numeric_cols = df.select_dtypes(include=['number']).columns
+    total_row = df[numeric_cols].sum()
+    
+    # Create the new row as a dictionary
+    row_dict = {col: total_row[col] for col in numeric_cols}
+    row_dict[label_col] = label
+    
+    # Fill in any missing columns with empty string or appropriate default
+    for col in df.columns:
+        if col not in row_dict:
+            row_dict[col] = ""
+            
+    return pd.concat([df, pd.DataFrame([row_dict])], ignore_index=True)

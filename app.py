@@ -2,7 +2,7 @@ import streamlit as st
 import duckdb
 import pandas as pd
 from logic.data_loader import load_data, get_base_data
-from logic.calculator import calculate_allocations, aggregate_by_region, aggregate_eu, aggregate_special_groups, aggregate_by_income
+from logic.calculator import calculate_allocations, aggregate_by_region, aggregate_eu, aggregate_special_groups, aggregate_by_income, add_total_row
 
 st.set_page_config(page_title="Cali Fund Allocation Model", layout="wide")
 
@@ -329,6 +329,7 @@ with tab2:
     st.subheader("Totals by UN Region")
 
     region_df = aggregate_by_region(results_df, "region")
+    region_df = add_total_row(region_df, "region")
 
     if use_thousands:
         for col in ["total_allocation", "state_component", "iplc_component"]:
@@ -394,6 +395,7 @@ with tab2:
 with tab2b:
     st.subheader("Totals by UN Sub-region")
     sub_region_df = aggregate_by_region(results_df, 'sub_region')
+    sub_region_df = add_total_row(sub_region_df, "sub_region")
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             sub_region_df[col] = sub_region_df[col].apply(format_currency)
@@ -458,6 +460,7 @@ with tab2b:
 with tab2c:
     st.subheader("Totals by UN Intermediate Region")
     int_region_df = aggregate_by_region(results_df[results_df['intermediate_region'] != 'NA'], 'intermediate_region')
+    int_region_df = add_total_row(int_region_df, "intermediate_region")
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             int_region_df[col] = int_region_df[col].apply(format_currency)
@@ -523,6 +526,7 @@ with tab2c:
 with tab3b:
     st.subheader("Totals by World Bank Income Group")
     income_df = aggregate_by_income(results_df)
+    income_df = add_total_row(income_df, "WB Income Group")
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             income_df[col] = income_df[col].apply(format_currency)
@@ -544,7 +548,9 @@ with tab4:
     ldc_total, _ = aggregate_special_groups(results_df)
     
     # Calculate non-LDC (broadly 'Developed/Other')
-    non_ldc_df = results_df[(~results_df['is_ldc']) & (results_df['total_allocation'] > 0)]
+    # To sum to 196, we count ALL CBD parties NOT in LDC group
+    mask_cbd = results_df['is_cbd_party']
+    non_ldc_df = results_df[mask_cbd & (~results_df['is_ldc'])]
     non_ldc_total = non_ldc_df[['total_allocation', 'state_component', 'iplc_component']].sum()
     non_ldc_count = len(non_ldc_df)
     
@@ -552,6 +558,8 @@ with tab4:
         {"Group": "Least Developed Countries (LDC)", "Countries (number)": ldc_total['Countries (number)'], **ldc_total.drop('Countries (number)').to_dict()},
         {"Group": "Other Countries", "Countries (number)": non_ldc_count, **non_ldc_total.to_dict()}
     ])
+    summary_data = add_total_row(summary_data, "Group")
+
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
             summary_data[col] = summary_data[col].apply(format_currency)
@@ -568,7 +576,8 @@ with tab5:
     _, sids_total = aggregate_special_groups(results_df)
     
     # Calculate non-SIDS
-    non_sids_df = results_df[(~results_df['is_sids']) & (results_df['total_allocation'] > 0)]
+    mask_cbd = results_df['is_cbd_party']
+    non_sids_df = results_df[mask_cbd & (~results_df['is_sids'])]
     non_sids_total = non_sids_df[['total_allocation', 'state_component', 'iplc_component']].sum()
     non_sids_count = len(non_sids_df)
     
@@ -576,6 +585,7 @@ with tab5:
         {"Group": "Small Island Developing States (SIDS)", "Countries (number)": sids_total['Countries (number)'], **sids_total.drop('Countries (number)').to_dict()},
         {"Group": "Other Countries", "Countries (number)": non_sids_count, **non_sids_total.to_dict()}
     ])
+    summary_data_sids = add_total_row(summary_data_sids, "Group")
     
     if use_thousands:
         for col in ['total_allocation', 'state_component', 'iplc_component']:
@@ -608,14 +618,29 @@ with tab5b:
     }
     config.update(get_column_config(use_thousands))
 
+    li_total = li_df[['total_allocation', 'state_component', 'iplc_component']].sum()
+    li_count = len(li_df)
+    
+    # Optional: Display a small summary table with Total at the bottom if desired
+    # But the user specifically asked for "a total row on each tab". 
+    # For individual country tables, a summary row at the bottom is helpful.
+    
+    display_cols_li = ['party', 'total_allocation', 'state_component', 'iplc_component', 'WB Income Group', 'UN LDC']
+    li_table = display_li_df[display_cols_li].sort_values('party')
+    li_table = add_total_row(li_table, "party")
+
+    if use_thousands:
+        # Re-apply formatting to the total row specifically if needed, 
+        # or just format the whole table again.
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
+             li_table[col] = li_table[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
+
     st.dataframe(
-        display_li_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'WB Income Group', 'UN LDC']].sort_values('party'),
+        li_table,
         column_config=config,
         hide_index=True,
         use_container_width=True
     )
-    
-    li_total = li_df[['total_allocation', 'state_component', 'iplc_component']].sum()
     st.metric("Low Income Total Allocation", format_currency(li_total['total_allocation']))
     col1, col2 = st.columns(2)
     col1.metric("Low Income State Component", format_currency(li_total['state_component']))
@@ -636,14 +661,22 @@ with tab6:
     }
     config.update(get_column_config(use_thousands))
 
+    mi_total = mi_df[['total_allocation', 'state_component', 'iplc_component']].sum()
+    mi_count = len(mi_df)
+    
+    mi_table = display_mi_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'UN LDC', 'WB Income Group']].sort_values('party')
+    mi_table = add_total_row(mi_table, "party")
+
+    if use_thousands:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
+            mi_table[col] = mi_table[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
+
     st.dataframe(
-        display_mi_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'UN LDC', 'WB Income Group']].sort_values('party'),
+        mi_table,
         column_config=config,
         hide_index=True,
         use_container_width=True
     )
-    
-    mi_total = mi_df[['total_allocation', 'state_component', 'iplc_component']].sum()
     st.metric("Middle Income Countries Total Allocation", format_currency(mi_total['total_allocation']))
     col1, col2 = st.columns(2)
     col1.metric("Middle Income State Component", format_currency(mi_total['state_component']))
@@ -661,14 +694,22 @@ with tab7:
     config = {"party": "Country"}
     config.update(get_column_config(use_thousands))
 
+    hi_total = hi_df[['total_allocation', 'state_component', 'iplc_component']].sum()
+    hi_count = len(hi_df)
+    
+    hi_table = display_hi_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'EU']].sort_values('party')
+    hi_table = add_total_row(hi_table, "party")
+
+    if use_thousands:
+        for col in ['total_allocation', 'state_component', 'iplc_component']:
+            hi_table[col] = hi_table[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
+
     st.dataframe(
-        display_hi_df[['party', 'total_allocation', 'state_component', 'iplc_component', 'EU']].sort_values('party'),
+        hi_table,
         column_config=config,
         hide_index=True,
         use_container_width=True
     )
-    
-    hi_total = hi_df[['total_allocation', 'state_component', 'iplc_component']].sum()
     st.metric("High Income Total Allocation", format_currency(hi_total['total_allocation']))
     col1, col2 = st.columns(2)
     col1.metric("High Income State Component", format_currency(hi_total['state_component']))
