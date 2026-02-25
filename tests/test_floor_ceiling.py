@@ -81,8 +81,8 @@ def test_allocation_stability_with_no_constraints(mock_con):
     base_df = get_base_data(mock_con)
     fund_size = 1_000_000_000
     
-    # Default parameters should match old logic
-    results_new = calculate_allocations(base_df, fund_size, 50, floor_pct=0.0, ceiling_pct=100.0)
+    # Default parameters should match old logic (None means no ceiling)
+    results_new = calculate_allocations(base_df, fund_size, 50, floor_pct=0.0, ceiling_pct=None)
     
     # Explicitly calculate old way (simple normalization)
     mask = (base_df['is_cbd_party']) & (base_df['un_share'] > 0)
@@ -95,3 +95,12 @@ def test_allocation_stability_with_no_constraints(mock_con):
         check_names=False,
         check_index_type=False
     )
+
+def test_ceiling_none_behavior(mock_con):
+    base_df = get_base_data(mock_con)
+    fund_size = 1_000_000_000
+    # None should behave same as 100% or effectively no cap
+    res_none = calculate_allocations(base_df, fund_size, 50, floor_pct=0.0, ceiling_pct=None)
+    res_100 = calculate_allocations(base_df, fund_size, 50, floor_pct=0.0, ceiling_pct=100.0)
+    
+    pd.testing.assert_frame_equal(res_none, res_100)

@@ -55,7 +55,8 @@ The mathematical core ensures that the sum of individual allocations matches the
 
 ### 4. Constraint Validation (Floor/Ceiling)
 The model supports user-defined floor and ceiling constraints on individual party shares.
-- **Validation Rule**: All eligible parties must receive a share within `[floor, ceiling]` while maintaining a total sum of 100%.
+- **Validation Rule**: All eligible parties must receive a share within `[floor, ceiling]` while maintaining a total sum of 100%. The model handles iterative redistribution of shares when constraints are applied.
+- **Dynamic Floor Check**: The UI automatically limits the maximum floor percentage to `100 / n_eligible` to prevent mathematical impossibility.
 - **Location**: `tests/test_floor_ceiling.py`.
 
 ### 5. Cross-Reference Mapping
