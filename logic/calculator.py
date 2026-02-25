@@ -61,7 +61,7 @@ def calculate_allocations(
     show_raw_inversion=False,
     exclude_high_income=False,
     floor_pct=0.0,
-    ceiling_pct=10.0,
+    ceiling_pct=None,
 ):
     # Filter out parties with 0 share for inversion logic (except for display later)
     # But for Cali Fund, we need to invert the non-zero ones.
@@ -92,7 +92,7 @@ def calculate_allocations(
 
     if len(eligible_idx) > 0:
         floor = float(floor_pct) / 100.0
-        cap = float(ceiling_pct) / 100.0
+        cap = 1.0 if ceiling_pct is None else float(ceiling_pct) / 100.0
 
         constrained_shares = _apply_floor_ceiling_shares(
             calc_df.loc[eligible_idx, "inv_weight"],
@@ -113,8 +113,19 @@ def calculate_allocations(
     return calc_df
 
 def aggregate_by_region(df, region_col='region'):
-    agg = df.groupby(region_col, dropna=False)[['total_allocation', 'state_component', 'iplc_component']].sum().reset_index()
-    return agg[agg['total_allocation'] > 0]
+    # We count all CBD parties that are eligible for the calculation
+    # Even if they have 0 allocation (e.g. they had 0 UN share or are the EU entity)
+    # BUT we only show those that are "eligible" based on the current toggle (e.g. not HI if excluded)
+    mask = df['is_cbd_party'] & df['eligible']
+    
+    agg_sums = df[mask].groupby(region_col, dropna=False)[['total_allocation', 'state_component', 'iplc_component']].sum()
+    agg_counts = df[mask].groupby(region_col, dropna=False)['party'].count()
+    
+    agg = agg_sums.merge(agg_counts, left_index=True, right_index=True).reset_index()
+    agg = agg.rename(columns={'party': 'Countries (number)'})
+    
+    # Filter to only show groups that have at least one party
+    return agg[agg['Countries (number)'] > 0]
 
 def aggregate_eu(df):
     ms_df = df[df['is_eu_ms']]
@@ -123,15 +134,33 @@ def aggregate_eu(df):
     combined = pd.concat([ms_df, eu_party])
     total_row = combined[['total_allocation', 'state_component', 'iplc_component']].sum()
     total_row['party'] = 'EU Member States + European Union (total)'
+    total_row['Countries (number)'] = len(combined)
     
     return combined, total_row
 
 def aggregate_special_groups(df):
-    ldc = df[df['is_ldc']][['total_allocation', 'state_component', 'iplc_component']].sum()
-    sids = df[df['is_sids']][['total_allocation', 'state_component', 'iplc_component']].sum()
+    # Count all CBD parties in these groups that are eligible
+    mask = df['is_cbd_party'] & df['eligible']
     
-    return ldc, sids
+    ldc_df = df[df['is_ldc'] & mask]
+    sids_df = df[df['is_sids'] & mask]
+    
+    ldc_sum = ldc_df[['total_allocation', 'state_component', 'iplc_component']].sum()
+    ldc_sum['Countries (number)'] = len(ldc_df)
+    
+    sids_sum = sids_df[['total_allocation', 'state_component', 'iplc_component']].sum()
+    sids_sum['Countries (number)'] = len(sids_df)
+    
+    return ldc_sum, sids_sum
 
 def aggregate_by_income(df):
-    agg = df.groupby('WB Income Group', dropna=False)[['total_allocation', 'state_component', 'iplc_component']].sum().reset_index()
-    return agg[agg['total_allocation'] > 0]
+    # Count all CBD parties that are eligible
+    mask = df['is_cbd_party'] & df['eligible']
+    
+    agg_sums = df[mask].groupby('WB Income Group', dropna=False)[['total_allocation', 'state_component', 'iplc_component']].sum()
+    agg_counts = df[mask].groupby('WB Income Group', dropna=False)['party'].count()
+    
+    agg = agg_sums.merge(agg_counts, left_index=True, right_index=True).reset_index()
+    agg = agg.rename(columns={'party': 'Countries (number)'})
+    
+    return agg[agg['Countries (number)'] > 0]

@@ -111,17 +111,11 @@ def get_base_data(con):
     df['WB Income Group'] = df['WB Income Group'].replace('NA', 'Not Available')
     
     # Manual fixes for known missing income data
-    df.loc[df['party'] == 'Venezuela (Bolivarian republic of)', 'WB Income Group'] = 'Lower middle income' 
     df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'WB Income Group'] = 'Lower middle income' 
-    df.loc[df['party'] == 'Venezuela (Bolivarian republic of)', 'region'] = 'Americas'
     df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'region'] = 'Americas'
-    df.loc[df['party'] == 'Venezuela (Bolivarian republic of)', 'sub_region'] = 'Latin America and the Caribbean'
     df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'sub_region'] = 'Latin America and the Caribbean'
-    df.loc[df['party'] == 'Venezuela (Bolivarian republic of)', 'intermediate_region'] = 'South America'
     df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'intermediate_region'] = 'South America'
-    df.loc[df['party'] == 'Venezuela (Bolivarian republic of)', 'is_ldc'] = False
     df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'is_ldc'] = False
-    df.loc[df['party'] == 'Venezuela (Bolivarian republic of)', 'is_sids'] = False
     df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'is_sids'] = False
     
     df.loc[df['party'] == 'Democratic Republic of the Congo (formerly Zaire)', 'WB Income Group'] = 'Low income'
