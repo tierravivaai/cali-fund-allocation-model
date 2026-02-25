@@ -34,6 +34,10 @@ if "use_thousands" not in st.session_state:
     st.session_state["use_thousands"] = False
 if "exclude_hi" not in st.session_state:
     st.session_state["exclude_hi"] = True
+if "floor_pct" not in st.session_state:
+    st.session_state["floor_pct"] = 0.0
+if "ceiling_pct" not in st.session_state:
+    st.session_state["ceiling_pct"] = 10.0
 if "sort_option" not in st.session_state:
     st.session_state["sort_option"] = "Allocation (highest first)"
 
@@ -47,6 +51,8 @@ if st.sidebar.button("Reset to default"):
     st.session_state["show_raw"] = False
     st.session_state["use_thousands"] = False
     st.session_state["exclude_hi"] = True
+    st.session_state["floor_pct"] = 0.0
+    st.session_state["ceiling_pct"] = 10.0
     st.session_state["sort_option"] = "Allocation (highest first)"
     st.rerun()
 
@@ -68,6 +74,22 @@ iplc_share = st.sidebar.slider(
     key="iplc_share"
 )
 
+floor_pct = st.sidebar.slider(
+    "Floor (minimum share per eligible country, %)",
+    min_value=0.0,
+    max_value=1.0,
+    step=0.01,
+    key="floor_pct"
+)
+
+ceiling_pct = st.sidebar.slider(
+    "Ceiling (maximum share per eligible country, %)",
+    min_value=0.1,
+    max_value=10.0,
+    step=0.1,
+    key="ceiling_pct"
+)
+
 show_raw = st.sidebar.toggle("Show explanation with raw data", key="show_raw")
 
 use_thousands = st.sidebar.toggle("Display small values in thousands (USD '000)", key="use_thousands")
@@ -83,7 +105,15 @@ sort_option = st.sidebar.selectbox(
 
 # Calculations
 fund_size_usd = fund_size_bn * 1_000_000_000
-results_df = calculate_allocations(st.session_state.base_df, fund_size_usd, iplc_share, show_raw, exclude_hi)
+results_df = calculate_allocations(
+    st.session_state.base_df,
+    fund_size_usd,
+    iplc_share,
+    show_raw,
+    exclude_hi,
+    floor_pct=floor_pct,
+    ceiling_pct=ceiling_pct
+)
 
 # Add descriptive columns
 results_df["EU"] = results_df["is_eu_ms"].map({True: "EU Member", False: "Non-EU"})
