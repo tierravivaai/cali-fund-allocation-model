@@ -3,3 +3,4 @@ duckdb
 pandas
 pytest
 jinja2
+plotly

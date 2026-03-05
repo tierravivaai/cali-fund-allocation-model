@@ -1,6 +1,9 @@
 import streamlit as st
 import duckdb
 import pandas as pd
+import plotly.graph_objects as go
+import plotly.express as px
+import numpy as np
 from logic.data_loader import load_data, get_base_data
 from logic.calculator import calculate_allocations, aggregate_by_region, aggregate_eu, aggregate_special_groups, aggregate_by_income, add_total_row
 
@@ -50,6 +53,8 @@ if "show_advanced" not in st.session_state:
     st.session_state["show_advanced"] = False
 if "sort_option" not in st.session_state:
     st.session_state["sort_option"] = "Allocation (highest first)"
+if "show_negotiation_dashboard" not in st.session_state:
+    st.session_state["show_negotiation_dashboard"] = True
 
 # Sidebar Controls
 st.sidebar.header("Controls")
@@ -69,6 +74,7 @@ if st.sidebar.button("Reset to default"):
     st.session_state["sosac_gamma"] = 0.10
     st.session_state["show_advanced"] = False
     st.session_state["sort_option"] = "Allocation (highest first)"
+    st.session_state["show_negotiation_dashboard"] = True
     st.rerun()
 
 fund_size_bn = st.sidebar.slider(
@@ -80,6 +86,26 @@ fund_size_bn = st.sidebar.slider(
     key="fund_size_bn"
 )
 st.sidebar.caption(f"= ${fund_size_bn * 1000:,.0f} million per year")
+
+# Negotiation Presets
+with st.sidebar.expander("Negotiation Presets", expanded=False):
+    col_p1, col_p2 = st.columns(2)
+    if col_p1.button("Equity Base", help="TSAC=0, SOSAC=0 (Pure IUSAF)"):
+        st.session_state["tsac_beta"] = 0.0
+        st.session_state["sosac_gamma"] = 0.0
+        st.rerun()
+    if col_p2.button("Stewardship", help="TSAC=0.25, SOSAC=0.05"):
+        st.session_state["tsac_beta"] = 0.25
+        st.session_state["sosac_gamma"] = 0.05
+        st.rerun()
+    if col_p1.button("Vulnerability", help="TSAC=0.10, SOSAC=0.15"):
+        st.session_state["tsac_beta"] = 0.10
+        st.session_state["sosac_gamma"] = 0.15
+        st.rerun()
+    if col_p2.button("Balanced", help="TSAC=0.15, SOSAC=0.10 (Default)"):
+        st.session_state["tsac_beta"] = 0.15
+        st.session_state["sosac_gamma"] = 0.10
+        st.rerun()
 
 # Calculations Pre-setup
 fund_size_usd = fund_size_bn * 1_000_000_000
@@ -236,6 +262,8 @@ use_thousands = st.sidebar.toggle("Display small values in thousands (USD '000)"
 
 show_advanced = st.sidebar.toggle("Show advanced component breakdown", key="show_advanced")
 
+st.sidebar.toggle("Enable Negotiation Dashboard", key="show_negotiation_dashboard")
+
 sort_option = st.sidebar.selectbox(
     "Sort results by",
     options=["Allocation (highest first)", "Country name (A–Z)"],
@@ -253,6 +281,26 @@ results_df = calculate_allocations(
     tsac_beta=tsac_beta,
     sosac_gamma=sosac_gamma
 )
+
+# Baseline for comparison (beta=0, gamma=0)
+results_df_baseline = calculate_allocations(
+    st.session_state.base_df,
+    fund_size_usd,
+    iplc_share,
+    False, # show_raw
+    exclude_hi,
+    floor_pct=floor_pct,
+    ceiling_pct=ceiling_pct,
+    tsac_beta=0.0,
+    sosac_gamma=0.0
+)
+
+# Merge baseline for comparison
+comparison_df = results_df[['party', 'total_allocation', 'WB Income Group', 'region', 'is_ldc', 'is_sids', 'is_cbd_party', 'eligible']].copy()
+comparison_df = comparison_df.rename(columns={'total_allocation': 'current_amt'})
+comparison_df['baseline_amt'] = results_df_baseline['total_allocation']
+comparison_df['delta_amt'] = comparison_df['current_amt'] - comparison_df['baseline_amt']
+comparison_df['pct_change'] = (comparison_df['delta_amt'] / comparison_df['baseline_amt'].replace(0, np.nan)) * 100
 
 # Add descriptive columns
 results_df["EU"] = results_df["is_eu_ms"].map({True: "EU Member", False: "Non-EU"})
@@ -306,7 +354,7 @@ def get_column_config(use_thousands, include_country_count=False):
     return config
 
 # Main Tabs
-tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5b, tab6, tab7, tab5 = st.tabs([
+tabs = [
     "By Party", 
     "By UN Region", 
     "By UN Sub-region",
@@ -317,9 +365,151 @@ tab1, tab2, tab2b, tab2c, tab3b, tab4, tab5b, tab6, tab7, tab5 = st.tabs([
     "Middle Income",
     "High Income",
     "SIDS"
-])
+]
 
-with tab1:
+if st.session_state.get("show_negotiation_dashboard", True):
+    tabs.insert(0, "Negotiation Dashboard")
+
+main_tabs = st.tabs(tabs)
+current_tab_idx = 0
+
+if st.session_state.get("show_negotiation_dashboard", True):
+    with main_tabs[current_tab_idx]:
+        st.subheader("Negotiation Dashboard")
+        
+        # Summary Row
+        col1, col2, col3, col4 = st.columns(4)
+        winners = (comparison_df['delta_amt'] > 0.001).sum()
+        losers = (comparison_df['delta_amt'] < -0.001).sum()
+        unchanged = len(comparison_df[comparison_df['eligible']]) - winners - losers
+        
+        col1.metric("Gainers vs Baseline", winners, delta=None)
+        col2.metric("Losers vs Baseline", losers, delta=None)
+        col3.metric("Unchanged", unchanged)
+        
+        total_shift = comparison_df[comparison_df['delta_amt'] > 0]['delta_amt'].sum()
+        col4.metric("Reallocated Amount", f"US${total_shift:,.2f}m", help="Total amount shifted from 'losers' to 'winners' compared to pure IUSAF.")
+
+        st.divider()
+        
+        # Charts Row
+        chart_col1, chart_col2 = st.columns(2)
+        
+        with chart_col1:
+            st.write("**Top 10 Winners & Losers (US$m)**")
+            top_winners = comparison_df.sort_values('delta_amt', ascending=False).head(10)
+            top_losers = comparison_df.sort_values('delta_amt', ascending=True).head(10)
+            win_loss_df = pd.concat([top_winners, top_losers])
+            
+            fig = px.bar(
+                win_loss_df, 
+                x='delta_amt', 
+                y='party', 
+                orientation='h',
+                color='delta_amt',
+                color_continuous_scale='RdBu_r',
+                labels={'delta_amt': 'Delta (US$m)', 'party': 'Country'}
+            )
+            fig.update_layout(showlegend=False, height=400, margin=dict(l=0, r=0, t=0, b=0))
+            st.plotly_chart(fig, use_container_width=True)
+
+        with chart_col2:
+            st.write("**Group Impact (Share % Change)**")
+            group_type = st.selectbox("Compare by:", ["region", "WB Income Group", "is_ldc", "is_sids"], key="group_impact_type")
+            
+            group_baseline = comparison_df.groupby(group_type)['baseline_amt'].sum()
+            group_current = comparison_df.groupby(group_type)['current_amt'].sum()
+            group_impact = ((group_current / group_baseline.replace(0, np.nan)) - 1) * 100
+            
+            # Formatting for display
+            if group_type == "is_ldc":
+                group_impact.index = group_impact.index.map({True: "LDC", False: "Non-LDC"})
+            if group_type == "is_sids":
+                group_impact.index = group_impact.index.map({True: "SIDS", False: "Non-SIDS"})
+                
+            fig = px.bar(
+                x=group_impact.values,
+                y=group_impact.index,
+                orientation='h',
+                labels={'x': '% Change in Total Share', 'y': 'Group'}
+            )
+            fig.update_layout(height=400, margin=dict(l=0, r=0, t=0, b=0))
+            st.plotly_chart(fig, use_container_width=True)
+
+        st.divider()
+        
+        # Lower Detail Row
+        detail_col1, detail_col2 = st.columns(2)
+        
+        with detail_col1:
+            st.write("**Country Allocation Waterfall**")
+            target_party = st.selectbox("Select Country:", options=sorted(results_df['party'].unique()), index=0)
+            row = results_df[results_df['party'] == target_party].iloc[0]
+            
+            # We need to compute deltas for the waterfall
+            # IUSAF Base is effective_alpha * iusaf_share * fund_size
+            # TSAC Adjustment is effective_beta * tsac_share * fund_size
+            # SOSAC Adjustment is effective_gamma * sosac_share * fund_size
+            
+            fig = go.Figure(go.Waterfall(
+                name = "Allocation", orientation = "v",
+                measure = ["relative", "relative", "relative", "total"],
+                x = ["IUSAF Base", "TSAC Adjustment", "SOSAC Adjustment", "Final Allocation"],
+                textposition = "outside",
+                text = [f"${row['component_iusaf_amt']:,.2f}m", f"${row['component_tsac_amt']:,.2f}m", f"${row['component_sosac_amt']:,.2f}m", f"${row['total_allocation']:,.2f}m"],
+                y = [row['component_iusaf_amt'], row['component_tsac_amt'], row['component_sosac_amt'], 0],
+                connector = {"line":{"color":"rgb(63, 63, 63)"}},
+            ))
+            fig.update_layout(height=400, margin=dict(l=0, r=0, t=20, b=0))
+            st.plotly_chart(fig, use_container_width=True)
+
+        with detail_col2:
+            st.write("**TSAC vs SOSAC Sensitivity Heatmap**")
+            target_group = st.selectbox("Metric to track:", ["LDC Total Share (%)", "SIDS Total Share (%)", "Africa Total Share (%)"], key="heatmap_metric")
+            
+            # Simple pre-computed/simulated heatmap logic for speed (mock-up for now, could be real-time if optimized)
+            # For real-time, we'd need a loop, but we can sample a few points
+            betas = [0.0, 0.1, 0.2, 0.3]
+            gammas = [0.0, 0.05, 0.1, 0.15, 0.2]
+            
+            # Real-time computation (approx 20 points, should be fast enough)
+            z_data = []
+            for g in gammas:
+                row_z = []
+                for b in betas:
+                    # Calculate allocations for this pair
+                    # To keep it fast, we only sum the target group
+                    # Final Share = (1-b-g)*iusaf + b*tsac + g*sosac
+                    # We can use the pre-computed component shares from results_df
+                    alpha = 1.0 - b - g
+                    temp_final = alpha * results_df['iusaf_share'] + b * results_df['tsac_share'] + g * results_df['sosac_share']
+                    # normalize
+                    temp_final = temp_final / temp_final[results_df['eligible']].sum()
+                    
+                    if target_group == "LDC Total Share (%)":
+                        val = temp_final[results_df['is_ldc'] & results_df['eligible']].sum() * 100
+                    elif target_group == "SIDS Total Share (%)":
+                        val = temp_final[results_df['is_sids'] & results_df['eligible']].sum() * 100
+                    else:
+                        val = temp_final[results_df['region'] == "Africa"].sum() * 100
+                    row_z.append(val)
+                z_data.append(row_z)
+                
+            fig = px.imshow(
+                z_data,
+                x=[f"β={b:.1f}" for b in betas],
+                y=[f"γ={g:.2f}" for g in gammas],
+                labels=dict(x="TSAC (Land) Weight", y="SOSAC (SIDS) Weight", color="Share %"),
+                text_auto=".1f",
+                aspect="auto",
+                color_continuous_scale='Viridis'
+            )
+            fig.update_layout(height=400, margin=dict(l=0, r=0, t=0, b=0))
+            st.plotly_chart(fig, use_container_width=True)
+
+    current_tab_idx += 1
+
+with main_tabs[current_tab_idx]:
     st.subheader("Allocations by Country")
     # Add party status column for display
     def get_status(row):
