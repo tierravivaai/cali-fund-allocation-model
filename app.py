@@ -39,7 +39,7 @@ if "enable_floor" not in st.session_state:
 if "floor_pct" not in st.session_state:
     st.session_state["floor_pct"] = 0.05
 if "enable_ceiling" not in st.session_state:
-    st.session_state["enable_ceiling"] = True
+    st.session_state["enable_ceiling"] = False
 if "ceiling_pct" not in st.session_state:
     st.session_state["ceiling_pct"] = 1.0
 if "tsac_beta" not in st.session_state:
@@ -63,7 +63,7 @@ if st.sidebar.button("Reset to default"):
     st.session_state["exclude_hi"] = True
     st.session_state["enable_floor"] = False
     st.session_state["floor_pct"] = 0.05
-    st.session_state["enable_ceiling"] = True
+    st.session_state["enable_ceiling"] = False
     st.session_state["ceiling_pct"] = 1.0
     st.session_state["tsac_beta"] = 0.15
     st.session_state["sosac_gamma"] = 0.10
@@ -111,11 +111,44 @@ sosac_gamma = st.sidebar.slider(
     help="Weight for the SIDS-only structural adjustment component (SOSAC)."
 )
 
+# Dynamic Interpretation Boxes
+tsac_amt_m = (fund_size_usd * tsac_beta) / 1_000_000
+sosac_amt_m = (fund_size_usd * sosac_gamma) / 1_000_000
 iusaf_weight = 1.0 - tsac_beta - sosac_gamma
+iusaf_amt_m = (fund_size_usd * max(0, iusaf_weight)) / 1_000_000
+
+# Calculate eligible SIDS count
+if exclude_hi:
+    eligible_sids_count = ((st.session_state.base_df["is_cbd_party"]) & (st.session_state.base_df["is_sids"]) & ~( (st.session_state.base_df["WB Income Group"] == "High income") & (st.session_state.base_df["is_sids"] == False) )).sum()
+else:
+    eligible_sids_count = ((st.session_state.base_df["is_cbd_party"]) & (st.session_state.base_df["is_sids"])).sum()
+
+st.sidebar.info(
+    f"**TSAC Interpretation**\n\n"
+    f"With TSAC set to **{tsac_beta:.0%}**, **US${tsac_amt_m:,.2f}m** is allocated based on land surface area.\n\n"
+    f"IUSAF base weight: **{iusaf_weight:.0%}** (US${iusaf_amt_m:,.2f}m)."
+)
+
+if eligible_sids_count > 0:
+    if sosac_gamma > 0:
+        st.sidebar.info(
+            f"**SOSAC Interpretation**\n\n"
+            f"With SOSAC set to **{sosac_gamma:.0%}**, **US${sosac_amt_m:,.2f}m** is reserved for SIDS. "
+            f"Shared equally among **{eligible_sids_count}** eligible SIDS."
+        )
+    else:
+        st.sidebar.info("**SOSAC Interpretation**\n\nSOSAC is set to 0%, so no SIDS-specific pool is applied.")
+else:
+    if sosac_gamma > 0:
+        st.sidebar.info(
+            f"**SOSAC Interpretation**\n\n"
+            f"No eligible SIDS under current filters. The SOSAC portion (**US${sosac_amt_m:,.2f}m**) will be reallocated to the inverted UN scale (IUSAF)."
+        )
+    else:
+        st.sidebar.info("**SOSAC Interpretation**\n\nSOSAC is set to 0%.")
+
 if iusaf_weight < 0.60:
     st.sidebar.warning(f"Combined secondary weights ({tsac_beta + sosac_gamma:.2f}) exceed 0.40. IUSAF base weight is low: {iusaf_weight:.2f}")
-else:
-    st.sidebar.info(f"IUSAF base weight (inverted UN scale): {iusaf_weight:.2f}")
 
 st.sidebar.divider()
 st.sidebar.header("Constraint Controls")
