@@ -1,3 +1,20 @@
+## Blended Allocation Components
+
+The model combines three components into a single **final share** for each eligible Party.
+
+1. **IUSAF (Inverted UN Scale of Assessments)**: favouring countries with smaller relative economic capacity.
+2. **TSAC (Total Surface Area Component)**: share proportional to land surface area (km²).
+3. **SOSAC (SIDS Only Structural Adjustment Component)**: share distributed equally among all eligible SIDS.
+
+The final share is calculated as:
+**Final Share = (1 - $\beta$ - $\gamma$) * IUSAF + $\beta$ * TSAC + $\gamma$ * SOSAC**
+
+Where:
+- $\beta$ is the weight assigned to land area (TSAC).
+- $\gamma$ is the weight assigned to SIDS structural adjustment (SOSAC).
+
+---
+
 ## Worked example: step-by-step calculation
 
 This example shows how the model converts UN assessed shares into indicative allocations.

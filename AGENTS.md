@@ -4,10 +4,12 @@
 You are working on a policy-support tool for biodiversity fund allocation (Cali Fund). The model uses the inverted UN Scale of Assessments to determine distribution among Parties.
 
 ## Core Rules
-1. **Inversion Logic**: 
-   - Weight = `1 / un_share_2027`
-   - Normalise weights so they sum to 1.0 (100%).
-   - `allocation = fund_size * normalised_weight`.
+1. **Inversion & Blending Logic**: 
+   - **IUSAF Weight** = `1 / un_share_2027` (Normalised to sum to 1.0).
+   - **TSAC Weight** = Proportional to `land_area_km2` (Normalised to sum to 1.0).
+   - **SOSAC Weight** = Equal share for all eligible SIDS (Normalised to sum to 1.0).
+   - `Final Share = (1 - beta - gamma) * iusaf_share + beta * tsac_share + gamma * sosac_share`.
+   - `allocation = fund_size * Final Share`.
 2. **Data Consistency**:
    - Total allocations MUST sum to the specified fund size.
    - `Total = IPLC Envelope + State Envelope`.

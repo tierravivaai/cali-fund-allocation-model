@@ -13,6 +13,7 @@ This interactive tool illustrates how Cali Fund allocations would be distributed
     - Developmental groupings (LDC, SIDS).
 - **High Income Filter**: Ability to toggle High Income countries out of the allocation pool (enabled by default).
 - **Transparency**: Toggle "Raw Inversion and Explanation" to see plain language and technical summaries of the methodology.
+- **TSAC & SOSAC Components**: Blended allocation formula incorporating land area (TSAC) and SIDS-specific structural adjustment (SOSAC).
 
 ## Installation & Setup
 
@@ -27,12 +28,20 @@ This interactive tool illustrates how Cali Fund allocations would be distributed
    ```
 
 ## Methodology
-The model takes each Party's UN Scale of Assessment share for 2027 and inverts it. This means countries with a smaller UN share (typically lower-income countries) receive a larger portion of the Cali Fund.
+The model computes a blended share for each eligible Party based on three components:
+
+1. **IUSAF (Inverted UN Scale of Assessments)**: The primary component. Each Party's UN Scale of Assessment share for 2027 is inverted (1/share), favouring countries with smaller relative economic capacity.
+2. **TSAC (Total Surface Area Component)**: A share proportional to each Party's land surface area (km²), using the latest non-null data from the World Bank.
+3. **SOSAC (SIDS Only Structural Adjustment Component)**: A categorical share distributed equally among all eligible Small Island Developing States (SIDS), reflecting structural vulnerabilities regardless of land size.
+
+The final share is determined by blending these components using user-adjustable weights ($\beta$ for TSAC and $\gamma$ for SOSAC):
+> **Final Share = (1 - $\beta$ - $\gamma$) * IUSAF + $\beta$ * TSAC + $\gamma$ * SOSAC**
 
 ## Data Sources
 - **UN Scale of Assessments**: General assembly resolution 79/225.
 - **Regions**: UNSD M49 standard.
 - **Income Class**: World Bank Country and Lending Groups.
+- **Land Area**: World Bank indicator `AG.LND.TOTL.K2` (Land area in sq. km).
 
 ## Floor Calculation (Minimum Share per Eligible Country)
 
@@ -102,6 +111,12 @@ The model undergoes rigorous automated validation to ensure statistical accuracy
 The model is validated against the **CBD COP16 Budget Table** (`cbd_cop16_budget_table.csv`) as the primary source of truth for CBD Parties.
 - **Validation Rule**: Exactly **196 Parties** (including the European Union) must be present and correctly mapped.
 - **Location**: `tests/test_logic.py` -> `test_cbd_party_count` and `test_budget_table_alignment`.
+
+### 1b. TSAC & SOSAC Component Integrity
+New tests verify the blending of the three allocation components.
+- **Validation Rule**: `Sum(Final Share) = 1.0`.
+- **Validation Rule**: Isolation tests (e.g. if $\gamma=1.0$, only SIDS receive funds).
+- **Location**: `tests/test_tsac_sosac.py`.
 
 ### 2. Metadata Completeness
 Every record is checked to ensure no missing values for regional or economic classifications.
