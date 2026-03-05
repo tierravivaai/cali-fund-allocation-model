@@ -13,7 +13,8 @@ def mock_con():
 def test_allocation_sums_to_fund_size(mock_con):
     base_df = get_base_data(mock_con)
     fund_size = 1_000_000_000 # 1bn
-    results = calculate_allocations(base_df, fund_size, 50)
+    # Use 0/0 weights to match old logic for this regression test
+    results = calculate_allocations(base_df, fund_size, 50, tsac_beta=0, sosac_gamma=0)
     
     # Sum of total_allocation should be 1000 (millions)
     assert pytest.approx(results['total_allocation'].sum(), 0.001) == 1000
@@ -21,7 +22,8 @@ def test_allocation_sums_to_fund_size(mock_con):
 def test_iplc_state_consistency(mock_con):
     base_df = get_base_data(mock_con)
     fund_size = 1_000_000_000
-    results = calculate_allocations(base_df, fund_size, 60)
+    # Use 0/0 weights to match old logic for this regression test
+    results = calculate_allocations(base_df, fund_size, 60, tsac_beta=0, sosac_gamma=0)
     
     # iplc + state should equal total
     check = results['iplc_component'] + results['state_component']

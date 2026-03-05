@@ -42,6 +42,12 @@ if "enable_ceiling" not in st.session_state:
     st.session_state["enable_ceiling"] = True
 if "ceiling_pct" not in st.session_state:
     st.session_state["ceiling_pct"] = 1.0
+if "tsac_beta" not in st.session_state:
+    st.session_state["tsac_beta"] = 0.15
+if "sosac_gamma" not in st.session_state:
+    st.session_state["sosac_gamma"] = 0.10
+if "show_advanced" not in st.session_state:
+    st.session_state["show_advanced"] = False
 if "sort_option" not in st.session_state:
     st.session_state["sort_option"] = "Allocation (highest first)"
 
@@ -59,6 +65,9 @@ if st.sidebar.button("Reset to default"):
     st.session_state["floor_pct"] = 0.05
     st.session_state["enable_ceiling"] = True
     st.session_state["ceiling_pct"] = 1.0
+    st.session_state["tsac_beta"] = 0.15
+    st.session_state["sosac_gamma"] = 0.10
+    st.session_state["show_advanced"] = False
     st.session_state["sort_option"] = "Allocation (highest first)"
     st.rerun()
 
@@ -76,10 +85,40 @@ st.sidebar.caption(f"= ${fund_size_bn * 1000:,.0f} million per year")
 fund_size_usd = fund_size_bn * 1_000_000_000
 
 exclude_hi = st.sidebar.checkbox(
-    "Exclude High Income countries from receiving allocations", 
+    "Exclude High Income countries (except SIDS)", 
     key="exclude_hi",
-    help="When enabled, High Income countries receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged."
+    help="When enabled, High Income countries (except SIDS) receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged."
 )
+
+st.sidebar.divider()
+st.sidebar.header("Allocation Formula Weights")
+
+tsac_beta = st.sidebar.slider(
+    "Land Area Weight (TSAC)",
+    min_value=0.0,
+    max_value=0.30,
+    step=0.01,
+    key="tsac_beta",
+    help="Weight for the land-area proportional component (TSAC)."
+)
+
+sosac_gamma = st.sidebar.slider(
+    "SIDS Structural Weight (SOSAC)",
+    min_value=0.0,
+    max_value=0.20,
+    step=0.01,
+    key="sosac_gamma",
+    help="Weight for the SIDS-only structural adjustment component (SOSAC)."
+)
+
+iusaf_weight = 1.0 - tsac_beta - sosac_gamma
+if iusaf_weight < 0.60:
+    st.sidebar.warning(f"Combined secondary weights ({tsac_beta + sosac_gamma:.2f}) exceed 0.40. IUSAF base weight is low: {iusaf_weight:.2f}")
+else:
+    st.sidebar.info(f"IUSAF base weight (inverted UN scale): {iusaf_weight:.2f}")
+
+st.sidebar.divider()
+st.sidebar.header("Constraint Controls")
 
 enable_floor = st.sidebar.checkbox("Enable minimum share (floor)", key="enable_floor")
 if enable_floor:
@@ -162,6 +201,8 @@ show_raw = st.sidebar.toggle("Show explanation with raw data", key="show_raw")
 
 use_thousands = st.sidebar.toggle("Display small values in thousands (USD '000)", key="use_thousands")
 
+show_advanced = st.sidebar.toggle("Show advanced component breakdown", key="show_advanced")
+
 sort_option = st.sidebar.selectbox(
     "Sort results by",
     options=["Allocation (highest first)", "Country name (A–Z)"],
@@ -175,7 +216,9 @@ results_df = calculate_allocations(
     show_raw,
     exclude_hi,
     floor_pct=floor_pct,
-    ceiling_pct=ceiling_pct
+    ceiling_pct=ceiling_pct,
+    tsac_beta=tsac_beta,
+    sosac_gamma=sosac_gamma
 )
 
 # Add descriptive columns
@@ -213,6 +256,9 @@ def get_column_config(use_thousands, include_country_count=False):
             "total_allocation": st.column_config.TextColumn("Total Share (USD)"),
             "state_component": st.column_config.TextColumn("State Component (USD)"),
             "iplc_component": st.column_config.TextColumn("IPLC Component (USD)"),
+            "component_iusaf_amt": st.column_config.TextColumn("IUSAF (USD)"),
+            "component_tsac_amt": st.column_config.TextColumn("TSAC (USD)"),
+            "component_sosac_amt": st.column_config.TextColumn("SOSAC (USD)"),
         })
     else:
         # Standard millions view can use NumberColumn for better sorting
@@ -220,6 +266,9 @@ def get_column_config(use_thousands, include_country_count=False):
             "total_allocation": st.column_config.NumberColumn("Total Share (USD Millions)", format="$%.2f"),
             "state_component": st.column_config.NumberColumn("State Component (USD Millions)", format="$%.2f"),
             "iplc_component": st.column_config.NumberColumn("IPLC Component (USD Millions)", format="$%.2f"),
+            "component_iusaf_amt": st.column_config.NumberColumn("IUSAF (USD Millions)", format="$%.2f"),
+            "component_tsac_amt": st.column_config.NumberColumn("TSAC (USD Millions)", format="$%.2f"),
+            "component_sosac_amt": st.column_config.NumberColumn("SOSAC (USD Millions)", format="$%.2f"),
         })
     return config
 
@@ -248,6 +297,11 @@ with tab1:
     results_df["CBD Party"] = results_df.apply(get_status, axis=1)
     
     display_cols = ['party', 'total_allocation', 'state_component', 'iplc_component', 'WB Income Group', 'UN LDC', 'CBD Party', 'EU']
+    
+    if show_advanced:
+        # Add component shares and amounts to display
+        display_cols.extend(['iusaf_share', 'tsac_share', 'sosac_share', 'component_iusaf_amt', 'component_tsac_amt', 'component_sosac_amt'])
+    
     if show_raw:
         st.info("""
     **How the Calculation Works (Plain Language)**
@@ -305,8 +359,9 @@ For more detailed information see this [walkthrough](https://github.com/tierravi
 
     # Only apply string formatting if toggle is ON; otherwise use numeric for sorting
     if use_thousands:
-        for col in ['total_allocation', 'state_component', 'iplc_component']:
-            filtered_df[col] = filtered_df[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
+        for col in ['total_allocation', 'state_component', 'iplc_component', 'component_iusaf_amt', 'component_tsac_amt', 'component_sosac_amt']:
+            if col in filtered_df.columns:
+                filtered_df[col] = filtered_df[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
     
     config = {
         "eligible": None, # Hide this column
@@ -314,6 +369,9 @@ For more detailed information see this [walkthrough](https://github.com/tierravi
         "un_share": st.column_config.NumberColumn("UN assessed share (%)", format="%.4f"),
         "un_share_fraction": st.column_config.NumberColumn("UN assessed share (fraction)", format="%.6f"),
         "inverted_share": st.column_config.NumberColumn("Indicative share of Cali Fund (%)", format="%.6f"),
+        "iusaf_share": st.column_config.NumberColumn("IUSAF Share (%)", format="%.6f"),
+        "tsac_share": st.column_config.NumberColumn("TSAC Share (%)", format="%.6f"),
+        "sosac_share": st.column_config.NumberColumn("SOSAC Share (%)", format="%.6f"),
     }
     config.update(get_column_config(use_thousands, include_country_count=True))
 

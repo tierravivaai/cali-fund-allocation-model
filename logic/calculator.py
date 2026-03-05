@@ -62,6 +62,9 @@ def calculate_allocations(
     exclude_high_income=False,
     floor_pct=0.0,
     ceiling_pct=None,
+    tsac_beta=0.15,
+    sosac_gamma=0.10,
+    high_income_mode="exclude_except_sids"
 ):
     # Filter out parties with 0 share for inversion logic (except for display later)
     # But for Cali Fund, we need to invert the non-zero ones.
@@ -69,10 +72,15 @@ def calculate_allocations(
     calc_df = df.copy()
     
     # 1. Define eligibility
-    calc_df["eligible"] = calc_df["is_cbd_party"]
+    # Rule (recommended): If exclude_high_income == True and mode is "exclude_except_sids", 
+    # then: Parties are excluded if income_group == "High income" AND is_sids == False.
     if exclude_high_income:
-        # Explicitly exclude "High income" countries among CBD Parties
-        calc_df["eligible"] = calc_df["eligible"] & (calc_df["WB Income Group"] != "High income")
+        if high_income_mode == "exclude_except_sids":
+             calc_df["eligible"] = calc_df["is_cbd_party"] & ~( (calc_df["WB Income Group"] == "High income") & (calc_df["is_sids"] == False) )
+        else: # "exclude_all"
+             calc_df["eligible"] = calc_df["is_cbd_party"] & (calc_df["WB Income Group"] != "High income")
+    else:
+        calc_df["eligible"] = calc_df["is_cbd_party"]
     
     # Inversion logic: only for eligible parties with shares > 0
     # The source 'un_share' is expressed as a percentage (e.g. 5.469)
@@ -85,27 +93,110 @@ def calculate_allocations(
     calc_df.loc[~mask, 'un_share_fraction'] = 0.0
     calc_df.loc[~mask, 'inv_weight'] = 0.0
     
-    calc_df["inverted_share"] = 0.0
+    calc_df["iusaf_share"] = 0.0
 
     eligible_mask = calc_df["eligible"] & (calc_df["un_share"] > 0) & (calc_df["un_share"].notna())
     eligible_idx = calc_df.index[eligible_mask]
 
     if len(eligible_idx) > 0:
+        # We compute IUSAF shares using the floor/ceiling logic if requested
+        # Note: Floor/Ceiling should probably apply to the FINAL share, 
+        # but to keep it simple and consistent with instructions, 
+        # we'll compute component shares first.
+        
+        # In this implementation, we'll apply floor/ceiling to the IUSAF component
+        # as a baseline if needed, but the original request implies blending 
+        # components then normalizing.
+        
+        # However, to maintain the existing floor/ceiling functionality 
+        # which was designed for the single-component model, 
+        # we'll apply it to the iusaf_share baseline.
+        
+        # If we want it on the FINAL share, we'd do it after blending.
+        # Let's keep it as is for now, computing iusaf_share baseline.
+        
+        baseline_floor = 0.0 # Floor/ceiling on components is tricky, usually done on FINAL
+        baseline_cap = 1.0
+        
+        # Actually, let's compute raw iusaf_share first
+        weights = calc_df.loc[eligible_idx, "inv_weight"]
+        calc_df.loc[eligible_idx, "iusaf_share"] = weights / weights.sum()
+
+    # 2. Compute TSAC Share (Land Area)
+    calc_df["tsac_share"] = 0.0
+    tsac_eligible_mask = calc_df["eligible"] & (calc_df["land_area_km2"] > 0)
+    if tsac_eligible_mask.any():
+        la_sum = calc_df.loc[tsac_eligible_mask, "land_area_km2"].sum()
+        calc_df.loc[tsac_eligible_mask, "tsac_share"] = calc_df.loc[tsac_eligible_mask, "land_area_km2"] / la_sum
+
+    # 3. Compute SOSAC Share (SIDS)
+    calc_df["sosac_share"] = 0.0
+    sosac_eligible_mask = calc_df["eligible"] & calc_df["is_sids"]
+    n_sids = int(sosac_eligible_mask.sum())
+    if n_sids > 0:
+        calc_df.loc[sosac_eligible_mask, "sosac_share"] = 1.0 / n_sids
+
+    # 4. Handle Blending and Fallback
+    beta = float(tsac_beta)
+    gamma = float(sosac_gamma)
+    
+    # Regression check: if weights are zero, use old logic (no TSAC/SOSAC component)
+    if beta == 0.0 and gamma == 0.0:
+        calc_df["final_share"] = calc_df["iusaf_share"]
+        effective_alpha = 1.0
+        effective_beta = 0.0
+        effective_gamma = 0.0
+    else:
+        # Fallback if no SIDS
+        effective_beta = beta
+        effective_gamma = gamma
+        effective_alpha = 1.0 - beta - gamma
+        
+        if n_sids == 0 and gamma > 0:
+            # Fallback: reallocate to IUSAF
+            effective_alpha += gamma
+            effective_gamma = 0.0
+            # log warning (implied in UI)
+            
+        # Compute Final Share
+        calc_df["final_share"] = (
+            effective_alpha * calc_df["iusaf_share"] + 
+            effective_beta * calc_df["tsac_share"] + 
+            effective_gamma * calc_df["sosac_share"]
+        )
+    
+    # Normalize
+    final_eligible_mask = calc_df["eligible"]
+    if final_eligible_mask.any():
+        s = calc_df.loc[final_eligible_mask, "final_share"].sum()
+        if s > 0:
+            calc_df.loc[final_eligible_mask, "final_share"] = calc_df.loc[final_eligible_mask, "final_share"] / s
+
+    # 5. Apply Floor and Ceiling to Final Share if enabled
+    if (floor_pct > 0 or ceiling_pct is not None) and final_eligible_mask.any():
         floor = float(floor_pct) / 100.0
         cap = 1.0 if ceiling_pct is None else float(ceiling_pct) / 100.0
-
+        
         constrained_shares = _apply_floor_ceiling_shares(
-            calc_df.loc[eligible_idx, "inv_weight"],
+            calc_df.loc[final_eligible_mask, "final_share"],
             floor=floor,
             cap=cap
         )
+        calc_df.loc[final_eligible_mask, "final_share"] = constrained_shares
 
-        calc_df.loc[eligible_idx, "inverted_share"] = constrained_shares
-        
-    calc_df['total_allocation'] = calc_df['inverted_share'] * fund_size
+    # Rename final_share back to inverted_share for compatibility if needed, 
+    # but the instruction said to use final_share. Let's provide both.
+    calc_df["inverted_share"] = calc_df["final_share"]
+    
+    calc_df['total_allocation'] = calc_df['final_share'] * fund_size
     calc_df['iplc_component'] = calc_df['total_allocation'] * (iplc_share_pct / 100.0)
     calc_df['state_component'] = calc_df['total_allocation'] - calc_df['iplc_component']
     
+    # Component amounts for transparency
+    calc_df['component_iusaf_amt'] = (effective_alpha * calc_df["iusaf_share"] * fund_size) / 1_000_000.0
+    calc_df['component_tsac_amt'] = (effective_beta * calc_df["tsac_share"] * fund_size) / 1_000_000.0
+    calc_df['component_sosac_amt'] = (effective_gamma * calc_df["sosac_share"] * fund_size) / 1_000_000.0
+
     # Convert to millions for display
     for col in ['total_allocation', 'iplc_component', 'state_component']:
         calc_df[col] = calc_df[col] / 1_000_000.0

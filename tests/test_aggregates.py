@@ -36,7 +36,8 @@ def test_aggregate_by_income_structure(mock_con):
 def test_aggregate_country_counts(mock_con):
     base_df = get_base_data(mock_con)
     # Exclude High Income to see if counts change
-    results_df = calculate_allocations(base_df, 1_000_000_000, 50, exclude_high_income=True)
+    # Note: New default mode is "exclude_except_sids", so HI SIDS will still be there
+    results_df = calculate_allocations(base_df, 1_000_000_000, 50, exclude_high_income=True, high_income_mode="exclude_all")
     
     income_df = aggregate_by_income(results_df)
     assert "High income" not in income_df['WB Income Group'].values

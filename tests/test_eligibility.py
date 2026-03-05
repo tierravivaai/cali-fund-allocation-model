@@ -15,7 +15,8 @@ def test_eligibility_filter_high_income(mock_con):
     fund_size = 1_000_000_000 # 1bn
     
     # Toggle ON: Exclude High Income
-    results_filtered = calculate_allocations(base_df, fund_size, 50, exclude_high_income=True)
+    # Note: New default mode is "exclude_except_sids", so we explicitly use "exclude_all" for this test
+    results_filtered = calculate_allocations(base_df, fund_size, 50, exclude_high_income=True, high_income_mode="exclude_all")
     
     # Check that High income countries have 0 allocation
     hi_countries = results_filtered[results_filtered['WB Income Group'] == 'High income']

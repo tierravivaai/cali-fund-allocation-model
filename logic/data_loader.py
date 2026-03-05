@@ -21,6 +21,11 @@ def load_data(con):
     # 5. Load Manual Name Map
     con.execute(f"CREATE TABLE name_map AS SELECT * FROM read_csv_auto('{base_path}/manual_name_map.csv')")
 
+    # 5b. Load Land Area (World Bank)
+    # The CSV has 4 header lines to skip.
+    land_area_path = f"{base_path}/API_AG.LND.TOTL.K2_DS2_en_csv_v2_749/API_AG.LND.TOTL.K2_DS2_en_csv_v2_749.csv"
+    con.execute(f"CREATE TABLE land_area_raw AS SELECT * FROM read_csv_auto('{land_area_path}', skip=4)")
+
     # 6. Load CBD Parties List (using the budget table as source of truth for Parties)
     con.execute(f"""
         CREATE TABLE cbd_parties_raw AS 
@@ -70,6 +75,35 @@ def get_base_data(con):
           AND party_name NOT LIKE 'c:\%'
           AND party_name !~ '^\d{2}/\d{2}/\d{4}$'
     ),
+    -- Prepare latest non-null land area from WB data
+    land_area_melted AS (
+        UNPIVOT (
+            SELECT 
+                "Country Name", "Country Code", "Indicator Name", "Indicator Code",
+                COLUMNS('^[0-9]{4}$')::VARCHAR as years
+            FROM land_area_raw
+        )
+        ON COLUMNS(* EXCLUDE ("Country Name", "Country Code", "Indicator Name", "Indicator Code"))
+        INTO NAME year VALUE land_area
+    ),
+    land_area_clean AS (
+        SELECT 
+            "Country Name" as wb_country_name,
+            "Country Code" as wb_country_code,
+            TRY_CAST(land_area AS DOUBLE) as land_area_km2,
+            TRY_CAST(year AS INTEGER) as land_area_year
+        FROM land_area_melted
+        WHERE land_area IS NOT NULL AND land_area != ''
+    ),
+    land_area_latest AS (
+        SELECT 
+            wb_country_name,
+            wb_country_code,
+            land_area_km2,
+            land_area_year
+        FROM land_area_clean
+        QUALIFY ROW_NUMBER() OVER (PARTITION BY wb_country_code ORDER BY land_area_year DESC) = 1
+    ),
     mapped_scale AS (
         SELECT 
             COALESCE(m.party_mapped, s.party_name) as party,
@@ -88,9 +122,12 @@ def get_base_data(con):
             COALESCE(r_mapped."Least Developed Countries (LDC)", r_raw."Least Developed Countries (LDC)") = 'x' as is_ldc,
             COALESCE(r_mapped."Small Island Developing States (SIDS)", r_raw."Small Island Developing States (SIDS)") = 'x' as is_sids,
             -- Prioritize WB Income mapping
+            w_mapped."Income group" is not null or w_raw."Income group" is not null as has_income_data,
             COALESCE(w_mapped."Income group", w_raw."Income group", 'Not Available') as "WB Income Group",
             e.is_eu27 IS NOT NULL as is_eu_ms,
-            c.Party IS NOT NULL OR s.party = 'European Union' as is_cbd_party
+            c.Party IS NOT NULL OR s.party = 'European Union' as is_cbd_party,
+            COALESCE(la.land_area_km2, 0.0) as land_area_km2,
+            la.land_area_km2 IS NOT NULL as has_land_area
         FROM mapped_scale s
         FULL OUTER JOIN cbd_parties c ON s.party = c.Party
         -- Map 1: Using the 'mapped' party name (from name_map)
@@ -101,6 +138,9 @@ def get_base_data(con):
         LEFT JOIN wb_income w_raw ON c.Party = w_raw.Economy
         -- Map 3: EU27 check
         LEFT JOIN eu27 e ON COALESCE(s.party, c.Party) = e.party
+        -- Map 4: Land Area (World Bank)
+        -- Attempt join on mapped name first, then fallback to name_map check
+        LEFT JOIN land_area_latest la ON COALESCE(s.party, c.Party) = la.wb_country_name
     )
     SELECT * FROM joined
     """
@@ -150,4 +190,16 @@ def get_base_data(con):
     df.loc[df['party'] == "United Kingdom of Great Britain and Northern Ireland", 'WB Income Group'] = 'High income'
     df.loc[df['party'] == "United States of America", 'WB Income Group'] = 'High income'
     
+    # Manual fixes for missing land area
+    # Note: land_area_km2 already initialized to 0.0 if COALESCE fails
+    df.loc[df['party'] == 'Monaco', 'land_area_km2'] = 2.02
+    df.loc[df['party'] == 'Cook Islands', 'land_area_km2'] = 236.0
+    df.loc[df['party'] == 'Niue', 'land_area_km2'] = 260.0
+    df.loc[df['party'] == 'State of Palestine', 'land_area_km2'] = 6020.0
+    df.loc[df['party'] == 'European Union', 'land_area_km2'] = 0.0 # EU is not assigned land area in this model
+    
+    # Mark as having land area after manual fixes
+    manual_la_list = ['Monaco', 'Cook Islands', 'Niue', 'State of Palestine']
+    df.loc[df['party'].isin(manual_la_list), 'has_land_area'] = True
+
     return df

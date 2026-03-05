@@ -36,7 +36,8 @@ def test_income_group_counts_with_hi_exclusion(mock_con):
     base_df = get_base_data(mock_con)
     # 1. Total fund allocation WITH High Income exclusion
     fund_size = 1_000_000_000
-    results_df = calculate_allocations(base_df, fund_size, 50, exclude_high_income=True)
+    # Use "exclude_all" to match old logic for this regression test
+    results_df = calculate_allocations(base_df, fund_size, 50, exclude_high_income=True, high_income_mode="exclude_all")
     
     # 2. Get aggregated counts
     income_agg = aggregate_by_income(results_df)

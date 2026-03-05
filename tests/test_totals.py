@@ -205,7 +205,8 @@ def test_sids_share_with_default_ceiling(mock_con):
     fund_size = 1_000_000_000
     # 1.0% ceiling, exclude HI
     from logic.calculator import calculate_allocations, aggregate_special_groups
-    results_df = calculate_allocations(base_df, fund_size, 50, exclude_high_income=True, ceiling_pct=1.0)
+    # Use 0/0 weights to match old logic for this regression test
+    results_df = calculate_allocations(base_df, fund_size, 50, exclude_high_income=True, high_income_mode="exclude_all", ceiling_pct=1.0, tsac_beta=0, sosac_gamma=0)
     _, sids_agg = aggregate_special_groups(results_df)
     
     # SIDS should get approx 25.46% of $1000m
