@@ -7,17 +7,158 @@ import numpy as np
 from logic.data_loader import load_data, get_base_data
 from logic.calculator import calculate_allocations, aggregate_by_region, aggregate_eu, aggregate_special_groups, aggregate_by_income, add_total_row
 
-st.set_page_config(page_title="Cali Fund Allocation Model", layout="wide")
+def negotiator_panel():
+    """
+    Renders a horizontal control panel for live negotiations.
+    Uses st.form to prevent unnecessary reruns.
+    """
+    # Use session state for default values to persist applied changes
+    if "applied_fund_size_bn" not in st.session_state:
+        st.session_state.applied_fund_size_bn = 1.0
+    if "applied_iplc_share" not in st.session_state:
+        st.session_state.applied_iplc_share = 50
+    if "applied_exclude_hi" not in st.session_state:
+        st.session_state.applied_exclude_hi = True
+    if "applied_tsac_beta" not in st.session_state:
+        st.session_state.applied_tsac_beta = 0.15
+    if "applied_sosac_gamma" not in st.session_state:
+        st.session_state.applied_sosac_gamma = 0.10
+    if "applied_floor_pct" not in st.session_state:
+        st.session_state.applied_floor_pct = 0.05
+    if "applied_ceiling_pct" not in st.session_state:
+        st.session_state.applied_ceiling_pct = 1.0
+    if "applied_enable_floor" not in st.session_state:
+        st.session_state.applied_enable_floor = False
+    if "applied_enable_ceiling" not in st.session_state:
+        st.session_state.applied_enable_ceiling = False
+    if "applied_hi_mode" not in st.session_state:
+        st.session_state.applied_hi_mode = "exclude_except_sids"
 
+    st.write("### Negotiator Control Panel")
+    
+    with st.form("negotiator_controls"):
+        # Row 1: Core Levers
+        c1, c2, c3, c4, c5, c6 = st.columns([2.0, 1.4, 1.2, 1.2, 1.0, 1.0])
+        
+        with c1:
+            fund_size_bn = st.slider(
+                "Fund Size (USD bn)",
+                min_value=0.002,
+                max_value=10.0,
+                value=st.session_state.applied_fund_size_bn,
+                step=0.001,
+                format="$%.3fbn"
+            )
+            st.caption(f"= ${fund_size_bn * 1000:,.0f}m / year")
+            
+        with c2:
+            exclude_hi = st.checkbox(
+                "Exclude HI (non-SIDS)",
+                value=st.session_state.applied_exclude_hi,
+                help="High Income countries (except SIDS) receive zero allocation."
+            )
+            st.caption("Eligibility Toggle")
+            
+        with c3:
+            beta = st.slider(
+                "TSAC (Land)",
+                min_value=0.0,
+                max_value=0.30,
+                value=st.session_state.applied_tsac_beta,
+                step=0.01
+            )
+            st.caption(f"Weight: {beta:.0%}")
+            
+        with c4:
+            gamma = st.slider(
+                "SOSAC (SIDS)",
+                min_value=0.0,
+                max_value=0.20,
+                value=st.session_state.applied_sosac_gamma,
+                step=0.01
+            )
+            st.caption(f"Weight: {gamma:.0%}")
+            
+        with c5:
+            enable_floor = st.checkbox("Min (Floor)", value=st.session_state.applied_enable_floor)
+            floor_val = st.number_input("%", min_value=0.0, max_value=2.0, value=st.session_state.applied_floor_pct, step=0.01, format="%.2f")
+            
+        with c6:
+            enable_ceiling = st.checkbox("Max (Ceiling)", value=st.session_state.applied_enable_ceiling)
+            ceiling_val = st.number_input("%", min_value=0.1, max_value=20.0, value=st.session_state.applied_ceiling_pct, step=0.1, format="%.1f")
+
+        # In-panel Dynamic Interpretation
+        iusaf_w = 1.0 - beta - gamma
+        
+        if iusaf_w < 0:
+            st.error(f"Invalid Weights: TSAC + SOSAC ({beta+gamma:.2f}) cannot exceed 1.0. IUSAF would be {iusaf_w:.2f}")
+        elif beta + gamma > 0.40:
+            st.warning(f"High Secondary Weights: Combined TSAC and SOSAC ({beta+gamma:.2f}) exceed 0.40. IUSAF base weight is low: {iusaf_w:.2f}")
+            
+        # Preview Boxes (Blue info boxes inside form)
+        p1, p2, p3 = st.columns(3)
+        with p1:
+            st.info(f"**IUSAF (UN Scale)**\n\nWeight: **{iusaf_w:.0%}**\n\nAmount: US${fund_size_bn * 1000 * max(0, iusaf_w):,.1f}m")
+        with p2:
+            st.info(f"**TSAC (Land Area)**\n\nWeight: **{beta:.0%}**\n\nAmount: US${fund_size_bn * 1000 * beta:,.1f}m")
+        with p3:
+            # SOSAC fallback logic for preview
+            # Note: actual SIDS count depends on eligibility toggle
+            st.info(f"**SOSAC (SIDS)**\n\nWeight: **{gamma:.0%}**\n\nAmount: US${fund_size_bn * 1000 * gamma:,.1f}m")
+
+        with st.expander("Advanced controls", expanded=False):
+            d1, d2, d3 = st.columns(3)
+            with d1:
+                hi_mode = st.selectbox(
+                    "High-income exclusion mode",
+                    options=["exclude_except_sids", "exclude_all"],
+                    index=0 if st.session_state.applied_hi_mode == "exclude_except_sids" else 1
+                )
+            with d2:
+                iplc_share = st.slider(
+                    "IPLC Share (%)",
+                    min_value=50,
+                    max_value=80,
+                    value=st.session_state.applied_iplc_share
+                )
+            with d3:
+                st.caption("More controls can be added here (e.g. SOSAC mode, baseline selection)")
+                
+        apply_clicked = st.form_submit_button("Apply Negotiation Parameters", use_container_width=True)
+        
+        if apply_clicked and iusaf_w >= 0:
+            st.session_state.applied_fund_size_bn = fund_size_bn
+            st.session_state.applied_iplc_share = iplc_share
+            st.session_state.applied_exclude_hi = exclude_hi
+            st.session_state.applied_tsac_beta = beta
+            st.session_state.applied_sosac_gamma = gamma
+            st.session_state.applied_floor_pct = floor_val
+            st.session_state.applied_ceiling_pct = ceiling_val
+            st.session_state.applied_enable_floor = enable_floor
+            st.session_state.applied_enable_ceiling = enable_ceiling
+            st.session_state.applied_hi_mode = hi_mode
+            st.success("Parameters applied!")
+            st.rerun()
+
+    return {
+        "fund_size_bn": st.session_state.applied_fund_size_bn,
+        "iplc_share": st.session_state.applied_iplc_share,
+        "exclude_hi": st.session_state.applied_exclude_hi,
+        "tsac_beta": st.session_state.applied_tsac_beta,
+        "sosac_gamma": st.session_state.applied_sosac_gamma,
+        "floor_pct": st.session_state.applied_floor_pct if st.session_state.applied_enable_floor else 0.0,
+        "ceiling_pct": st.session_state.applied_ceiling_pct if st.session_state.applied_enable_ceiling else None,
+        "hi_mode": st.session_state.applied_hi_mode
+    }
+
+# Main Application Layout
 st.title("Cali Fund Allocation Model (UN Scale)")
+
+# Render Horizontal Negotiator Panel
+params = negotiator_panel()
+
 st.markdown("""
-This interactive application uses the UN Scale of Assessments (2025–2027) to model indicative shares of the Cali Fund. The model inverts assessed UN budget shares so that countries with smaller assessed shares receive proportionally larger indicative allocations. 
-
-All figures are illustrative modelling outputs for exploratory purposes. They do not represent entitlements or predetermined disbursements.
-The IPLC component reflects the share of resources expected to support indigenous peoples and local communities consistent with existing COP decisions. 
-Governance arrangements are determined separately. The model has no formal status.
-
-A detailed description of the UN Scale of Assessment for 2025-2027 is available [here](https://www.un-ilibrary.org/content/books/9789211069945c004/read) and the latest table is [here](https://digitallibrary.un.org/record/4071844?ln=en&utm_source=chatgpt.com&v=pdf#files).
+This interactive application uses the UN Scale of Assessments (2025–2027) to model indicative shares of the Cali Fund.
 """)
 
 # Initialize connection and data
@@ -56,220 +197,60 @@ if "sort_option" not in st.session_state:
 if "show_negotiation_dashboard" not in st.session_state:
     st.session_state["show_negotiation_dashboard"] = True
 
-# Sidebar Controls
-st.sidebar.header("Controls")
+# Sidebar Controls (Legacy / Helper Controls)
+with st.sidebar:
+    st.header("Display & Helper Controls")
 
-# Reset to default button
-if st.sidebar.button("Reset to default"):
-    st.session_state["fund_size_bn"] = 1.0
-    st.session_state["iplc_share"] = 50
-    st.session_state["show_raw"] = False
-    st.session_state["use_thousands"] = False
-    st.session_state["exclude_hi"] = True
-    st.session_state["enable_floor"] = False
-    st.session_state["floor_pct"] = 0.05
-    st.session_state["enable_ceiling"] = False
-    st.session_state["ceiling_pct"] = 1.0
-    st.session_state["tsac_beta"] = 0.15
-    st.session_state["sosac_gamma"] = 0.10
-    st.session_state["show_advanced"] = False
-    st.session_state["sort_option"] = "Allocation (highest first)"
-    st.session_state["show_negotiation_dashboard"] = True
-    st.rerun()
+    # Reset to default button
+    if st.button("Reset All to Default"):
+        for key in list(st.session_state.keys()):
+            if key.startswith("applied_") or key in ["fund_size_bn", "tsac_beta", "sosac_gamma", "iplc_share", "exclude_hi", "enable_floor", "enable_ceiling", "floor_pct", "ceiling_pct"]:
+                del st.session_state[key]
+        st.rerun()
 
-fund_size_bn = st.sidebar.slider(
-    "Annual Cali Fund size (USD billion)",
-    min_value=0.002,   # $2m
-    max_value=10.0,
-    step=0.001,        # $1m increments
-    format="$%.3fbn",
-    key="fund_size_bn"
-)
-st.sidebar.caption(f"= ${fund_size_bn * 1000:,.0f} million per year")
-
-# Negotiation Presets
-with st.sidebar.expander("Negotiation Presets", expanded=False):
+    # Presets relocated to sidebar as quick actions
+    st.divider()
+    st.subheader("Negotiation Presets")
     col_p1, col_p2 = st.columns(2)
     if col_p1.button("Equity Base", help="TSAC=0, SOSAC=0 (Pure IUSAF)"):
-        st.session_state["tsac_beta"] = 0.0
-        st.session_state["sosac_gamma"] = 0.0
+        st.session_state.applied_tsac_beta = 0.0
+        st.session_state.applied_sosac_gamma = 0.0
         st.rerun()
     if col_p2.button("Stewardship", help="TSAC=0.25, SOSAC=0.05"):
-        st.session_state["tsac_beta"] = 0.25
-        st.session_state["sosac_gamma"] = 0.05
+        st.session_state.applied_tsac_beta = 0.25
+        st.session_state.applied_sosac_gamma = 0.05
         st.rerun()
     if col_p1.button("Vulnerability", help="TSAC=0.10, SOSAC=0.15"):
-        st.session_state["tsac_beta"] = 0.10
-        st.session_state["sosac_gamma"] = 0.15
+        st.session_state.applied_tsac_beta = 0.10
+        st.session_state.applied_sosac_gamma = 0.15
         st.rerun()
     if col_p2.button("Balanced", help="TSAC=0.15, SOSAC=0.10 (Default)"):
-        st.session_state["tsac_beta"] = 0.15
-        st.session_state["sosac_gamma"] = 0.10
+        st.session_state.applied_tsac_beta = 0.15
+        st.session_state.applied_sosac_gamma = 0.10
         st.rerun()
 
-# Calculations Pre-setup
-fund_size_usd = fund_size_bn * 1_000_000_000
-
-exclude_hi = st.sidebar.checkbox(
-    "Exclude High Income countries (except SIDS)", 
-    key="exclude_hi",
-    help="When enabled, High Income countries (except SIDS) receive zero allocation and the remaining allocations are rescaled so the total fund remains unchanged."
-)
-
-st.sidebar.divider()
-st.sidebar.header("Allocation Formula Weights")
-
-tsac_beta = st.sidebar.slider(
-    "Land Area Weight (TSAC)",
-    min_value=0.0,
-    max_value=0.30,
-    step=0.01,
-    key="tsac_beta",
-    help="Weight for the land-area proportional component (TSAC)."
-)
-
-sosac_gamma = st.sidebar.slider(
-    "SIDS Structural Weight (SOSAC)",
-    min_value=0.0,
-    max_value=0.20,
-    step=0.01,
-    key="sosac_gamma",
-    help="Weight for the SIDS-only structural adjustment component (SOSAC)."
-)
-
-# Dynamic Interpretation Boxes
-tsac_amt_m = (fund_size_usd * tsac_beta) / 1_000_000
-sosac_amt_m = (fund_size_usd * sosac_gamma) / 1_000_000
-iusaf_weight = 1.0 - tsac_beta - sosac_gamma
-iusaf_amt_m = (fund_size_usd * max(0, iusaf_weight)) / 1_000_000
-
-# Calculate eligible SIDS count
-if exclude_hi:
-    eligible_sids_count = ((st.session_state.base_df["is_cbd_party"]) & (st.session_state.base_df["is_sids"]) & ~( (st.session_state.base_df["WB Income Group"] == "High income") & (st.session_state.base_df["is_sids"] == False) )).sum()
-else:
-    eligible_sids_count = ((st.session_state.base_df["is_cbd_party"]) & (st.session_state.base_df["is_sids"])).sum()
-
-st.sidebar.info(
-    f"**TSAC Interpretation**\n\n"
-    f"With TSAC set to **{tsac_beta:.0%}**, **US${tsac_amt_m:,.2f}m** is allocated based on land surface area.\n\n"
-    f"IUSAF base weight: **{iusaf_weight:.0%}** (US${iusaf_amt_m:,.2f}m)."
-)
-
-if eligible_sids_count > 0:
-    if sosac_gamma > 0:
-        st.sidebar.info(
-            f"**SOSAC Interpretation**\n\n"
-            f"With SOSAC set to **{sosac_gamma:.0%}**, **US${sosac_amt_m:,.2f}m** is reserved for SIDS. "
-            f"Shared equally among **{eligible_sids_count}** eligible SIDS."
-        )
-    else:
-        st.sidebar.info("**SOSAC Interpretation**\n\nSOSAC is set to 0%, so no SIDS-specific pool is applied.")
-else:
-    if sosac_gamma > 0:
-        st.sidebar.info(
-            f"**SOSAC Interpretation**\n\n"
-            f"No eligible SIDS under current filters. The SOSAC portion (**US${sosac_amt_m:,.2f}m**) will be reallocated to the inverted UN scale (IUSAF)."
-        )
-    else:
-        st.sidebar.info("**SOSAC Interpretation**\n\nSOSAC is set to 0%.")
-
-if iusaf_weight < 0.60:
-    st.sidebar.warning(f"Combined secondary weights ({tsac_beta + sosac_gamma:.2f}) exceed 0.40. IUSAF base weight is low: {iusaf_weight:.2f}")
-
-st.sidebar.divider()
-st.sidebar.header("Constraint Controls")
-
-enable_floor = st.sidebar.checkbox("Enable minimum share (floor)", key="enable_floor")
-if enable_floor:
-    eligible_mask = st.session_state.base_df["is_cbd_party"].astype(bool)
-    if exclude_hi:
-        eligible_mask = eligible_mask & (st.session_state.base_df["WB Income Group"] != "High income")
-
-    n_eligible = int(eligible_mask.sum())
-    max_floor_pct = 0.0 if n_eligible <= 0 else (100.0 / n_eligible)
-
-    floor_pct = st.sidebar.slider(
-        "Minimum share per eligible country (% of total fund)",
-        min_value=0.00,
-        max_value=float(max_floor_pct),
-        value=min(0.05, float(max_floor_pct)),
-        step=0.01,
-        format="%.2f",
-        help=(
-            "Sets a minimum percentage of the total fund for each eligible country. "
-            "The maximum possible value is automatically limited to 100% divided by the number of eligible countries "
-            "to ensure the model remains feasible."
-        ),
-        key="floor_pct"
+    st.divider()
+    show_raw = st.toggle("Show explanation with raw data", key="show_raw")
+    use_thousands = st.toggle("Display small values in thousands (USD '000)", key="use_thousands")
+    show_advanced = st.toggle("Show advanced component breakdown", key="show_advanced")
+    st.toggle("Enable Negotiation Dashboard", key="show_negotiation_dashboard")
+    sort_option = st.selectbox(
+        "Sort results by",
+        options=["Allocation (highest first)", "Country name (A–Z)"],
+        key="sort_option"
     )
 
-    st.sidebar.caption(
-        f"Eligible countries: {n_eligible} • "
-        f"Max feasible floor: {max_floor_pct:.2f}% • "
-        f"Floor ≈ ${fund_size_usd * (floor_pct/100) / 1_000_000:,.2f}m per eligible country"
-    )
-else:
-    floor_pct = 0.0
+# Extract values from panel
+fund_size_usd = params["fund_size_bn"] * 1_000_000_000
+iplc_share = params["iplc_share"]
+exclude_hi = params["exclude_hi"]
+tsac_beta = params["tsac_beta"]
+sosac_gamma = params["sosac_gamma"]
+floor_pct = params["floor_pct"]
+ceiling_pct = params["ceiling_pct"]
+hi_mode = params["hi_mode"]
 
-enable_ceiling = st.sidebar.checkbox("Enable maximum share (ceiling)", key="enable_ceiling")
-if enable_ceiling:
-    ceiling_pct = st.sidebar.slider(
-        "Maximum share per eligible country (% of total fund)",
-        min_value=0.10,
-        max_value=5.00,
-        step=0.10,
-        format="%.2f",
-        key="ceiling_pct"
-    )
-    st.sidebar.caption(
-        f"≈ ${fund_size_usd * (ceiling_pct/100) / 1_000_000:,.2f}m per eligible country"
-    )
-
-    with st.sidebar.expander("More ceiling options"):
-        ceiling_pct_ext = st.slider(
-            "Maximum share per eligible country (% of total fund) — extended range",
-            min_value=5.00,
-            max_value=20.00,
-            value=st.session_state.get("ceiling_pct_ext", max(5.0, 1.0)), # default 1.0
-            step=0.50,
-            format="%.2f",
-            key="ceiling_pct_ext"
-        )
-        # Use the extended one if the primary one is at its max
-        if ceiling_pct >= 5.0:
-            ceiling_pct = ceiling_pct_ext
-            
-        st.caption(
-            f"≈ ${fund_size_usd * (ceiling_pct/100) / 1_000_000:,.2f}m per eligible country"
-        )
-else:
-    ceiling_pct = None
-
-iplc_share = st.sidebar.slider(
-    "Share earmarked for Indigenous Peoples & Local Communities (%)",
-    min_value=50,
-    max_value=80,
-    help="This splits each Party’s allocation into an IPLC component and a State component. Together they equal the total.",
-    key="iplc_share"
-)
-
-st.sidebar.divider()
-st.sidebar.header("Helper Controls")
-
-show_raw = st.sidebar.toggle("Show explanation with raw data", key="show_raw")
-
-use_thousands = st.sidebar.toggle("Display small values in thousands (USD '000)", key="use_thousands")
-
-show_advanced = st.sidebar.toggle("Show advanced component breakdown", key="show_advanced")
-
-st.sidebar.toggle("Enable Negotiation Dashboard", key="show_negotiation_dashboard")
-
-sort_option = st.sidebar.selectbox(
-    "Sort results by",
-    options=["Allocation (highest first)", "Country name (A–Z)"],
-    key="sort_option"
-)
-
+# Run primary calculation
 results_df = calculate_allocations(
     st.session_state.base_df,
     fund_size_usd,
@@ -279,10 +260,11 @@ results_df = calculate_allocations(
     floor_pct=floor_pct,
     ceiling_pct=ceiling_pct,
     tsac_beta=tsac_beta,
-    sosac_gamma=sosac_gamma
+    sosac_gamma=sosac_gamma,
+    high_income_mode=hi_mode
 )
 
-# Baseline for comparison (beta=0, gamma=0)
+# Run baseline calculation for comparison (using the same exclusion filters but beta=gamma=0)
 results_df_baseline = calculate_allocations(
     st.session_state.base_df,
     fund_size_usd,
@@ -292,7 +274,8 @@ results_df_baseline = calculate_allocations(
     floor_pct=floor_pct,
     ceiling_pct=ceiling_pct,
     tsac_beta=0.0,
-    sosac_gamma=0.0
+    sosac_gamma=0.0,
+    high_income_mode=hi_mode
 )
 
 # Merge baseline for comparison
@@ -614,8 +597,8 @@ For more detailed information see this [walkthrough](https://github.com/tierravi
         width="stretch"
     )
 
-
-with tab2:
+current_tab_idx += 1
+with main_tabs[current_tab_idx]:
     st.subheader("Totals by UN Region")
 
     region_df = aggregate_by_region(results_df, "region")
@@ -685,7 +668,8 @@ with tab2:
         width="stretch",
     )
 
-with tab2b:
+current_tab_idx += 1
+with main_tabs[current_tab_idx]:
     st.subheader("Totals by UN Sub-region")
     sub_region_df = aggregate_by_region(results_df, 'sub_region')
     sub_region_df = sub_region_df.sort_values('total_allocation', ascending=False)
@@ -752,7 +736,8 @@ with tab2b:
         width="stretch",
     )
 
-with tab2c:
+current_tab_idx += 1
+with main_tabs[current_tab_idx]:
     st.subheader("Totals by UN Intermediate Region")
     # Include all countries, including those with 'NA' intermediate_region
     # but rename 'NA' for clearer display
@@ -824,7 +809,8 @@ with tab2c:
             width="stretch",
         )
 
-with tab3b:
+current_tab_idx += 1
+with main_tabs[current_tab_idx]:
     st.subheader("Totals by World Bank Income Group")
     income_df = aggregate_by_income(results_df)
     income_df = income_df.sort_values('total_allocation', ascending=False)
@@ -844,7 +830,8 @@ with tab3b:
         width="stretch"
     )
 
-with tab4:
+current_tab_idx += 1
+with main_tabs[current_tab_idx]:
     st.subheader("LDC Share")
     st.markdown("Least Developed Countries (LDCs) are low-income countries as defined by the UN Committee for Development Policy (CDP) as described [here](https://policy.desa.un.org/least-developed-countries). There are currently 44 LDCs.")
     ldc_total, _ = aggregate_special_groups(results_df)
@@ -874,7 +861,8 @@ with tab4:
         width="stretch"
     )
 
-with tab5:
+current_tab_idx += 1
+with main_tabs[current_tab_idx]:
     st.subheader("Small Island Developing States (SIDS)")
     _, sids_total = aggregate_special_groups(results_df)
     
@@ -952,7 +940,8 @@ with tab5:
         width="stretch",
     )
 
-with tab5b:
+current_tab_idx += 1
+with main_tabs[current_tab_idx]:
     st.subheader("Low Income Countries")
     li_df = results_df[results_df['WB Income Group'] == 'Low income'].copy()
     
@@ -991,7 +980,8 @@ with tab5b:
     col1.metric("Low Income State Component", format_currency(li_total['state_component']))
     col2.metric("Low Income IPLC Component", format_currency(li_total['iplc_component']))
 
-with tab6:
+current_tab_idx += 1
+with main_tabs[current_tab_idx]:
     st.subheader("Middle Income Countries")
     mi_df = results_df[results_df['WB Income Group'].isin(['Lower middle income', 'Upper middle income'])].copy()
     
@@ -1028,7 +1018,8 @@ with tab6:
     col1.metric("Middle Income State Component", format_currency(mi_total['state_component']))
     col2.metric("Middle Income IPLC Component", format_currency(mi_total['iplc_component']))
 
-with tab7:
+current_tab_idx += 1
+with main_tabs[current_tab_idx]:
     st.subheader("High Income Countries")
     hi_df = results_df[results_df['WB Income Group'] == 'High income'].copy()
     
