@@ -92,31 +92,36 @@ st.sidebar.caption(f"= ${fund_size_bn * 1000:,.0f} million per year")
 # Negotiation Presets
 with st.sidebar.expander("Negotiation Presets", expanded=False):
     col_p1, col_p2 = st.columns(2)
-    if col_p1.button("Inverted Scale", help="TSAC=0, SOSAC=0 (Pure IUSAF)"):
-        st.session_state["tsac_beta"] = 0.0
-        st.session_state["sosac_gamma"] = 0.0
-        st.session_state["equality_mode"] = False
-        st.rerun()
-    if col_p2.button("Stewardship", help="TSAC=0.25, SOSAC=0.05"):
-        st.session_state["tsac_beta"] = 0.25
-        st.session_state["sosac_gamma"] = 0.05
-        st.session_state["equality_mode"] = False
-        st.rerun()
-    if col_p1.button("Vulnerability", help="TSAC=0.10, SOSAC=0.15"):
-        st.session_state["tsac_beta"] = 0.10
-        st.session_state["sosac_gamma"] = 0.15
-        st.session_state["equality_mode"] = False
-        st.rerun()
-    if col_p2.button("Balanced", help="TSAC=0.15, SOSAC=0.10 (Default)"):
-        st.session_state["tsac_beta"] = 0.15
-        st.session_state["sosac_gamma"] = 0.10
-        st.session_state["equality_mode"] = False
-        st.rerun()
+    # Row 1
     if col_p1.button("Equality", help="Even split between all eligible countries (Excludes HI except SIDS)"):
         st.session_state["tsac_beta"] = 0.0
         st.session_state["sosac_gamma"] = 0.0
         st.session_state["equality_mode"] = True
         st.session_state["exclude_hi"] = True
+        st.rerun()
+    if col_p2.button("Inverted Scale", help="TSAC=0, SOSAC=0 (Pure IUSAF)"):
+        st.session_state["tsac_beta"] = 0.0
+        st.session_state["sosac_gamma"] = 0.0
+        st.session_state["equality_mode"] = False
+        st.rerun()
+    
+    # Row 2
+    if col_p1.button("Terrestrial Stewardship", help="TSAC=0.25, SOSAC=0.05"):
+        st.session_state["tsac_beta"] = 0.25
+        st.session_state["sosac_gamma"] = 0.05
+        st.session_state["equality_mode"] = False
+        st.rerun()
+    if col_p2.button("Oceans Stewardship", help="TSAC=0.10, SOSAC=0.15"):
+        st.session_state["tsac_beta"] = 0.10
+        st.session_state["sosac_gamma"] = 0.15
+        st.session_state["equality_mode"] = False
+        st.rerun()
+        
+    # Row 3 (Full width)
+    if st.button("Balanced", help="TSAC=0.15, SOSAC=0.10 (Default)", use_container_width=True):
+        st.session_state["tsac_beta"] = 0.15
+        st.session_state["sosac_gamma"] = 0.10
+        st.session_state["equality_mode"] = False
         st.rerun()
 
 # Calculations Pre-setup
