@@ -49,6 +49,8 @@ if "tsac_beta" not in st.session_state:
     st.session_state["tsac_beta"] = 0.15
 if "sosac_gamma" not in st.session_state:
     st.session_state["sosac_gamma"] = 0.10
+if "equality_mode" not in st.session_state:
+    st.session_state["equality_mode"] = False
 if "show_advanced" not in st.session_state:
     st.session_state["show_advanced"] = False
 if "sort_option" not in st.session_state:
@@ -90,21 +92,31 @@ st.sidebar.caption(f"= ${fund_size_bn * 1000:,.0f} million per year")
 # Negotiation Presets
 with st.sidebar.expander("Negotiation Presets", expanded=False):
     col_p1, col_p2 = st.columns(2)
-    if col_p1.button("Equity Base", help="TSAC=0, SOSAC=0 (Pure IUSAF)"):
+    if col_p1.button("Inverted Scale", help="TSAC=0, SOSAC=0 (Pure IUSAF)"):
         st.session_state["tsac_beta"] = 0.0
         st.session_state["sosac_gamma"] = 0.0
+        st.session_state["equality_mode"] = False
         st.rerun()
     if col_p2.button("Stewardship", help="TSAC=0.25, SOSAC=0.05"):
         st.session_state["tsac_beta"] = 0.25
         st.session_state["sosac_gamma"] = 0.05
+        st.session_state["equality_mode"] = False
         st.rerun()
     if col_p1.button("Vulnerability", help="TSAC=0.10, SOSAC=0.15"):
         st.session_state["tsac_beta"] = 0.10
         st.session_state["sosac_gamma"] = 0.15
+        st.session_state["equality_mode"] = False
         st.rerun()
     if col_p2.button("Balanced", help="TSAC=0.15, SOSAC=0.10 (Default)"):
         st.session_state["tsac_beta"] = 0.15
         st.session_state["sosac_gamma"] = 0.10
+        st.session_state["equality_mode"] = False
+        st.rerun()
+    if col_p1.button("Equality", help="Even split between all eligible countries (Excludes HI except SIDS)"):
+        st.session_state["tsac_beta"] = 0.0
+        st.session_state["sosac_gamma"] = 0.0
+        st.session_state["equality_mode"] = True
+        st.session_state["exclude_hi"] = True
         st.rerun()
 
 # Calculations Pre-setup
@@ -279,10 +291,11 @@ results_df = calculate_allocations(
     floor_pct=floor_pct,
     ceiling_pct=ceiling_pct,
     tsac_beta=tsac_beta,
-    sosac_gamma=sosac_gamma
+    sosac_gamma=sosac_gamma,
+    equality_mode=st.session_state.get("equality_mode", False)
 )
 
-# Baseline for comparison (beta=0, gamma=0)
+# Baseline for comparison (beta=0, gamma=0, equality=False)
 results_df_baseline = calculate_allocations(
     st.session_state.base_df,
     fund_size_usd,
@@ -292,7 +305,8 @@ results_df_baseline = calculate_allocations(
     floor_pct=floor_pct,
     ceiling_pct=ceiling_pct,
     tsac_beta=0.0,
-    sosac_gamma=0.0
+    sosac_gamma=0.0,
+    equality_mode=False
 )
 
 # Merge baseline for comparison
@@ -396,43 +410,105 @@ if st.session_state.get("show_negotiation_dashboard", True):
         chart_col1, chart_col2 = st.columns(2)
         
         with chart_col1:
-            st.write("**Top 10 Winners & Losers (US$m)**")
-            top_winners = comparison_df.sort_values('delta_amt', ascending=False).head(10)
-            top_losers = comparison_df.sort_values('delta_amt', ascending=True).head(10)
-            win_loss_df = pd.concat([top_winners, top_losers])
-            
-            fig = px.bar(
-                win_loss_df, 
-                x='delta_amt', 
-                y='party', 
-                orientation='h',
-                color='delta_amt',
-                color_continuous_scale='RdBu_r',
-                labels={'delta_amt': 'Delta (US$m)', 'party': 'Country'}
-            )
-            fig.update_layout(showlegend=False, height=400, margin=dict(l=0, r=0, t=0, b=0))
+            if tsac_beta == 0 and sosac_gamma == 0:
+                st.write("**Top 10 & Bottom 10 Recipients (IUSAF Base) (US$m)**")
+                # Filter for non-zero allocations to show meaningful "Bottom 10"
+                non_zero_base = comparison_df[comparison_df['current_amt'] > 0.0001].copy()
+                
+                # Consistent Top 10: Sort by Amount (desc) then Alphabetical (asc)
+                top_iusaf = non_zero_base.sort_values(['current_amt', 'party'], ascending=[False, True]).head(10).copy()
+                top_iusaf['category'] = 'Top 10'
+                
+                # Consistent Bottom 10: Sort by Amount (asc) then Alphabetical (asc)
+                bottom_iusaf = non_zero_base.sort_values(['current_amt', 'party'], ascending=[True, True]).head(10).copy()
+                bottom_iusaf['category'] = 'Bottom 10'
+                
+                # For display in px.bar orientation='h'
+                # Bottom 10 should be at the bottom, Top 10 at the top.
+                # Plotly plots from bottom of the Y-axis upward.
+                # To show Top 10 at the top, they should be last in the dataframe.
+                # To show them in alphabetical order (Top-to-Bottom), 
+                # they should be in REVERSE alphabetical order in the dataframe.
+                combined_iusaf = pd.concat([
+                    bottom_iusaf.sort_values(['current_amt', 'party'], ascending=[False, False]),
+                    top_iusaf.sort_values(['current_amt', 'party'], ascending=[True, False])
+                ])
+                
+                fig = px.bar(
+                    combined_iusaf, 
+                    x='current_amt', 
+                    y='party', 
+                    orientation='h',
+                    color='category',
+                    color_discrete_map={'Top 10': '#1f77b4', 'Bottom 10': '#94a3b8'}, # Blue and Neutral Gray
+                    labels={'current_amt': 'Allocation (US$m)', 'party': 'Country', 'category': 'Group'}
+                )
+                fig.update_layout(showlegend=True, height=500, margin=dict(l=0, r=0, t=0, b=0))
+            else:
+                st.write("**Top 10 Winners & Losers (US$m)**")
+                # Consistent Winners: Sort by Delta (desc) then Alphabetical (asc)
+                top_winners = comparison_df.sort_values(['delta_amt', 'party'], ascending=[False, True]).head(10).copy()
+                top_winners['category'] = 'Top 10 Winners'
+                
+                # Consistent Losers: Sort by Delta (asc) then Alphabetical (asc)
+                top_losers = comparison_df.sort_values(['delta_amt', 'party'], ascending=[True, True]).head(10).copy()
+                top_losers['category'] = 'Top 10 Losers'
+                
+                # For display: Losers at bottom, Winners at top. 
+                # Reverse alphabetical for top-to-bottom visual order in Plotly 'h'
+                win_loss_df = pd.concat([
+                    top_losers.sort_values(['delta_amt', 'party'], ascending=[False, False]),
+                    top_winners.sort_values(['delta_amt', 'party'], ascending=[True, False])
+                ])
+                
+                fig = px.bar(
+                    win_loss_df, 
+                    x='delta_amt', 
+                    y='party', 
+                    orientation='h',
+                    color='delta_amt',
+                    color_continuous_scale='RdBu_r',
+                    labels={'delta_amt': 'Delta (US$m)', 'party': 'Country'}
+                )
+                fig.update_layout(showlegend=False, height=500, margin=dict(l=0, r=0, t=0, b=0))
             st.plotly_chart(fig, use_container_width=True)
 
         with chart_col2:
-            st.write("**Group Impact (Share % Change)**")
             group_type = st.selectbox("Compare by:", ["region", "WB Income Group", "is_ldc", "is_sids"], key="group_impact_type")
             
-            group_baseline = comparison_df.groupby(group_type)['baseline_amt'].sum()
-            group_current = comparison_df.groupby(group_type)['current_amt'].sum()
-            group_impact = ((group_current / group_baseline.replace(0, np.nan)) - 1) * 100
-            
-            # Formatting for display
-            if group_type == "is_ldc":
-                group_impact.index = group_impact.index.map({True: "LDC", False: "Non-LDC"})
-            if group_type == "is_sids":
-                group_impact.index = group_impact.index.map({True: "SIDS", False: "Non-SIDS"})
+            if tsac_beta == 0 and sosac_gamma == 0:
+                st.write(f"**Group Totals (IUSAF Base) (US$m)**")
+                group_total = comparison_df.groupby(group_type)['current_amt'].sum().sort_values(ascending=True)
+                # Formatting for display
+                if group_type == "is_ldc":
+                    group_total.index = group_total.index.map({True: "LDC", False: "Non-LDC"})
+                if group_type == "is_sids":
+                    group_total.index = group_total.index.map({True: "SIDS", False: "Non-SIDS"})
                 
-            fig = px.bar(
-                x=group_impact.values,
-                y=group_impact.index,
-                orientation='h',
-                labels={'x': '% Change in Total Share', 'y': 'Group'}
-            )
+                fig = px.bar(
+                    x=group_total.values,
+                    y=group_total.index,
+                    orientation='h',
+                    labels={'x': 'Total Allocation (US$m)', 'y': 'Group'}
+                )
+            else:
+                st.write("**Group Impact (Share % Change)**")
+                group_baseline = comparison_df.groupby(group_type)['baseline_amt'].sum()
+                group_current = comparison_df.groupby(group_type)['current_amt'].sum()
+                group_impact = (((group_current / group_baseline.replace(0, np.nan)) - 1) * 100).sort_values(ascending=True)
+                
+                # Formatting for display
+                if group_type == "is_ldc":
+                    group_impact.index = group_impact.index.map({True: "LDC", False: "Non-LDC"})
+                if group_type == "is_sids":
+                    group_impact.index = group_impact.index.map({True: "SIDS", False: "Non-SIDS"})
+                    
+                fig = px.bar(
+                    x=group_impact.values,
+                    y=group_impact.index,
+                    orientation='h',
+                    labels={'x': '% Change in Total Share', 'y': 'Group'}
+                )
             fig.update_layout(height=400, margin=dict(l=0, r=0, t=0, b=0))
             st.plotly_chart(fig, use_container_width=True)
 

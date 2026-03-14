@@ -64,7 +64,8 @@ def calculate_allocations(
     ceiling_pct=None,
     tsac_beta=0.15,
     sosac_gamma=0.10,
-    high_income_mode="exclude_except_sids"
+    high_income_mode="exclude_except_sids",
+    equality_mode=False
 ):
     # Filter out parties with 0 share for inversion logic (except for display later)
     # But for Cali Fund, we need to invert the non-zero ones.
@@ -81,108 +82,124 @@ def calculate_allocations(
              calc_df["eligible"] = calc_df["is_cbd_party"] & (calc_df["WB Income Group"] != "High income")
     else:
         calc_df["eligible"] = calc_df["is_cbd_party"]
-    
-    # Inversion logic: only for eligible parties with shares > 0
-    # The source 'un_share' is expressed as a percentage (e.g. 5.469)
-    # First convert it to a fraction by dividing by 100.
-    mask = calc_df["eligible"] & (calc_df['un_share'] > 0) & (calc_df['un_share'].notna())
-    
-    calc_df.loc[mask, 'un_share_fraction'] = calc_df.loc[mask, 'un_share'] / 100.0
-    calc_df.loc[mask, 'inv_weight'] = 1.0 / calc_df.loc[mask, 'un_share_fraction']
-    
-    calc_df.loc[~mask, 'un_share_fraction'] = 0.0
-    calc_df.loc[~mask, 'inv_weight'] = 0.0
-    
-    calc_df["iusaf_share"] = 0.0
 
-    eligible_mask = calc_df["eligible"] & (calc_df["un_share"] > 0) & (calc_df["un_share"].notna())
-    eligible_idx = calc_df.index[eligible_mask]
-
-    if len(eligible_idx) > 0:
-        # We compute IUSAF shares using the floor/ceiling logic if requested
-        # Note: Floor/Ceiling should probably apply to the FINAL share, 
-        # but to keep it simple and consistent with instructions, 
-        # we'll compute component shares first.
+    # 1b. Equality Mode
+    if equality_mode:
+        final_eligible_mask = calc_df["eligible"]
+        n_eligible = int(final_eligible_mask.sum())
+        calc_df["final_share"] = 0.0
+        if n_eligible > 0:
+            calc_df.loc[final_eligible_mask, "final_share"] = 1.0 / n_eligible
         
-        # In this implementation, we'll apply floor/ceiling to the IUSAF component
-        # as a baseline if needed, but the original request implies blending 
-        # components then normalizing.
-        
-        # However, to maintain the existing floor/ceiling functionality 
-        # which was designed for the single-component model, 
-        # we'll apply it to the iusaf_share baseline.
-        
-        # If we want it on the FINAL share, we'd do it after blending.
-        # Let's keep it as is for now, computing iusaf_share baseline.
-        
-        baseline_floor = 0.0 # Floor/ceiling on components is tricky, usually done on FINAL
-        baseline_cap = 1.0
-        
-        # Actually, let's compute raw iusaf_share first
-        weights = calc_df.loc[eligible_idx, "inv_weight"]
-        calc_df.loc[eligible_idx, "iusaf_share"] = weights / weights.sum()
-
-    # 2. Compute TSAC Share (Land Area)
-    calc_df["tsac_share"] = 0.0
-    tsac_eligible_mask = calc_df["eligible"] & (calc_df["land_area_km2"] > 0)
-    if tsac_eligible_mask.any():
-        la_sum = calc_df.loc[tsac_eligible_mask, "land_area_km2"].sum()
-        calc_df.loc[tsac_eligible_mask, "tsac_share"] = calc_df.loc[tsac_eligible_mask, "land_area_km2"] / la_sum
-
-    # 3. Compute SOSAC Share (SIDS)
-    calc_df["sosac_share"] = 0.0
-    sosac_eligible_mask = calc_df["eligible"] & calc_df["is_sids"]
-    n_sids = int(sosac_eligible_mask.sum())
-    if n_sids > 0:
-        calc_df.loc[sosac_eligible_mask, "sosac_share"] = 1.0 / n_sids
-
-    # 4. Handle Blending and Fallback
-    beta = float(tsac_beta)
-    gamma = float(sosac_gamma)
-    
-    # Regression check: if weights are zero, use old logic (no TSAC/SOSAC component)
-    if beta == 0.0 and gamma == 0.0:
-        calc_df["final_share"] = calc_df["iusaf_share"]
+        # Zero out components for display/transparency
+        calc_df["iusaf_share"] = calc_df["final_share"]
+        calc_df["tsac_share"] = 0.0
+        calc_df["sosac_share"] = 0.0
         effective_alpha = 1.0
         effective_beta = 0.0
         effective_gamma = 0.0
     else:
-        # Fallback if no SIDS
-        effective_beta = beta
-        effective_gamma = gamma
-        effective_alpha = 1.0 - beta - gamma
+        # Inversion logic: only for eligible parties with shares > 0
+        # The source 'un_share' is expressed as a percentage (e.g. 5.469)
+        # First convert it to a fraction by dividing by 100.
+        mask = calc_df["eligible"] & (calc_df['un_share'] > 0) & (calc_df['un_share'].notna())
         
-        if n_sids == 0 and gamma > 0:
-            # Fallback: reallocate to IUSAF
-            effective_alpha += gamma
-            effective_gamma = 0.0
-            # log warning (implied in UI)
-            
-        # Compute Final Share
-        calc_df["final_share"] = (
-            effective_alpha * calc_df["iusaf_share"] + 
-            effective_beta * calc_df["tsac_share"] + 
-            effective_gamma * calc_df["sosac_share"]
-        )
-    
-    # Normalize
-    final_eligible_mask = calc_df["eligible"]
-    if final_eligible_mask.any():
-        s = calc_df.loc[final_eligible_mask, "final_share"].sum()
-        if s > 0:
-            calc_df.loc[final_eligible_mask, "final_share"] = calc_df.loc[final_eligible_mask, "final_share"] / s
+        calc_df.loc[mask, 'un_share_fraction'] = calc_df.loc[mask, 'un_share'] / 100.0
+        calc_df.loc[mask, 'inv_weight'] = 1.0 / calc_df.loc[mask, 'un_share_fraction']
+        
+        calc_df.loc[~mask, 'un_share_fraction'] = 0.0
+        calc_df.loc[~mask, 'inv_weight'] = 0.0
+        
+        calc_df["iusaf_share"] = 0.0
 
-    # 5. Apply Floor and Ceiling to Final Share if enabled
-    if (floor_pct > 0 or ceiling_pct is not None) and final_eligible_mask.any():
-        floor = float(floor_pct) / 100.0
-        cap = 1.0 if ceiling_pct is None else float(ceiling_pct) / 100.0
+        eligible_mask = calc_df["eligible"] & (calc_df["un_share"] > 0) & (calc_df["un_share"].notna())
+        eligible_idx = calc_df.index[eligible_mask]
+
+        if len(eligible_idx) > 0:
+            # We compute IUSAF shares using the floor/ceiling logic if requested
+            # Note: Floor/Ceiling should probably apply to the FINAL share, 
+            # but to keep it simple and consistent with instructions, 
+            # we'll compute component shares first.
+            
+            # In this implementation, we'll apply floor/ceiling to the IUSAF component
+            # as a baseline if needed, but the original request implies blending 
+            # components then normalizing.
+            
+            # However, to maintain the existing floor/ceiling functionality 
+            # which was designed for the single-component model, 
+            # we'll apply it to the iusaf_share baseline.
+            
+            # If we want it on the FINAL share, we'd do it after blending.
+            # Let's keep it as is for now, computing iusaf_share baseline.
+            
+            baseline_floor = 0.0 # Floor/ceiling on components is tricky, usually done on FINAL
+            baseline_cap = 1.0
+            
+            # Actually, let's compute raw iusaf_share first
+            weights = calc_df.loc[eligible_idx, "inv_weight"]
+            calc_df.loc[eligible_idx, "iusaf_share"] = weights / weights.sum()
+
+        # 2. Compute TSAC Share (Land Area)
+        calc_df["tsac_share"] = 0.0
+        tsac_eligible_mask = calc_df["eligible"] & (calc_df["land_area_km2"] > 0)
+        if tsac_eligible_mask.any():
+            la_sum = calc_df.loc[tsac_eligible_mask, "land_area_km2"].sum()
+            calc_df.loc[tsac_eligible_mask, "tsac_share"] = calc_df.loc[tsac_eligible_mask, "land_area_km2"] / la_sum
+
+        # 3. Compute SOSAC Share (SIDS)
+        calc_df["sosac_share"] = 0.0
+        sosac_eligible_mask = calc_df["eligible"] & calc_df["is_sids"]
+        n_sids = int(sosac_eligible_mask.sum())
+        if n_sids > 0:
+            calc_df.loc[sosac_eligible_mask, "sosac_share"] = 1.0 / n_sids
+
+        # 4. Handle Blending and Fallback
+        beta = float(tsac_beta)
+        gamma = float(sosac_gamma)
         
-        constrained_shares = _apply_floor_ceiling_shares(
-            calc_df.loc[final_eligible_mask, "final_share"],
-            floor=floor,
-            cap=cap
-        )
-        calc_df.loc[final_eligible_mask, "final_share"] = constrained_shares
+        # Regression check: if weights are zero, use old logic (no TSAC/SOSAC component)
+        if beta == 0.0 and gamma == 0.0:
+            calc_df["final_share"] = calc_df["iusaf_share"]
+            effective_alpha = 1.0
+            effective_beta = 0.0
+            effective_gamma = 0.0
+        else:
+            # Fallback if no SIDS
+            effective_beta = beta
+            effective_gamma = gamma
+            effective_alpha = 1.0 - beta - gamma
+            
+            if n_sids == 0 and gamma > 0:
+                # Fallback: reallocate to IUSAF
+                effective_alpha += gamma
+                effective_gamma = 0.0
+                # log warning (implied in UI)
+                
+            # Compute Final Share
+            calc_df["final_share"] = (
+                effective_alpha * calc_df["iusaf_share"] + 
+                effective_beta * calc_df["tsac_share"] + 
+                effective_gamma * calc_df["sosac_share"]
+            )
+        
+        # Normalize
+        final_eligible_mask = calc_df["eligible"]
+        if final_eligible_mask.any():
+            s = calc_df.loc[final_eligible_mask, "final_share"].sum()
+            if s > 0:
+                calc_df.loc[final_eligible_mask, "final_share"] = calc_df.loc[final_eligible_mask, "final_share"] / s
+
+        # 5. Apply Floor and Ceiling to Final Share if enabled
+        if (floor_pct > 0 or ceiling_pct is not None) and final_eligible_mask.any():
+            floor = float(floor_pct) / 100.0
+            cap = 1.0 if ceiling_pct is None else float(ceiling_pct) / 100.0
+            
+            constrained_shares = _apply_floor_ceiling_shares(
+                calc_df.loc[final_eligible_mask, "final_share"],
+                floor=floor,
+                cap=cap
+            )
+            calc_df.loc[final_eligible_mask, "final_share"] = constrained_shares
 
     # Rename final_share back to inverted_share for compatibility if needed, 
     # but the instruction said to use final_share. Let's provide both.
