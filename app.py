@@ -46,11 +46,11 @@ if "enable_ceiling" not in st.session_state:
 if "ceiling_pct" not in st.session_state:
     st.session_state["ceiling_pct"] = 1.0
 if "tsac_beta" not in st.session_state:
-    st.session_state["tsac_beta"] = 0.15
+    st.session_state["tsac_beta"] = 0.0
 if "sosac_gamma" not in st.session_state:
-    st.session_state["sosac_gamma"] = 0.10
+    st.session_state["sosac_gamma"] = 0.0
 if "equality_mode" not in st.session_state:
-    st.session_state["equality_mode"] = False
+    st.session_state["equality_mode"] = True
 if "show_advanced" not in st.session_state:
     st.session_state["show_advanced"] = False
 if "sort_option" not in st.session_state:
@@ -72,8 +72,9 @@ if st.sidebar.button("Reset to default"):
     st.session_state["floor_pct"] = 0.05
     st.session_state["enable_ceiling"] = False
     st.session_state["ceiling_pct"] = 1.0
-    st.session_state["tsac_beta"] = 0.15
-    st.session_state["sosac_gamma"] = 0.10
+    st.session_state["tsac_beta"] = 0.0
+    st.session_state["sosac_gamma"] = 0.0
+    st.session_state["equality_mode"] = True
     st.session_state["show_advanced"] = False
     st.session_state["sort_option"] = "Allocation (highest first)"
     st.session_state["show_negotiation_dashboard"] = True
