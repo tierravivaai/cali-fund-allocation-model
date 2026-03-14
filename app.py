@@ -550,9 +550,9 @@ if st.session_state.get("show_negotiation_dashboard", True):
                     text='display_text',
                     labels={'total_amt': 'Total Allocation (US$m)', 'y': 'Group'}
                 )
-                fig.update_traces(textposition='outside')
+                fig.update_traces(textposition='outside', cliponaxis=False)
                 fig.update_yaxes(automargin=True)
-                fig.update_layout(height=400, margin=dict(l=150, r=120, t=40, b=40))
+                fig.update_layout(height=400, margin=dict(l=200, r=300, t=40, b=40))
             else:
                 st.write("**Group Impact (Share % Change)**")
                 eligible_comp = comparison_df[comparison_df['eligible']].copy()
@@ -587,9 +587,9 @@ if st.session_state.get("show_negotiation_dashboard", True):
                     text='display_text',
                     labels={'impact': '% Change in Total Share', 'y': 'Group'}
                 )
-                fig.update_traces(textposition='outside')
+                fig.update_traces(textposition='outside', cliponaxis=False)
                 fig.update_yaxes(automargin=True)
-                fig.update_layout(height=400, margin=dict(l=150, r=120, t=40, b=40))
+                fig.update_layout(height=400, margin=dict(l=200, r=300, t=40, b=40))
                 st.caption("*Percentages are rounded to the nearest whole number.")
             st.plotly_chart(fig, use_container_width=True)
 
