@@ -158,12 +158,12 @@ def get_base_data(con):
     df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'is_ldc'] = False
     df.loc[df['party'] == 'Venezuela (Bolivarian Republic of)', 'is_sids'] = False
     
-    df.loc[df['party'] == 'Democratic Republic of the Congo (formerly Zaire)', 'WB Income Group'] = 'Low income'
-    df.loc[df['party'] == 'Democratic Republic of the Congo (formerly Zaire)', 'region'] = 'Africa'
-    df.loc[df['party'] == 'Democratic Republic of the Congo (formerly Zaire)', 'sub_region'] = 'Sub-Saharan Africa'
-    df.loc[df['party'] == 'Democratic Republic of the Congo (formerly Zaire)', 'intermediate_region'] = 'Middle Africa'
-    df.loc[df['party'] == 'Democratic Republic of the Congo (formerly Zaire)', 'is_ldc'] = True
-    df.loc[df['party'] == 'Democratic Republic of the Congo (formerly Zaire)', 'is_sids'] = False
+    df.loc[df['party'] == 'Democratic Republic of the Congo', 'WB Income Group'] = 'Low income'
+    df.loc[df['party'] == 'Democratic Republic of the Congo', 'region'] = 'Africa'
+    df.loc[df['party'] == 'Democratic Republic of the Congo', 'sub_region'] = 'Sub-Saharan Africa'
+    df.loc[df['party'] == 'Democratic Republic of the Congo', 'intermediate_region'] = 'Middle Africa'
+    df.loc[df['party'] == 'Democratic Republic of the Congo', 'is_ldc'] = True
+    df.loc[df['party'] == 'Democratic Republic of the Congo', 'is_sids'] = False
 
     df.loc[df['party'] == 'European Union', 'WB Income Group'] = 'High income'
     df.loc[df['party'] == 'European Union', 'region'] = 'Europe'
