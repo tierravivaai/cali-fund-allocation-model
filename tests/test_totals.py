@@ -155,6 +155,19 @@ def test_sids_filtering_logic(mock_con):
     # Total check
     assert len(sids_df) + len(non_sids_df) == 196
 
+    # Check that Total row works for SIDS filtering
+    sids_table = sids_df.copy()
+    sids_table.insert(1, "Countries (number)", 1)
+    total_sids = add_total_row(sids_table, "party")
+    assert total_sids.iloc[-1]["party"] == "Total"
+    assert total_sids.iloc[-1]["Countries (number)"] == len(sids_df)
+    non_sids_df = results_df[mask_cbd & (~results_df["is_sids"])].copy()
+    assert len(non_sids_df) > 0
+    assert not any(non_sids_df["is_sids"])
+    
+    # Total check
+    assert len(sids_df) + len(non_sids_df) == 196
+
 def test_sids_membership_completeness(mock_con):
     base_df = get_base_data(mock_con)
     # Check that all SIDS in base data are marked as CBD Parties (or handled correctly)

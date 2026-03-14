@@ -651,18 +651,23 @@ with tab5:
         hide_index = True
 
     display_cols = ["party", "total_allocation", "state_component", "iplc_component", "WB Income Group", "UN LDC", "EU"]
+    sids_display_df = sids_filtered_df[display_cols].copy()
+    
+    # Add Countries (number) dummy column and Total row
+    sids_display_df.insert(1, "Countries (number)", 1)
+    sids_display_df = add_total_row(sids_display_df, "party")
 
     if use_thousands:
         for col in ["total_allocation", "state_component", "iplc_component"]:
-            sids_filtered_df[col] = sids_filtered_df[col].apply(format_currency)
+            sids_display_df[col] = sids_display_df[col].apply(lambda x: format_currency(x) if isinstance(x, (int, float)) else x)
 
     config = {"party": "Country"}
-    config.update(get_column_config(use_thousands))
+    config.update(get_column_config(use_thousands, include_country_count=True))
 
     st.dataframe(
-        sids_filtered_df[display_cols],
+        sids_display_df,
         column_config=config,
-        hide_index=hide_index,
+        hide_index=True,
         width="stretch",
     )
 
