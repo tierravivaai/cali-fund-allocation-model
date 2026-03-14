@@ -99,7 +99,7 @@ with st.sidebar.expander("Negotiation Presets", expanded=True):
         st.session_state["equality_mode"] = True
         st.session_state["exclude_hi"] = True
         st.rerun()
-    if col_p2.button("Inverted Scale", help="TSAC=0, SOSAC=0 (Pure IUSAF)"):
+    if col_p2.button("Inverted UN Scale", help="TSAC=0, SOSAC=0 (Pure IUSAF)"):
         st.session_state["tsac_beta"] = 0.0
         st.session_state["sosac_gamma"] = 0.0
         st.session_state["equality_mode"] = False
@@ -301,10 +301,10 @@ results_df = calculate_allocations(
 )
 
 # Baseline Logic
-# 1. If we are in Inverted Scale (beta=0, gamma=0, equality=False), 
+# 1. If we are in Inverted UN Scale (beta=0, gamma=0, equality=False), 
 #    the baseline should be Equality (equality=True).
 # 2. If we are in any other preset (Stewardship, Balanced, etc.),
-#    the baseline should be Inverted Scale (beta=0, gamma=0, equality=False).
+#    the baseline should be Inverted UN Scale (beta=0, gamma=0, equality=False).
 # 3. If we are in Equality preset (equality=True), metrics should be 0 (baseline = current).
 
 is_eq_mode = st.session_state.get("equality_mode", False)
@@ -315,7 +315,7 @@ if is_eq_mode:
     results_df_baseline = results_df.copy()
     baseline_label = "Equality"
 elif is_inverted_scale:
-    # Inverted Scale selected: Compare against Equality
+    # Inverted UN Scale selected: Compare against Equality
     results_df_baseline = calculate_allocations(
         st.session_state.base_df,
         fund_size_usd,
@@ -330,7 +330,7 @@ elif is_inverted_scale:
     )
     baseline_label = "Equality"
 else:
-    # Stewardship/Balanced selected: Compare against Inverted Scale (IUSAF)
+    # Stewardship/Balanced selected: Compare against Inverted UN Scale (IUSAF)
     results_df_baseline = calculate_allocations(
         st.session_state.base_df,
         fund_size_usd,
@@ -605,7 +605,7 @@ if st.session_state.get("show_negotiation_dashboard", True):
             
             # We need to compute deltas for the waterfall
             is_eq = st.session_state.get("equality_mode", False)
-            base_label = "Equality Base" if is_eq else "Inverted Scale (IUSAF) Base"
+            base_label = "Equality Base" if is_eq else "Inverted UN Scale (IUSAF) Base"
             tsac_label = "TSAC Adjustment" if not is_eq else "TSAC (0)"
             sosac_label = "SOSAC Adjustment" if not is_eq else "SOSAC (0)"
 
