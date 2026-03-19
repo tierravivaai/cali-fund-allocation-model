@@ -1,0 +1,28 @@
+# UN Scale Band Configuration
+# Each band defines a weight used for IUSAF calculation in 'band_inversion' mode.
+
+bands:
+  - id: 1
+    min_threshold: -0.0001
+    max_threshold: 0.001
+    weight: 1.50
+    label: "Band 1: <= 0.001%"
+  - id: 2
+    min_threshold: 0.001
+    max_threshold: 0.01
+    weight: 1.30
+    label: "Band 2: 0.001% - 0.01%"
+  - id: 3
+    min_threshold: 0.01
+    max_threshold: 0.1
+    weight: 1.10
+    label: "Band 3: 0.01% - 0.1%"
+  - id: 4
+    min_threshold: 0.1
+    max_threshold: 1.0
+    weight: 0.95
+    label: "Band 4: 0.1% - 1.0%"
+  - id: 5
+    min_threshold: 1.0
+    weight: 0.75
+    label: "Band 5: > 1.0%"

@@ -1,0 +1,17 @@
+.DS_Store
+.Rhistory
+.Rproj.user/
+.pytest_cache/
+__pycache__/
+*.pyc
+.venv/
+.env
+*.duckdb
+data/
+data_temp_*/
+*.backup
+*.log
+.factory/
+data-raw.zip
+archive/
+
