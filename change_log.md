@@ -72,6 +72,14 @@
 - Added a reporting test to verify sweep summaries attribute Spearman and turnover triggers separately.
 - Added integrity-check export tests covering schema completeness, valid-scenario pass behaviour, and deliberate non-conservation failure detection.
 
+### Infrastructure and tooling
+- Fixed Streamlit server connection issue causing CSV download errors
+- Added regression tests in `tests/test_app_dataframes.py` to verify:
+  - App initializes with valid dataframes
+  - Streamlit renders dataframe elements needed for CSV export
+  - App state remains consistent after parameter changes
+- Updated `.gitignore` to exclude `sensitivity-reports/v2-sensitivity-reports`
+
 ### Current validated status
-- Full automated test suite passing (`135` tests).
+- Full automated test suite passing (`138` tests, including 3 new app dataframe tests).
 - V3 sensitivity markdown and CSV outputs regenerated successfully, including `integrity_checks.csv`.
