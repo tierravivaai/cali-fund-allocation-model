@@ -1,5 +1,11 @@
 # Cali Allocation Model (UN Scale)
 
+## Note
+
+This repository is archived and has been superseded. It contains the original starting code (version 1) for the Inverted United Nations Scale of Assessment model based on raw inversion of the UN scale. This was superseded by the now archived [version 2](https://github.com/tierravivaai/cali-allocation-model-v2) which introduced a banded approach to inversion and the concept of territorial (TSAC) and SIDS ocean (SOSAC) stewardship. The current version of the mdoel is [version 3](https://github.com/tierravivaai/cali-allocation-model-v3)
+
+## Introduction
+
 This interactive tool illustrates how Cali Fund allocations would be distributed if based on the **latest UN Scale of Assessments (2025-2027)**, inverted to reflect relative need.
 
 ## Features
