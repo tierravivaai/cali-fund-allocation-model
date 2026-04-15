@@ -1,6 +1,6 @@
 # UN Scale of Assessment 2027 — Distribution Figures
 
-Generated: 2026-04-15 15:48 UTC
+Generated: 2026-04-15 16:29 UTC
 Project: Cali Allocation Model (Inverted UN Scale Option)
 
 ---

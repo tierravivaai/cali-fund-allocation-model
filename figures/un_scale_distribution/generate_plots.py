@@ -80,19 +80,22 @@ def plot_distribution(shares, title, filename, color="#3B82F6"):
     n_zero = int((shares["un_share"] == 0).sum())
     nonzero = shares[shares["un_share"] > 0]["un_share"].values
 
-    # Define clear percentage bands
+    # 6 bands aligned with config/un_scale_bands.yaml
+    # Repo convention: > min_threshold and <= max_threshold
     bands = [
+        (-0.0001, 0.001, "≤ 0.001%"),
         (0.001, 0.01, "0.001–0.01%"),
         (0.01, 0.1, "0.01–0.1%"),
         (0.1, 1.0, "0.1–1%"),
         (1.0, 10.0, "1–10%"),
-        (10.0, 100.0, ">10%"),
+        (10.0, 100.0, "> 10%"),
     ]
 
     labels = []
     counts = []
+    all_shares = shares["un_share"].values
     for lo, hi, label in bands:
-        count = int(np.sum((nonzero >= lo) & (nonzero < hi)))
+        count = int(np.sum((all_shares > lo) & (all_shares <= hi)))
         labels.append(label)
         counts.append(count)
 
