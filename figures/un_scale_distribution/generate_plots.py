@@ -144,6 +144,52 @@ def save_csv(data, filename):
     return csv_path
 
 
+def plot_ranked_bars(shares, title, filename, color="#6366F1"):
+    """Create a ranked bar chart: each Party as one bar, sorted highest to lowest."""
+    fig, ax = plt.subplots(figsize=(14, 5))
+    fig.patch.set_facecolor("white")
+
+    # Filter out EU, keep zero-rated Parties
+    plot_data = shares[shares["party_name"] != "European Union"].copy()
+    plot_data = plot_data.sort_values("un_share", ascending=False).reset_index(drop=True)
+
+    n_total = len(plot_data)
+    x_pos = np.arange(n_total)
+    values = plot_data["un_share"].values
+
+    ax.bar(x_pos, values, color=color, edgecolor="none", width=0.85, alpha=0.85)
+
+    ax.set_xlim(-0.5, n_total - 0.5)
+    ax.set_xlabel(f"Parties ranked by UN Scale share (N={n_total})", fontsize=11)
+    ax.set_ylabel("UN Scale of Assessment Share (%)", fontsize=11)
+    ax.set_title(title, fontsize=13, fontweight="bold")
+    ax.grid(True, axis="y", alpha=0.3)
+
+    # Remove x-axis tick labels (no country names)
+    ax.set_xticks([])
+
+    # Annotate the first and last bars
+    if len(values) > 0:
+        ax.annotate(
+            f"{values[0]:.2f}%", xy=(0, values[0]),
+            xytext=(15, 10), textcoords="offset points",
+            fontsize=8, color="#555555"
+        )
+        if values[-1] == 0:
+            ax.annotate(
+                "0%", xy=(n_total - 1, values[-1]),
+                xytext=(0, 5), textcoords="offset points",
+                fontsize=7, color="#999999", ha="center"
+            )
+
+    plt.tight_layout()
+    svg_path = os.path.join(OUTPUT_DIR, filename)
+    plt.savefig(svg_path, format="svg", bbox_inches="tight", facecolor="white")
+    plt.close()
+    print(f"Saved: {svg_path}")
+    return svg_path
+
+
 def generate_readme(fig1_data, fig2_data, fig1_path, fig2_path, fig1_csv, fig2_csv):
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     import matplotlib
@@ -235,6 +281,14 @@ if __name__ == "__main__":
         color="#22C55E",
     )
     fig2_csv = save_csv(fig2_data, "fig_2_non_high_income.csv")
+
+    print("\nBuilding Figure 3: Ranked bars (142 eligible Parties, EU excluded)...")
+    fig3_path = plot_ranked_bars(
+        fig2_data,
+        "UN Scale of Assessment Shares (2027)\nCBD Parties ranked highest to lowest (High income excluded, SIDS preserved)",
+        "fig_3_ranked_bars.svg",
+        color="#6366F1",
+    )
 
     print("\nGenerating README.md...")
     generate_readme(fig1_data, fig2_data, fig1_path, fig2_path, fig1_csv, fig2_csv)
