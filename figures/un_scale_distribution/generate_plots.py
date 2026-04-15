@@ -179,6 +179,56 @@ def plot_ranked_bars(shares, title, filename, color="#6366F1"):
     return svg_path
 
 
+def plot_ranked_bars_two_panel(shares, title, filename, color="#6366F1", zoom_ymax=1.5):
+    """Two-panel ranked bar chart: top = full range, bottom = zoomed into lower end."""
+    plot_data = shares[shares["party_name"] != "European Union"].copy()
+    plot_data = plot_data.sort_values("un_share", ascending=False).reset_index(drop=True)
+
+    n_total = len(plot_data)
+    x_pos = np.arange(n_total)
+    values = plot_data["un_share"].values
+
+    fig, (ax_top, ax_bot) = plt.subplots(
+        2, 1, figsize=(8, 8), sharex=True,
+        gridspec_kw={"height_ratios": [1, 1.2]}
+    )
+    fig.patch.set_facecolor("white")
+
+    # Top panel: full range
+    ax_top.bar(x_pos, values, color=color, edgecolor="none", width=0.85, alpha=0.85)
+    ax_top.set_xlim(-0.5, n_total - 0.5)
+    ax_top.set_ylabel("UN Scale Share (%)", fontsize=10)
+    ax_top.set_title(title, fontsize=11, fontweight="bold")
+    ax_top.grid(True, axis="y", alpha=0.3)
+    ax_top.set_xticks([])
+
+    # Bottom panel: zoomed into lower end
+    ax_bot.bar(x_pos, values, color=color, edgecolor="none", width=0.85, alpha=0.85)
+    ax_bot.set_xlim(-0.5, n_total - 0.5)
+    ax_bot.set_ylim(0, zoom_ymax)
+    ax_bot.set_xlabel(f"Parties ranked by UN Scale share (N={n_total})", fontsize=10)
+    ax_bot.set_ylabel("UN Scale Share (%)", fontsize=10)
+    ax_bot.grid(True, axis="y", alpha=0.3)
+    ax_bot.set_xticks([])
+    # Zoom label
+    ax_bot.text(
+        0.99, 0.97, f"Zoomed: 0–{zoom_ymax}%",
+        transform=ax_bot.transAxes, fontsize=9,
+        verticalalignment="top", horizontalalignment="right",
+        bbox=dict(boxstyle="round,pad=0.3", facecolor="#F0F0F0", alpha=0.8)
+    )
+
+    plt.tight_layout(h_pad=1.5)
+    svg_path = os.path.join(OUTPUT_DIR, filename)
+    plt.savefig(svg_path, format="svg", bbox_inches="tight", facecolor="white")
+    png_path = os.path.splitext(svg_path)[0] + ".png"
+    plt.savefig(png_path, format="png", dpi=200, bbox_inches="tight", facecolor="white")
+    plt.close()
+    print(f"Saved: {svg_path}")
+    print(f"Saved: {png_path}")
+    return svg_path
+
+
 def generate_readme(fig1_data, fig2_data, fig1_path, fig2_path, fig1_csv, fig2_csv):
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     import matplotlib
@@ -293,6 +343,24 @@ if __name__ == "__main__":
         color="#8B5CF6",
     )
     fig4_csv = save_csv(fig4_data, "fig_4_ranked_bars_no_china.csv")
+
+    print("\nBuilding Figure 5: Two-panel ranked bars (142 eligible Parties)...")
+    fig5_path = plot_ranked_bars_two_panel(
+        fig2_data,
+        "UN Scale of Assessment Shares (2027)\nCBD Parties (High income excluded, SIDS preserved)",
+        "fig_5_two_panel_ranked.svg",
+        color="#6366F1",
+        zoom_ymax=1.5,
+    )
+
+    print("\nBuilding Figure 6: Two-panel ranked bars without China...")
+    fig6_path = plot_ranked_bars_two_panel(
+        no_china,
+        "UN Scale of Assessment Shares (2027) — Without China\nCBD Parties (High income excluded, SIDS preserved)",
+        "fig_6_two_panel_ranked_no_china.svg",
+        color="#8B5CF6",
+        zoom_ymax=1.5,
+    )
 
     print("\nGenerating README.md...")
     generate_readme(fig1_data, fig2_data, fig1_path, fig2_path, fig1_csv, fig2_csv)
