@@ -132,8 +132,11 @@ def plot_distribution(shares, title, filename, color="#3B82F6"):
     plt.tight_layout()
     svg_path = os.path.join(OUTPUT_DIR, filename)
     plt.savefig(svg_path, format="svg", bbox_inches="tight", facecolor="white")
+    png_path = os.path.splitext(svg_path)[0] + ".png"
+    plt.savefig(png_path, format="png", dpi=200, bbox_inches="tight", facecolor="white")
     plt.close()
     print(f"Saved: {svg_path}")
+    print(f"Saved: {png_path}")
     return svg_path
 
 
