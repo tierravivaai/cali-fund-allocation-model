@@ -168,20 +168,6 @@ def plot_ranked_bars(shares, title, filename, color="#6366F1"):
     # Remove x-axis tick labels (no country names)
     ax.set_xticks([])
 
-    # Annotate the first and last bars
-    if len(values) > 0:
-        ax.annotate(
-            f"{values[0]:.2f}%", xy=(0, values[0]),
-            xytext=(15, 10), textcoords="offset points",
-            fontsize=8, color="#555555"
-        )
-        if values[-1] == 0:
-            ax.annotate(
-                "0%", xy=(n_total - 1, values[-1]),
-                xytext=(0, 5), textcoords="offset points",
-                fontsize=7, color="#999999", ha="center"
-            )
-
     plt.tight_layout()
     svg_path = os.path.join(OUTPUT_DIR, filename)
     plt.savefig(svg_path, format="svg", bbox_inches="tight", facecolor="white")
