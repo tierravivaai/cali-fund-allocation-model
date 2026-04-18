@@ -1205,10 +1205,9 @@ with main_tabs[current_tab_idx]:
     st.markdown("Least Developed Countries (LDCs) are low-income countries as defined by the UN Committee for Development Policy (CDP) as described [here](https://policy.desa.un.org/least-developed-countries). There are currently 44 LDCs.")
     ldc_total, _ = aggregate_special_groups(results_df)
     
-    # Calculate non-LDC (broadly 'Developed/Other')
-    # To sum to 196, we count ALL CBD parties NOT in LDC group
-    mask_cbd = results_df['is_cbd_party']
-    non_ldc_df = results_df[mask_cbd & (~results_df['is_ldc'])]
+    # Calculate non-LDC among eligible parties
+    mask_eligible = results_df['is_cbd_party'] & results_df['eligible']
+    non_ldc_df = results_df[mask_eligible & (~results_df['is_ldc'])]
     non_ldc_total = non_ldc_df[['total_allocation', 'state_component', 'iplc_component']].sum()
     non_ldc_count = len(non_ldc_df)
     
@@ -1235,9 +1234,9 @@ with main_tabs[current_tab_idx]:
     st.subheader("Small Island Developing States (SIDS)")
     _, sids_total = aggregate_special_groups(results_df)
     
-    # Calculate non-SIDS
-    mask_cbd = results_df['is_cbd_party']
-    non_sids_df = results_df[mask_cbd & (~results_df['is_sids'])]
+    # Calculate non-SIDS among eligible parties
+    mask_eligible = results_df['is_cbd_party'] & results_df['eligible']
+    non_sids_df = results_df[mask_eligible & (~results_df['is_sids'])]
     non_sids_total = non_sids_df[['total_allocation', 'state_component', 'iplc_component']].sum()
     non_sids_count = len(non_sids_df)
     

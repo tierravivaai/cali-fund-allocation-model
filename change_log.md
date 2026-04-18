@@ -124,6 +124,12 @@
 - All 138 tests passing after updates for renamed parameters, new constraint logic, and changed baseline values.
 - Updated test assertions: TSAC baseline 0.025 (was 0.05), Spearman floor 0.80 (was 0.85), preset slider 2.5 (was 5).
 
+### Bug fix: LDC/SIDS tabs counted ineligible parties
+- Fixed LDC Share and SIDS Share tabs showing country counts that summed to 196 (all CBD Parties) instead of the correct eligible total.
+- The "Other Countries" row in both tabs used `is_cbd_party` alone instead of `is_cbd_party & eligible`, so excluded high-income parties were still counted.
+- Updated `test_ldc_sids_total_sum` to verify both `exclude_hi=False` (sums to 196) and `exclude_hi=True` (sums to 142).
+- Updated `test_sids_filtering_logic` to use the eligible mask.
+
 ### Git workflow
 - Tagged main as `v3.final` (pre-Option D state).
 - Merged `optiond` branch with `--no-ff` to preserve branch history.
