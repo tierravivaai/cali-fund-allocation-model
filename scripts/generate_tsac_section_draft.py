@@ -255,7 +255,8 @@ def main():
     run = p.add_run(
         "The IUSAF equity base is dominant for all eligible Parties without exception. "
         "Stewardship supplements never exceed the equity base for any Party. Band order is "
-        "preserved with a margin of 19.3% (Band 5 mean $4.92M vs Band 6 mean $3.97M). "
+        "preserved with a comfortable gap of $0.95M (Band 5 mean $4.92M vs Band 6 mean $3.97M), "
+        "a relative margin of 19.3% of the Band 5 mean. "
         f"Spearman ρ = {scenarios[0.015]['spearman']:.3f}."
     )
     run.font.name = FONT
@@ -269,7 +270,8 @@ def main():
         "The point at which the Gini coefficient is lowest while preserving IUSAF band order. "
         "If this balance point is chosen, stewardship may approach but does not exceed the "
         "equity base for developing country Parties with a large landmass. Band order is "
-        "preserved with a margin of 5.4% (Band 5 mean $5.44M vs Band 6 mean $5.15M). "
+        "preserved with a slim absolute gap of $0.29M (Band 5 mean $5.44M vs Band 6 mean $5.15M), "
+        "a relative margin of 5.4% of the Band 5 mean. "
         f"Spearman ρ = {scenarios[0.025]['spearman']:.3f}."
     )
     run.font.name = FONT
@@ -348,7 +350,7 @@ def main():
 
     doc.add_paragraph(
         "The key observation in Table A is that at TSAC = 2.5% (the Gini-minimum) the IUSAF "
-        "band order is preserved with a margin of 5.4%, but at TSAC = 3.0% Band 6 is receiving "
+        "band order is preserved with a slim gap of $0.29M (a relative margin of 5.4% of the Band 5 mean), but at TSAC = 3.0% Band 6 is receiving "
         "a higher allocation than Band 5, breaking the descending monotonic requirement. "
         "This overturn occurs at a TSAC value 17× lower than the simple model overturn threshold "
         "(TSAC + SOSAC = 50%), underscoring the sensitivity of the band ordering to the TSAC "
@@ -484,7 +486,7 @@ def main():
         "strictly decreasing (monotonic) order in the amounts allocated by IUSAF band or "
         "whether relaxation is permitted in order to adequately recognise the stewardship "
         "responsibilities of some Parties. Under Option D, the Gini-minimum balance point "
-        "(TSAC = 2.5%) preserves band order with a margin of 5.4%. If Parties wish to go "
+        "(TSAC = 2.5%) preserves band order with a slim gap of $0.29M (relative margin of 5.4% of the Band 5 mean). If Parties wish to go "
         "beyond this towards greater terrestrial stewardship recognition, they may accept "
         "band-order relaxation, in which case settings up to TSAC = 3.5% (the former "
         "\"Bounded\" point) remain within the range where IUSAF is still the dominant "
