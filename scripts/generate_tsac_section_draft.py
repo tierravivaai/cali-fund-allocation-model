@@ -487,8 +487,8 @@ def main():
     band_full = ['Band 1: <= 0.001%', 'Band 2: 0.001% - 0.01%', 'Band 3: 0.01% - 0.1%',
                  'Band 4: 0.1% - 1.0%', 'Band 5: 1.0% - 10.0%', 'Band 6: > 10.0%']
 
-    transfer_headers = ['Band', 'Parties', 'Δ at 1.5%\n(USD M)', 'Δ at 2.5%\n(USD M)',
-                        'Δ at 3.0%\n(USD M)', 'Δ at 3.5%\n(USD M)', 'Δ at 5.0%\n(USD M)']
+    transfer_headers = ['Band', 'Parties', 'Change at\n1.5% (USD M)', 'Change at\n2.5% (USD M)',
+                        'Change at\n3.0% (USD M)', 'Change at\n3.5% (USD M)', 'Change at\n5.0% (USD M)']
     transfer_rows = []
 
     # Compute pure IUSAF band totals
@@ -519,7 +519,7 @@ def main():
 
     cap = doc.add_paragraph()
     cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = cap.add_run("Table D2. Change in total band allocation vs pure IUSAF (USD M, SOSAC = 3%)")
+    run = cap.add_run("Table D2. Change in total band allocation vs pure IUSAF (USD M, SOSAC = 3%). Positive = band gains; negative = band loses.")
     run.font.name = FONT
     run.font.size = Pt(8.5)
     run.font.italic = True
