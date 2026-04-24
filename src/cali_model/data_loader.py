@@ -61,7 +61,7 @@ def load_data(con):
     land_df["Country Name"] = land_df["Country Name"].replace({v: k for k, v in LAND_AREA_NAME_MAP.items()})
     land_area_latest_df = land_df[["Country Name", "Country Code", "land_area_km2", "land_area_year"]].copy()
     # Ensure string columns use object dtype (DuckDB doesn't recognise pandas StringDtype)
-    for col in land_area_latest_df.select_dtypes(include=["string", "str"]).columns:
+    for col in land_area_latest_df.select_dtypes(include=["object"]).columns:
         land_area_latest_df[col] = land_area_latest_df[col].astype("object")
     con.register("land_area_latest_df", land_area_latest_df)
     con.execute("CREATE TABLE land_area_latest AS SELECT * FROM land_area_latest_df")
