@@ -140,3 +140,82 @@
 - Tagged main as `v3.final` (pre-Option D state).
 - Merged `optiond` branch with `--no-ff` to preserve branch history.
 - Tagged main as `v4.0`.
+
+---
+
+## v4.1 — Balance-point ranking tables, IPLC developed-country tables, DuckDB fix (2026-04-19)
+
+### Balance-point ranking tables
+- Added stewardship pool tables (E1, E2) by balance point and fund size in `model-tables/`.
+- Added band-order preservation ranking tables (iusaf-band-order-preservation.docx, iusaf-breakpoint-summary.docx).
+- Fixed DuckDB `StringDtype` incompatibility in `data_loader.py` that caused type errors when reading parquet columns.
+
+### IPLC developed-country allocation tables
+- Created `iplc-developed/` directory with specification, integration options analysis, and validation tests.
+- Implemented `scripts/generate_iplc_developed_tables.py` for two scenarios:
+  - **Option 1 (Raw Equality):** 9 developed countries' allocations under equality mode, filtered and tabulated.
+  - **Option 2 (Banded IUSAF):** 9 developed countries added to IUSAF bands (Band 4: Denmark, Finland, NZ, Norway, Sweden; Band 5: Australia, Canada, Japan, Russia), with `exclude_hi` overridden only for these 9.
+- Generated CSV and DOCX outputs for all 4 fund volumes ($50M, $200M, $500M, $1B) plus summary tables:
+  - Per-fund-volume tables with UN Share, allocation, IPLC/State split.
+  - Summary across all fund volumes.
+  - IPLC-only summary with Cali Fund percentage row.
+- Implemented `scripts/generate_iplc_md.py` for markdown table generation.
+- Integration options analysis (A–D) documented in `iplc-developed/iplc-integration-options.md`:
+  - **Option A:** Pre-deduction (top-slice) — deduct dev-country IPLC from fund before allocation.
+  - **Option B:** Post-deduction (claw-back) — same result as A, worse politics.
+  - **Option C:** Separate window — no model change, depends on external funding.
+  - **Option D (recommended):** Unified pool with State-component return — dev countries receive IPLC only; their State component is redistributed to the 142.
+
+---
+
+## v4.2 — Banded TSAC app, calibration harness, sensitivity reports (2026-04-23, `terrestrial` branch)
+
+### Banded TSAC Streamlit app (`src/banded_app.py`)
+- Created `banded_app.py` as a parallel variant of `app.py` with `tsac_mode="banded"` (geometric_base_2 preset).
+- All 6 `calculate_allocations` call sites pass `tsac_mode="banded"`.
+- TSAC and SOSAC sliders extended to 0–30% range.
+- Preset buttons replaced with three balance-point candidates:
+  - **Strict:** TSAC=12%, SOSAC=3% — maximum TSAC where IUSAF remains dominant for every Party.
+  - **Gini-minimum:** TSAC=12%, SOSAC=3% — coincides with Strict under banding.
+  - **Boundary:** TSAC=13%, SOSAC=3% — structural ceiling where China crosses into TSAC-dominant territory.
+- Added `active_balance_point` session state to track which balance point is active, with auto-clear on slider change or preset switch.
+- Added balance-point info panel (`st.success`) displaying hardcoded Gini and Spearman metadata per balance point.
+- Added Spearman-based overlay warning: `st.sidebar.error` at ρ<0.85 (dominant overlay), `st.sidebar.warning` at ρ<0.95 (moderate overlay); suppressed in equality mode.
+- Updated page title, heading, and introductory markdown to identify the banded variant.
+- Updated TSAC Interpretation sidebar to reference banded land-area categories.
+- Updated notes section with banding explanation.
+- `app.py` is not modified — both apps run independently.
+
+### Model changes (`src/cali_model/`)
+- `calculator.py`: added `tsac_mode`, `tsac_band_lower_bounds`, `tsac_band_weights` parameters to `calculate_allocations`; added `assign_tsac_band()` and `banded_tsac_weights()` functions; defaults to `tsac_mode="linear"` preserving backward compatibility.
+- `sensitivity_metrics.py`: added `spearman_vs_pure_iusaf` and `tsac_balance_exceeded` metrics.
+- `data_loader.py`: minor DuckDB `StringDtype` fix.
+
+### Calibration harness (`scripts/calibrate_banded_tsac.py`)
+- 6 preset configurations + linear baseline, each running a 176-scenario two-way grid (TSAC × SOSAC).
+- Acceptance criteria (geometric_base_2): **PASS** — Gini=0.0647, max TSAC/IUSAF ratio=1.40×, moderate overlay=122/176 scenarios.
+- Full grid CSVs, integrity checks, comparison plots output to `sensitivity-reports/v4-sensitivity-reports/calibration/`.
+
+### Sensitivity reports
+- v4 executive summary, technical annex, scale invariance analysis, two-way grid analysis.
+- Coarse (176-scenario) and fine (441-scenario) TSAC×SOSAC grids with Gini and Spearman heatmaps.
+- All outputs in `sensitivity-reports/v4-sensitivity-reports/`.
+
+### Break-point analysis figures
+- Added `break_point_timeline.svg`, `decision_boundaries.svg`, `party_distribution_heatmap.svg` to `band-analysis/break-points/figures/`.
+
+### TSAC band assignments
+- Added `tsac_banded/tsac_band_assignments.csv` with per-country land-area, band assignment, and banded weight.
+
+### Tests
+- `tests/test_banded_tsac.py`: 215 tests for banded TSAC logic (band assignment, weight normalisation, allocation correctness, edge cases).
+- `tests/test_calibration_harness.py`: calibration harness validation.
+- `tests/test_iplc_developed.py`: IPLC developed-country allocation tests (Option 1 and Option 2).
+- `tests/test_v4_sensitivity.py`: v4 sensitivity framework validation.
+- `tests/test_sensitivity_modules.py`: extended with Spearman and balance metrics tests.
+
+### Git workflow
+- Branch `terrestrial` parked at commit `e5b5c57` with full documentation.
+- Branches `iplc` (merged into main) and `optiond` (merged into main as v4.0) deleted.
+- `app.py` unchanged on all branches.
+- `.gitignore` updated to exclude `banded_tsac_spec.html`.
