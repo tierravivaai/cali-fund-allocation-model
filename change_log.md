@@ -1,5 +1,27 @@
 # Change Log
 
+## v4.2.2 — Small fixes (2026-04-25)
+
+### Data loader: land area for high-income CBD parties
+- Added 4 name mappings to `LAND_AREA_NAME_MAP` so the World Bank land-area CSV JOIN resolves correctly for countries whose CBD names differ from WB names:
+  - `"Republic of Korea"` → `"Korea, Rep."`
+  - `"Slovakia"` → `"Slovak Republic"`
+  - `"United Kingdom of Great Britain and Northern Ireland"` → `"United Kingdom"`
+  - `"Netherlands (Kingdom of the)"` → `"Netherlands"`
+- Land area now flows from the authoritative World Bank source (97,600 / 48,080 / 241,930 / 33,670 km²) instead of being zero.
+- No hard-coded manual patches needed; removed the previously added patches for these 4 countries.
+
+### Config loading: robust path for `load_band_config()`
+- Replaced CWD-dependent `os.path.join("config", "un_scale_bands.yaml")` with `Path(__file__).resolve().parent.parent.parent / "config" / "un_scale_bands.yaml"`.
+- Band config now loads correctly regardless of working directory.
+
+### Small-fixes.md audit
+- Marked items 2 (Spearman threshold), 3 (`_spearman_by_party` self-filtering), 4 (Gini-optimal → Gini-minimum rename), and 7 (`use_container_width` deprecation) as resolved or moot.
+- Marked items 6 (land area) and 8 (config path) as resolved.
+- Items 1 (isolated TSAC sweep) and 5 (TSAC overturn metadata) remain open.
+
+---
+
 ## Since initiation of the v3 repo (2026-03-20)
 
 ### Allocation logic and configuration

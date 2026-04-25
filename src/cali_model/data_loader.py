@@ -26,6 +26,11 @@ LAND_AREA_NAME_MAP = {
     "Saint Kitts and Nevis": "St. Kitts and Nevis",
     "Saint Lucia": "St. Lucia",
     "Saint Vincent and the Grenadines": "St. Vincent and the Grenadines",
+    # Additional mappings for high-income CBD parties missing land area
+    "Republic of Korea": "Korea, Rep.",
+    "Slovakia": "Slovak Republic",
+    "United Kingdom of Great Britain and Northern Ireland": "United Kingdom",
+    "Netherlands (Kingdom of the)": "Netherlands",
 }
 
 def load_data(con):
@@ -201,14 +206,14 @@ def get_base_data(con):
     df.loc[df['party'] == "United Kingdom of Great Britain and Northern Ireland", 'WB Income Group'] = 'High income'
     df.loc[df['party'] == "United States of America", 'WB Income Group'] = 'High income'
     
-    # Manual fixes for missing land area
+    # Manual fixes for missing land area (countries absent from World Bank source)
     # Note: land_area_km2 already initialized to 0.0 if COALESCE fails
     df.loc[df['party'] == 'Monaco', 'land_area_km2'] = 2.02
     df.loc[df['party'] == 'Cook Islands', 'land_area_km2'] = 236.0
     df.loc[df['party'] == 'Niue', 'land_area_km2'] = 260.0
     df.loc[df['party'] == 'State of Palestine', 'land_area_km2'] = 6020.0
     df.loc[df['party'] == 'European Union', 'land_area_km2'] = 0.0 # EU is not assigned land area in this model
-    
+
     # Mark as having land area after manual fixes
     manual_la_list = ['Monaco', 'Cook Islands', 'Niue', 'State of Palestine']
     df.loc[df['party'].isin(manual_la_list), 'has_land_area'] = True
