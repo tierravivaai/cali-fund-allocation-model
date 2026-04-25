@@ -1,23 +1,25 @@
 # Small Fixes and Follow-Ups
 
+## Resolved (v4.0+)
+
+2. ~~**Ground the Spearman threshold**~~ — **Resolved in v4.0.** Option D (band-order preservation + Spearman safety floor 0.80) was adopted. The arbitrary 0.85 threshold is replaced. See `optiond-threshold-revision-rationale.md`.
+
+3. ~~**Make `_spearman_by_party()` self-filtering**~~ — **Resolved in v4.0.** `_eligible()` filter is now used throughout `sensitivity_metrics.py`. All callers of `_spearman_by_party` pass through filtered data.
+
+4. ~~**Rename "Gini-optimal" → "Gini-minimum" in code and UI**~~ — **Resolved in v4.0.** All code, scenarios, and UI labels now use `gini_minimum`. No `gini_optimal` occurrences remain in `src/`.
+
+7. ~~**Resolve `use_container_width` deprecation in Streamlit app**~~ — **Moot.** The app uses `st.plotly_chart(use_container_width=True)` which is not deprecated. No `st.pyplot` usage exists.
+
 ## Priority: High
 
 1. **Generate isolated-TSAC sweep (SOSAC = 0%)** — A dedicated sweep with SOSAC = 0% is needed to verify provisional threshold values in setup (a) of the component rationale. Current values (order overturn ~2.95%, component overturn ~9.2%) are from ad hoc runs and require confirmation. See `docs/component-rationale.md` "Sensitivity Analysis Setups" and `docs/spearman-threshold-assessment.md`.
 
-2. **Ground the Spearman threshold** — The 0.85 threshold is a design parameter, not an analytical finding. Decide which option to adopt (band-order threshold ~0.93, retain 0.85 as design choice, align with overlay classification at 0.90, or multi-criterion). See `docs/spearman-threshold-assessment.md` Section 8.
-
 ## Priority: Medium
-
-3. **Make `_spearman_by_party()` self-filtering** — The function in `sensitivity_metrics.py` does not filter to eligible parties internally. All current callers pass pre-filtered dataframes, so results are correct in practice. However, a future caller passing unfiltered data would get inflated values (0.945 vs 0.852 at TSAC=5%). Add internal `_eligible()` filter or docstring warning.
-
-4. **Rename "Gini-optimal" → "Gini-minimum" in code and UI** — The rationale document uses "Gini-minimum" throughout, but the codebase still uses "Gini-optimal" in `balance_analysis.py`, `sensitivity_scenarios.py`, and `app.py`. The peer review flagged that "optimal" carries normative weight in a policy context.
 
 5. **Reconcile TSAC overturn scenario metadata** — The `tsac_overturn.csv` was regenerated with SOSAC = 3%, giving TSAC = 1.80% (China component overturn). The rationale previously cited TSAC ~9.2% from an isolated-TSAC analysis. The scenario description in `band-analysis/break-points/readme.md` should be updated to reflect the current setup.
 
 ## Priority: Low
 
-6. **Add land area for 4 high-income parties** — Republic of Korea, Netherlands, Slovakia, and United Kingdom have zero land area in the base dataset. All are excluded by default, but completeness matters for credibility. Peer review flagged as MEDIUM priority.
+6. ~~**Add land area for 4 high-income parties**~~ — **Resolved via name mapping.** Added `"Republic of Korea": "Korea, Rep."`, `"Slovakia": "Slovak Republic"`, `"United Kingdom of Great Britain and Northern Ireland": "United Kingdom"`, and `"Netherlands (Kingdom of the)": "Netherlands"` to `LAND_AREA_NAME_MAP` so the World Bank CSV JOIN resolves correctly. No hard-coded patches needed; data flows from the authoritative source.
 
-7. **Resolve `use_container_width` deprecation in Streamlit app** — The app uses `st.pyplot(use_container_width=True)` which is deprecated. Should migrate to `st.pyplot(use_container_width=True)` replacement or Plotly native resizing.
-
-8. **Fix relative path in `load_band_config()`** — Uses `os.path.join("config", "un_scale_bands.yaml")` which assumes CWD is repo root. Should use `__file__`-relative paths for robustness.
+8. ~~**Fix relative path in `load_band_config()`**~~ — **Resolved.** Changed from `os.path.join("config", ...)` (CWD-dependent) to `Path(__file__).resolve().parent.parent.parent / "config" / "un_scale_bands.yaml"` (robust, `__file__`-relative).
