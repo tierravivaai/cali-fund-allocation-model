@@ -1,0 +1,116 @@
+[
+  {
+    "table": "LDC Panel",
+    "status": "MATCH",
+    "differences": []
+  },
+  {
+    "table": "SIDS Panel",
+    "status": "MATCH",
+    "differences": []
+  },
+  {
+    "table": "UN Region",
+    "status": "MATCH",
+    "differences": []
+  },
+  {
+    "table": "UN Sub-region",
+    "status": "MATCH",
+    "differences": []
+  },
+  {
+    "table": "Intermediate Region",
+    "status": "FP_PRECISION",
+    "differences": [
+      "Column 'intermediate_region': 1 row(s) differ",
+      "  Row 4: orig='Not Categorized' vs fresh='NA'"
+    ]
+  },
+  {
+    "table": "SIDS Countries",
+    "status": "FP_PRECISION",
+    "differences": [
+      "Column 'WB Income Group': 1 row(s) differ",
+      "  Row 36: orig='nan' vs fresh=''",
+      "Column 'UN LDC': 1 row(s) differ",
+      "  Row 36: orig='nan' vs fresh=''",
+      "Column 'EU': 1 row(s) differ",
+      "  Row 36: orig='nan' vs fresh=''"
+    ]
+  },
+  {
+    "table": "Alphabetical Country",
+    "status": "FP_PRECISION",
+    "differences": [
+      "Column 'un_band': 56 row(s) differ",
+      "  Row 3: orig='nan' vs fresh=''",
+      "  Row 8: orig='nan' vs fresh=''",
+      "  Row 9: orig='nan' vs fresh=''",
+      "Column 'WB Income Group': 1 row(s) differ",
+      "  Row 178: orig='nan' vs fresh=''",
+      "Column 'UN LDC': 1 row(s) differ",
+      "  Row 178: orig='nan' vs fresh=''",
+      "Column 'CBD Party': 2 row(s) differ",
+      "  Row 178: orig='nan' vs fresh=''",
+      "  Row 189: orig='Non-Party' vs fresh='-'",
+      "Column 'EU': 28 row(s) differ",
+      "  Row 9: orig='EU Member' vs fresh='EU'",
+      "  Row 16: orig='EU Member' vs fresh='EU'",
+      "  Row 25: orig='EU Member' vs fresh='EU'"
+    ]
+  },
+  {
+    "table": "Ranked Country",
+    "status": "FP_PRECISION",
+    "differences": [
+      "Column 'WB Income Group': 1 row(s) differ",
+      "  Row 178: orig='nan' vs fresh=''",
+      "Column 'UN LDC': 1 row(s) differ",
+      "  Row 178: orig='nan' vs fresh=''",
+      "Column 'CBD Party': 2 row(s) differ",
+      "  Row 178: orig='nan' vs fresh=''",
+      "  Row 189: orig='Non-Party' vs fresh='-'",
+      "Column 'EU': 28 row(s) differ",
+      "  Row 9: orig='EU Member' vs fresh='EU'",
+      "  Row 16: orig='EU Member' vs fresh='EU'",
+      "  Row 25: orig='EU Member' vs fresh='EU'",
+      "Column 'un_band': 56 row(s) differ",
+      "  Row 3: orig='nan' vs fresh=''",
+      "  Row 8: orig='nan' vs fresh=''",
+      "  Row 9: orig='nan' vs fresh=''"
+    ]
+  },
+  {
+    "table": "Breakpoint Summary",
+    "status": "MATCH",
+    "differences": []
+  },
+  {
+    "table": "Band Order Preservation",
+    "status": "MATCH",
+    "differences": []
+  },
+  {
+    "table": "Ranked Country (strict)",
+    "status": "MATCH",
+    "differences": []
+  },
+  {
+    "table": "Ranked Country (gini_minimum)",
+    "status": "MATCH",
+    "differences": []
+  },
+  {
+    "table": "Ranked Country (band_order_boundary)",
+    "status": "MATCH",
+    "differences": []
+  },
+  {
+    "table": "Income Group",
+    "status": "NEW (no original)",
+    "differences": [
+      "Generated from current code; no original CSV to compare against"
+    ]
+  }
+]
