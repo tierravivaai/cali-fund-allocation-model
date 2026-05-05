@@ -95,8 +95,97 @@ This produces the following CSV files in `band-analysis/band-weights-flatten/`:
 | `gini-vs-spread.csv` | Fine-grained sweep: Gini as a function of weight spread (51 points) |
 | `extreme-profiles.csv` | Detailed stats at the 5 key named profiles |
 
+## Optimal Weights Analysis: Minimising Gini by Floor Ratio
+
+The flattening analysis above uses a single weight family (linear interpolation from current to equality). But the weight **shape** also matters — the same B1/B6 ratio can be achieved with very different interior weights, and some shapes produce much lower Gini.
+
+### The shape discovery
+
+Running a constrained optimisation (minimise Gini subject to B1/B6 >= R) reveals that the **optimal shape front-loads the differentiation**: Bands 1–3 receive nearly equal weights, with the B1/B6 ratio achieved primarily by reducing w5 and w6. This is because 88% of eligible Parties (120 of 142) are in Bands 1–4, and reducing the variance within this majority block dramatically lowers Gini.
+
+**Current weights at B1/B6 = 3.75: [1.50, 1.30, 1.10, 0.95, 0.75, 0.40] → Gini = 0.087**
+
+**Optimal weights at B1/B6 = 3.75: [1.46, 1.45, 1.39, 1.23, 0.91, 0.39] → Gini = 0.035**
+
+Same ratio, 60% lower Gini. The optimal keeps B1 and B6 almost unchanged (1.46 vs 1.50, 0.39 vs 0.40) but compresses the interior from a steep staircase to a gentle ramp.
+
+### Efficient frontier
+
+| B1/B6 Floor | Optimal Gini | vs Current Gini (0.087) | Weights (w1...w6) | B1 mean | B6 mean | LDC total | SIDS total |
+|-------------|-------------|--------------------------|-------------------|---------|---------|-----------|------------|
+| 1.00× | 0 (equality) | −100% | [1.00, 1.00, 1.00, 1.00, 1.00, 1.00] | $7.04M | $7.04M | $310M | $275M |
+| 1.25× | 0.009 | −89% | [0.45, 0.45, 0.44, 0.43, 0.40, 0.36] | $7.13M | $5.70M | $313M | $277M |
+| 1.50× | 0.016 | −82% | [0.92, 0.91, 0.90, 0.85, 0.76, 0.61] | $7.19M | $4.79M | $316M | $279M |
+| 1.75× | 0.020 | −77% | [1.26, 1.26, 1.23, 1.14, 0.98, 0.72] | $7.23M | $4.13M | $318M | $280M |
+| 2.00× | 0.024 | −73% | [1.80, 1.79, 1.74, 1.61, 1.34, 0.90] | $7.27M | $3.63M | $319M | $281M |
+| 2.50× | 0.029 | −67% | [1.80, 1.79, 1.73, 1.57, 1.25, 0.72] | $7.31M | $2.93M | $321M | $282M |
+| 3.00× | 0.032 | −63% | [0.90, 0.90, 0.86, 0.77, 0.59, 0.30] | $7.35M | $2.45M | $322M | $283M |
+| 3.75× | 0.035 | −60% | [1.46, 1.45, 1.39, 1.23, 0.91, 0.39] | $7.38M | $1.97M | $323M | $284M |
+
+*(Note: LDC and SIDS totals are approximate, computed from per-band means and LDC/SIDS counts per band. For exact totals, the full calculator must be run.)*
+
+### The policy question reframed
+
+The analysis reframes the question from "what weight spread is appropriate?" to "what minimum differentiation floor (B1/B6 ratio) is appropriate?" Given any floor R, there exists an optimal weight shape that minimises Gini while guaranteeing Band 1 countries receive at least R times what Band 6 receives.
+
+The key trade-offs:
+
+- **At R = 1.5× (LDCs get 50% more than China):** Gini = 0.016 — near-equality between developing countries. China receives $4.79M vs $7.19M for Band 1 LDCs. Brazil/India/Mexico receive $5.96M (between Band 1 and Band 6).
+- **At R = 2.0× (LDCs get double China):** Gini = 0.024 — moderate differentiation. China receives $3.63M, Band 1 receives $7.27M. Brazil/India/Mexico receive $5.41M.
+- **At R = 3.75× (current IUSAF level):** Gini = 0.035 (optimal) or 0.087 (current) — either way Band 1 receives 3.75× what China receives.
+
+The difference between "optimal at 3.75×" (Gini = 0.035) and "current at 3.75×" (Gini = 0.087) shows that **the current weights achieve the right B1/B6 ratio but with a sub-optimal interior shape**. Compressing Bands 1–4 from a steep staircase (1.50, 1.30, 1.10, 0.95) to a gentle ramp (1.46, 1.45, 1.39, 1.23) reduces Gini by 60% while leaving the B1/B6 differential unchanged.
+
+### Why the current weights are sub-optimal
+
+The current weights create a **staircase** pattern where each band is noticeably different from its neighbours. Because 88% of parties are in Bands 1–4, this staircase creates significant inequality within the majority. The optimal shape **front-loads** the differentiation: nearly-equal weights for Bands 1–3, a modest step at Band 4, and the large differential compressed into Bands 5–6. This reduces within-majority variance while preserving the between-floor differential.
+
+### Fairness for middle-income countries
+
+At the current weights:
+- Band 1 (LDCs, small islands): $8.53M per country
+- Band 4 (upper-middle income like South Africa, Argentina): $5.40M per country
+- Band 5 (Brazil, India, Mexico): $4.26M per country
+- Band 6 (China): $2.27M per country
+
+At the current weights, there is a 3.75:1 ratio between Band 1 and Band 6, but also a large gap between Band 1 and Band 4 (1.58:1). The optimal at R=2.0× provides:
+- Band 1: $7.27M
+- Band 4: $6.49M
+- Band 5: $5.41M
+- Band 6: $3.63M
+
+The Band 1/Band 4 ratio drops from 1.58 to 1.12, making allocations between LDCs and upper-middle-income developing countries much more equitable, while still maintaining the principle that the poorest receive the most.
+
 ## Relationship to Other Analyses
 
-- **`gini-unconstrained/`**: Investigates what happens when TSAC is added to IUSAF (varying beta). Found that the unconstrained Gini minimum (0.0828) offers only 0.006 improvement over the band-preserved minimum (0.0886).
+- **`gini-unconstrained/`**: Investigates what happens when TSAC is added to IUSAF (varying beta). Found that the unconstrained Gini minimum (0.0828) offers only 0.006 improvement over the band-preserved minimum (0.0886). By contrast, weight optimisation at the same B1/B6 floor achieves 0.035 — an order of magnitude larger improvement.
 - **`stewardship-pool/`**: Restructures the stewardship pool tables (TSAC + SOSAC) for clarity, with deterministic component splits.
-- **This analysis**: Investigates what happens when the band weights themselves are flattened — a separate structural lever that has far greater impact on inequality than either TSAC blending or SOSAC.
+- **This analysis**: Investigates two related questions: (1) what happens when band weights are flattened along the current staircase path, and (2) what is the optimal weight shape at each B1/B6 floor? The latter reveals that the current staircase is far from optimal — front-loading the differentiation into the B5/B6 gap while compressing B1–B3 achieves 60% lower Gini at the same differentiation floor.
+
+## Reproducibility
+
+All outputs can be regenerated by running:
+
+```bash
+# Flattening analysis (linear interpolation)
+python3 band-analysis/band-weights-flatten/band_weights_flatten_analysis.py
+
+# Constrained optimisation (optimal weight shape at each floor)
+python3 band-analysis/band-weights-flatten/optimal_weights_constrained.py
+```
+
+This produces the following CSV files in `band-analysis/band-weights-flatten/`:
+
+| File | Description |
+|------|-------------|
+| `weight-profiles.csv` | 6 named profiles + 19 parametric sweeps with Gini and band metrics |
+| `allocation-by-band.csv` | Per-band mean and total allocation for each profile (150 rows) |
+| `gini-vs-spread.csv` | Fine-grained sweep: Gini as a function of weight spread (51 points) |
+| `extreme-profiles.csv` | Detailed stats at the 5 key named profiles |
+| `optimal-sweep.csv` | 201-point sweep: Gini and B1/B6 ratio along the linear interpolation path |
+| `optimal-profiles.csv` | Key floor ratios along the linear path |
+| `optimal-profiles-detail.csv` | Per-band allocation detail at key floor ratios |
+| `weight-shape-comparison.csv` | Linear vs front-compressed vs back-compressed weight shapes |
+| `efficient-frontier.csv` | 24-point efficient frontier: optimal Gini at each B1/B6 floor |
+| `optimal-weights.csv` | Full weight vectors at each point on the frontier |
+| `optimal-allocations.csv` | Per-band allocation detail at each frontier point |
