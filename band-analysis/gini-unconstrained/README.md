@@ -19,7 +19,7 @@ Using the same IUSAF allocation model (142 eligible Parties, fund = USD 1,000M, 
 | **Unconstrained Gini minimum** | **5.35%** | **3%** | **91.65%** | **0.0828** | **Violated** | **−22.7%** | **0.839** | **Yes (China, Brazil)** |
 | TSAC-dominated | 9.2% | 3% | 87.8% | 0.0877 | Violated | −45.7% | 0.696 | Yes (5 parties) |
 
-The unconstrained Gini minimum of **0.0828** occurs at **TSAC = 5.35%**, a 6.5% relative improvement over the band-preserving Gini-minimum (0.0886). However, at this point:
+The unconstrained Gini minimum of **0.0828** occurs at **TSAC = 5.35%**, an absolute reduction of only 0.006 from the band-preserving minimum (0.0886). On the 0–1 Gini scale this is a marginal improvement — small enough that a reader comparing 0.0886 and 0.0828 could reasonably consider them functionally equivalent for policy purposes. The often-cited "6.5% relative improvement" is misleading because it divides two already-small numbers (0.006 / 0.0886), inflating the apparent significance. In absolute terms the gain is negligible relative to the structural cost. At this point:
 
 1. **Band order is severely inverted**: Band 6 (China) mean = $8.50M exceeds Band 5 mean = $6.93M by 22.7%.
 2. **Spearman ρ drops to 0.839**, indicating a substantial departure from the IUSAF ranking.
@@ -55,7 +55,8 @@ Only in Bands 5 and 6 does TSAC contribute a significant share of any Party's al
 | Aspect | Band-preserved (2.5%) | Unconstrained (5.35%) |
 |--------|----------------------|----------------------|
 | Gini coefficient | 0.0886 | 0.0828 |
-| Gini improvement vs pure IUSAF | 12.4% | 18.1% |
+| Gini improvement vs pure IUSAF (absolute) | 0.013 | 0.018 |
+| Gini improvement vs pure IUSAF (relative) | 12.4% | 18.1% |
 | Band order preserved? | Yes (5.4% margin) | No (−22.7%) |
 | Spearman ρ | 0.945 | 0.839 |
 | Parties where TSAC > IUSAF | 1 (China) | 2 (China, Brazil) |
@@ -67,11 +68,11 @@ Only in Bands 5 and 6 does TSAC contribute a significant share of any Party's al
 
 ## Interpretation
 
-The unconstrained Gini minimum is effectively a "land-area redistribution" scenario masked behind a veneer of IUSAF. Although IUSAF still provides 91.65% of the total budget, the 5.35% TSAC lever — concentrated on just two Parties (China receives 75.5% of its allocation from TSAC; Brazil 59.4%) — is sufficient to reorder the top of the distribution and reduce the Gini by a further 6.5%.
+The unconstrained Gini minimum is effectively a "land-area redistribution" scenario masked behind a veneer of IUSAF. Although IUSAF still provides 91.65% of the total budget, the 5.35% TSAC lever — concentrated on just two Parties (China receives 75.5% of its allocation from TSAC; Brazil 59.4%) — is sufficient to reorder the top of the distribution. The additional Gini reduction from relaxing band order is only 0.006 in absolute terms (from 0.0886 to 0.0828). While this is sometimes expressed as "6.5% relative improvement", that framing divides two already-small numbers and overstates the practical significance; on the 0–1 Gini scale, the difference between 0.0886 and 0.0828 is marginal.
 
 The flatness of the Gini surface around the minimum (0.082834 at 5.35% vs 0.082891 at 5.0%) means the exact minimiser is a matter of numerical precision rather than policy significance. The Gini achieves near-minimal values across a 0.5 percentage-point window (TSAC 5.1–5.5%), all of which severely violate band order.
 
-**Policy implication**: The band-preservation constraint is not merely a technical nicety — it enforces a structural property (no higher-numbered band exceeds a lower-numbered one) that is central to the IUSAF's political legitimacy. The unconstrained minimum achieves only a modest additional Gini improvement (6.5% relative) at the cost of a severe structural violation and a large rank-order disruption (Spearman ρ drops from 0.945 to 0.839).
+**Policy implication**: The band-preservation constraint is not merely a technical nicety — it enforces a structural property (no higher-numbered band exceeds a lower-numbered one) that is central to the IUSAF's political legitimacy. The unconstrained minimum achieves only a marginal additional Gini improvement (0.006 in absolute terms, from 0.0886 to 0.0828) at the cost of a severe structural violation and a large rank-order disruption (Spearman ρ drops from 0.945 to 0.839). The "6.5% relative improvement" framing should be read cautiously: it divides two small numbers and overstates the practical difference.
 
 ## Reproducibility
 
