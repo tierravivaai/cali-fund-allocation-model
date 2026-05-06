@@ -27,3 +27,4 @@ sensitivity-reports/ahteg-outputs
 sensitivity-reports/v2-sensitivity-reports
 docs
 .coverage
+*.html
