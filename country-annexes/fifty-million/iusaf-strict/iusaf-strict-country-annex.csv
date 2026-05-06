@@ -1,0 +1,143 @@
+Rank,party,total_allocation,state_component,iplc_component,component_iusaf_amt,component_tsac_amt,component_sosac_amt,WB Income Group,is_ldc,is_sids,is_eu_ms,un_band
+1,Guinea-Bissau,0.4458,0.2229,0.2229,0.4071,0.0003,0.0385,Low income,True,True,False,Band 1: <= 0.001%
+2,Solomon Islands,0.4458,0.2229,0.2229,0.4071,0.0003,0.0385,Lower middle income,True,True,False,Band 1: <= 0.001%
+3,Belize,0.4458,0.2229,0.2229,0.4071,0.0002,0.0385,Upper middle income,False,True,False,Band 1: <= 0.001%
+4,Timor-Leste,0.4457,0.2228,0.2228,0.4071,0.0001,0.0385,Lower middle income,True,True,False,Band 1: <= 0.001%
+5,Vanuatu,0.4457,0.2228,0.2228,0.4071,0.0001,0.0385,Lower middle income,False,True,False,Band 1: <= 0.001%
+6,Cabo Verde,0.4456,0.2228,0.2228,0.4071,0.0000,0.0385,Upper middle income,False,True,False,Band 1: <= 0.001%
+7,Samoa,0.4456,0.2228,0.2228,0.4071,0.0000,0.0385,Upper middle income,False,True,False,Band 1: <= 0.001%
+8,Comoros,0.4456,0.2228,0.2228,0.4071,0.0000,0.0385,Lower middle income,True,True,False,Band 1: <= 0.001%
+9,Sao Tome and Principe,0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,Lower middle income,False,True,False,Band 1: <= 0.001%
+10,Kiribati,0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,Lower middle income,True,True,False,Band 1: <= 0.001%
+11,Dominica,0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,Upper middle income,False,True,False,Band 1: <= 0.001%
+12,Tonga,0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,Upper middle income,False,True,False,Band 1: <= 0.001%
+13,Micronesia (Federated States of),0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,Lower middle income,False,True,False,Band 1: <= 0.001%
+14,Palau,0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,High income,False,True,False,Band 1: <= 0.001%
+15,Saint Vincent and the Grenadines,0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,Upper middle income,False,True,False,Band 1: <= 0.001%
+16,Grenada,0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,Upper middle income,False,True,False,Band 1: <= 0.001%
+17,Niue,0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,High income,False,True,False,Band 1: <= 0.001%
+18,Saint Kitts and Nevis,0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,High income,False,True,False,Band 1: <= 0.001%
+19,Cook Islands,0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,High income,False,True,False,Band 1: <= 0.001%
+20,Marshall Islands,0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,Upper middle income,False,True,False,Band 1: <= 0.001%
+21,Tuvalu,0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,Upper middle income,True,True,False,Band 1: <= 0.001%
+22,Nauru,0.4455,0.2228,0.2228,0.4071,0.0000,0.0385,High income,False,True,False,Band 1: <= 0.001%
+23,Central African Republic,0.4130,0.2065,0.2065,0.4071,0.0060,0.0000,Low income,True,False,False,Band 1: <= 0.001%
+24,Eritrea,0.4082,0.2041,0.2041,0.4071,0.0012,0.0000,Low income,True,False,False,Band 1: <= 0.001%
+25,Liberia,0.4080,0.2040,0.2040,0.4071,0.0009,0.0000,Low income,True,False,False,Band 1: <= 0.001%
+26,Sierra Leone,0.4078,0.2039,0.2039,0.4071,0.0007,0.0000,Low income,True,False,False,Band 1: <= 0.001%
+27,Bhutan,0.4074,0.2037,0.2037,0.4071,0.0004,0.0000,Lower middle income,False,False,False,Band 1: <= 0.001%
+28,Lesotho,0.4074,0.2037,0.2037,0.4071,0.0003,0.0000,Lower middle income,True,False,False,Band 1: <= 0.001%
+29,Burundi,0.4073,0.2037,0.2037,0.4071,0.0002,0.0000,Low income,True,False,False,Band 1: <= 0.001%
+30,Gambia,0.4072,0.2036,0.2036,0.4071,0.0001,0.0000,Low income,True,False,False,Band 1: <= 0.001%
+31,State of Palestine,0.4071,0.2036,0.2036,0.4071,0.0001,0.0000,Lower middle income,False,False,False,Band 1: <= 0.001%
+32,Papua New Guinea,0.3956,0.1978,0.1978,0.3528,0.0043,0.0385,Lower middle income,False,True,False,Band 2: 0.001% - 0.01%
+33,Suriname,0.3928,0.1964,0.1964,0.3528,0.0015,0.0385,Upper middle income,False,True,False,Band 2: 0.001% - 0.01%
+34,Haiti,0.3915,0.1958,0.1958,0.3528,0.0003,0.0385,Lower middle income,True,True,False,Band 2: 0.001% - 0.01%
+35,Fiji,0.3914,0.1957,0.1957,0.3528,0.0002,0.0385,Upper middle income,False,True,False,Band 2: 0.001% - 0.01%
+36,Jamaica,0.3914,0.1957,0.1957,0.3528,0.0001,0.0385,Upper middle income,False,True,False,Band 2: 0.001% - 0.01%
+37,Mauritius,0.3913,0.1956,0.1956,0.3528,0.0000,0.0385,Upper middle income,False,True,False,Band 2: 0.001% - 0.01%
+38,Saint Lucia,0.3913,0.1956,0.1956,0.3528,0.0000,0.0385,Upper middle income,False,True,False,Band 2: 0.001% - 0.01%
+39,Seychelles,0.3913,0.1956,0.1956,0.3528,0.0000,0.0385,High income,False,True,False,Band 2: 0.001% - 0.01%
+40,Antigua and Barbuda,0.3913,0.1956,0.1956,0.3528,0.0000,0.0385,High income,False,True,False,Band 2: 0.001% - 0.01%
+41,Barbados,0.3913,0.1956,0.1956,0.3528,0.0000,0.0385,High income,False,True,False,Band 2: 0.001% - 0.01%
+42,Maldives,0.3913,0.1956,0.1956,0.3528,0.0000,0.0385,Upper middle income,False,True,False,Band 2: 0.001% - 0.01%
+43,Democratic Republic of the Congo,0.3745,0.1873,0.1873,0.3528,0.0217,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+44,Sudan,0.3707,0.1854,0.1854,0.3528,0.0179,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+45,Mongolia,0.3677,0.1839,0.1839,0.3528,0.0149,0.0000,Upper middle income,False,False,False,Band 2: 0.001% - 0.01%
+46,Niger,0.3649,0.1825,0.1825,0.3528,0.0121,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+47,Chad,0.3649,0.1824,0.1824,0.3528,0.0121,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+48,Angola,0.3648,0.1824,0.1824,0.3528,0.0120,0.0000,Lower middle income,True,False,False,Band 2: 0.001% - 0.01%
+49,Mali,0.3645,0.1822,0.1822,0.3528,0.0117,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+50,Ethiopia,0.3636,0.1818,0.1818,0.3528,0.0108,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+51,Mauritania,0.3627,0.1813,0.1813,0.3528,0.0099,0.0000,Lower middle income,True,False,False,Band 2: 0.001% - 0.01%
+52,United Republic of Tanzania,0.3613,0.1806,0.1806,0.3528,0.0085,0.0000,Lower middle income,True,False,False,Band 2: 0.001% - 0.01%
+53,Namibia,0.3607,0.1803,0.1803,0.3528,0.0079,0.0000,Lower middle income,False,False,False,Band 2: 0.001% - 0.01%
+54,Mozambique,0.3603,0.1802,0.1802,0.3528,0.0075,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+55,Zambia,0.3599,0.1800,0.1800,0.3528,0.0071,0.0000,Lower middle income,True,False,False,Band 2: 0.001% - 0.01%
+56,Myanmar,0.3591,0.1795,0.1795,0.3528,0.0063,0.0000,Lower middle income,True,False,False,Band 2: 0.001% - 0.01%
+57,Afghanistan,0.3591,0.1795,0.1795,0.3528,0.0063,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+58,South Sudan,0.3589,0.1794,0.1794,0.3528,0.0061,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+59,Somalia,0.3588,0.1794,0.1794,0.3528,0.0060,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+60,Madagascar,0.3584,0.1792,0.1792,0.3528,0.0056,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+61,Yemen,0.3579,0.1789,0.1789,0.3528,0.0051,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+62,Zimbabwe,0.3565,0.1783,0.1783,0.3528,0.0037,0.0000,Lower middle income,False,False,False,Band 2: 0.001% - 0.01%
+63,Congo,0.3561,0.1780,0.1780,0.3528,0.0033,0.0000,Lower middle income,False,False,False,Band 2: 0.001% - 0.01%
+64,Burkina Faso,0.3554,0.1777,0.1777,0.3528,0.0026,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+65,Guinea,0.3552,0.1776,0.1776,0.3528,0.0024,0.0000,Lower middle income,True,False,False,Band 2: 0.001% - 0.01%
+66,Lao People's Democratic Republic,0.3550,0.1775,0.1775,0.3528,0.0022,0.0000,Lower middle income,True,False,False,Band 2: 0.001% - 0.01%
+67,Uganda,0.3547,0.1774,0.1774,0.3528,0.0019,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+68,Senegal,0.3546,0.1773,0.1773,0.3528,0.0018,0.0000,Lower middle income,True,False,False,Band 2: 0.001% - 0.01%
+69,Kyrgyzstan,0.3546,0.1773,0.1773,0.3528,0.0018,0.0000,Lower middle income,False,False,False,Band 2: 0.001% - 0.01%
+70,Syrian Arab Republic,0.3546,0.1773,0.1773,0.3528,0.0018,0.0000,Low income,False,False,False,Band 2: 0.001% - 0.01%
+71,Cambodia,0.3545,0.1772,0.1772,0.3528,0.0017,0.0000,Lower middle income,True,False,False,Band 2: 0.001% - 0.01%
+72,Nepal,0.3542,0.1771,0.1771,0.3528,0.0014,0.0000,Lower middle income,True,False,False,Band 2: 0.001% - 0.01%
+73,Tajikistan,0.3541,0.1771,0.1771,0.3528,0.0013,0.0000,Lower middle income,False,False,False,Band 2: 0.001% - 0.01%
+74,Bangladesh,0.3540,0.1770,0.1770,0.3528,0.0012,0.0000,Lower middle income,True,False,False,Band 2: 0.001% - 0.01%
+75,Democratic People's Republic of Korea,0.3540,0.1770,0.1770,0.3528,0.0012,0.0000,Low income,False,False,False,Band 2: 0.001% - 0.01%
+76,Nicaragua,0.3540,0.1770,0.1770,0.3528,0.0012,0.0000,Lower middle income,False,False,False,Band 2: 0.001% - 0.01%
+77,Benin,0.3539,0.1769,0.1769,0.3528,0.0011,0.0000,Lower middle income,True,False,False,Band 2: 0.001% - 0.01%
+78,Honduras,0.3539,0.1769,0.1769,0.3528,0.0011,0.0000,Lower middle income,False,False,False,Band 2: 0.001% - 0.01%
+79,Malawi,0.3537,0.1769,0.1769,0.3528,0.0009,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+80,Georgia,0.3535,0.1767,0.1767,0.3528,0.0007,0.0000,Upper middle income,False,False,False,Band 2: 0.001% - 0.01%
+81,Togo,0.3533,0.1767,0.1767,0.3528,0.0005,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+82,Republic of Moldova,0.3531,0.1766,0.1766,0.3528,0.0003,0.0000,Upper middle income,False,False,False,Band 2: 0.001% - 0.01%
+83,Armenia,0.3531,0.1765,0.1765,0.3528,0.0003,0.0000,Upper middle income,False,False,False,Band 2: 0.001% - 0.01%
+84,Equatorial Guinea,0.3531,0.1765,0.1765,0.3528,0.0003,0.0000,Upper middle income,False,False,False,Band 2: 0.001% - 0.01%
+85,Albania,0.3531,0.1765,0.1765,0.3528,0.0003,0.0000,Upper middle income,False,False,False,Band 2: 0.001% - 0.01%
+86,North Macedonia,0.3530,0.1765,0.1765,0.3528,0.0002,0.0000,Upper middle income,False,False,False,Band 2: 0.001% - 0.01%
+87,Rwanda,0.3530,0.1765,0.1765,0.3528,0.0002,0.0000,Low income,True,False,False,Band 2: 0.001% - 0.01%
+88,Djibouti,0.3530,0.1765,0.1765,0.3528,0.0002,0.0000,Lower middle income,True,False,False,Band 2: 0.001% - 0.01%
+89,Eswatini,0.3530,0.1765,0.1765,0.3528,0.0002,0.0000,Lower middle income,False,False,False,Band 2: 0.001% - 0.01%
+90,Montenegro,0.3529,0.1765,0.1765,0.3528,0.0001,0.0000,Upper middle income,False,False,False,Band 2: 0.001% - 0.01%
+91,Guyana,0.3390,0.1695,0.1695,0.2985,0.0020,0.0385,High income,False,True,False,Band 3: 0.01% - 0.1%
+92,Dominican Republic,0.3374,0.1687,0.1687,0.2985,0.0005,0.0385,Upper middle income,False,True,False,Band 3: 0.01% - 0.1%
+93,Bahamas,0.3371,0.1685,0.1685,0.2985,0.0001,0.0385,High income,False,True,False,Band 3: 0.01% - 0.1%
+94,Trinidad and Tobago,0.3370,0.1685,0.1685,0.2985,0.0000,0.0385,High income,False,True,False,Band 3: 0.01% - 0.1%
+95,Algeria,0.3214,0.1607,0.1607,0.2985,0.0228,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+96,Libya,0.3154,0.1577,0.1577,0.2985,0.0169,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+97,Bolivia (Plurinational State of),0.3089,0.1545,0.1545,0.2985,0.0104,0.0000,Lower middle income,False,False,False,Band 3: 0.01% - 0.1%
+98,Venezuela (Bolivarian Republic of),0.3070,0.1535,0.1535,0.2985,0.0085,0.0000,Lower middle income,False,False,False,Band 3: 0.01% - 0.1%
+99,Kenya,0.3041,0.1520,0.1520,0.2985,0.0056,0.0000,Lower middle income,False,False,False,Band 3: 0.01% - 0.1%
+100,Ukraine,0.3041,0.1520,0.1520,0.2985,0.0056,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+101,Botswana,0.3040,0.1520,0.1520,0.2985,0.0054,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+102,Cameroon,0.3031,0.1515,0.1515,0.2985,0.0045,0.0000,Lower middle income,False,False,False,Band 3: 0.01% - 0.1%
+103,Turkmenistan,0.3030,0.1515,0.1515,0.2985,0.0045,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+104,Morocco,0.3028,0.1514,0.1514,0.2985,0.0043,0.0000,Lower middle income,False,False,False,Band 3: 0.01% - 0.1%
+105,Uzbekistan,0.3027,0.1514,0.1514,0.2985,0.0042,0.0000,Lower middle income,False,False,False,Band 3: 0.01% - 0.1%
+106,Paraguay,0.3023,0.1512,0.1512,0.2985,0.0038,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+107,Côte d’Ivoire,0.3016,0.1508,0.1508,0.2985,0.0030,0.0000,Lower middle income,False,False,False,Band 3: 0.01% - 0.1%
+108,Gabon,0.3010,0.1505,0.1505,0.2985,0.0025,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+109,Ecuador,0.3009,0.1505,0.1505,0.2985,0.0024,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+110,Ghana,0.3007,0.1504,0.1504,0.2985,0.0022,0.0000,Lower middle income,False,False,False,Band 3: 0.01% - 0.1%
+111,Belarus,0.3005,0.1502,0.1502,0.2985,0.0019,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+112,Tunisia,0.3000,0.1500,0.1500,0.2985,0.0015,0.0000,Lower middle income,False,False,False,Band 3: 0.01% - 0.1%
+113,Guatemala,0.2995,0.1498,0.1498,0.2985,0.0010,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+114,Jordan,0.2994,0.1497,0.1497,0.2985,0.0009,0.0000,Lower middle income,False,False,False,Band 3: 0.01% - 0.1%
+115,Serbia,0.2993,0.1497,0.1497,0.2985,0.0008,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+116,Azerbaijan,0.2993,0.1497,0.1497,0.2985,0.0008,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+117,Sri Lanka,0.2991,0.1496,0.1496,0.2985,0.0006,0.0000,Lower middle income,False,False,False,Band 3: 0.01% - 0.1%
+118,Bosnia and Herzegovina,0.2990,0.1495,0.1495,0.2985,0.0005,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+119,El Salvador,0.2987,0.1494,0.1494,0.2985,0.0002,0.0000,Upper middle income,False,False,False,Band 3: 0.01% - 0.1%
+120,Lebanon,0.2986,0.1493,0.1493,0.2985,0.0001,0.0000,Lower middle income,False,False,False,Band 3: 0.01% - 0.1%
+121,Cuba,0.2973,0.1486,0.1486,0.2578,0.0010,0.0385,Upper middle income,False,True,False,Band 4: 0.1% - 1.0%
+122,Singapore,0.2963,0.1481,0.1481,0.2578,0.0000,0.0385,High income,False,True,False,Band 4: 0.1% - 1.0%
+123,Argentina,0.2841,0.1420,0.1420,0.2578,0.0262,0.0000,Upper middle income,False,False,False,Band 4: 0.1% - 1.0%
+124,Kazakhstan,0.2837,0.1419,0.1419,0.2578,0.0259,0.0000,Upper middle income,False,False,False,Band 4: 0.1% - 1.0%
+125,Brazil,0.2837,0.1418,0.1418,0.2035,0.0801,0.0000,Upper middle income,False,False,False,Band 5: 1.0% - 10.0%
+126,Indonesia,0.2760,0.1380,0.1380,0.2578,0.0181,0.0000,Upper middle income,False,False,False,Band 4: 0.1% - 1.0%
+127,Iran (Islamic Republic of),0.2734,0.1367,0.1367,0.2578,0.0156,0.0000,Upper middle income,False,False,False,Band 4: 0.1% - 1.0%
+128,Peru,0.2701,0.1350,0.1350,0.2578,0.0123,0.0000,Upper middle income,False,False,False,Band 4: 0.1% - 1.0%
+129,South Africa,0.2694,0.1347,0.1347,0.2578,0.0116,0.0000,Upper middle income,False,False,False,Band 4: 0.1% - 1.0%
+130,Colombia,0.2685,0.1342,0.1342,0.2578,0.0106,0.0000,Upper middle income,False,False,False,Band 4: 0.1% - 1.0%
+131,Egypt,0.2674,0.1337,0.1337,0.2578,0.0095,0.0000,Lower middle income,False,False,False,Band 4: 0.1% - 1.0%
+132,Nigeria,0.2665,0.1333,0.1333,0.2578,0.0087,0.0000,Lower middle income,False,False,False,Band 4: 0.1% - 1.0%
+133,Pakistan,0.2652,0.1326,0.1326,0.2578,0.0074,0.0000,Lower middle income,False,False,False,Band 4: 0.1% - 1.0%
+134,Türkiye,0.2652,0.1326,0.1326,0.2578,0.0074,0.0000,Upper middle income,False,False,False,Band 4: 0.1% - 1.0%
+135,Thailand,0.2627,0.1314,0.1314,0.2578,0.0049,0.0000,Upper middle income,False,False,False,Band 4: 0.1% - 1.0%
+136,Iraq,0.2620,0.1310,0.1310,0.2578,0.0042,0.0000,Upper middle income,False,False,False,Band 4: 0.1% - 1.0%
+137,Malaysia,0.2610,0.1305,0.1305,0.2578,0.0032,0.0000,Upper middle income,False,False,False,Band 4: 0.1% - 1.0%
+138,Viet Nam,0.2608,0.1304,0.1304,0.2578,0.0030,0.0000,Lower middle income,False,False,False,Band 4: 0.1% - 1.0%
+139,Philippines,0.2607,0.1303,0.1303,0.2578,0.0029,0.0000,Lower middle income,False,False,False,Band 4: 0.1% - 1.0%
+140,India,0.2320,0.1160,0.1160,0.2035,0.0285,0.0000,Lower middle income,False,False,False,Band 5: 1.0% - 10.0%
+141,Mexico,0.2222,0.1111,0.1111,0.2035,0.0186,0.0000,Upper middle income,False,False,False,Band 5: 1.0% - 10.0%
+142,China,0.1986,0.0993,0.0993,0.1086,0.0900,0.0000,Upper middle income,False,False,False,Band 6: > 10.0%

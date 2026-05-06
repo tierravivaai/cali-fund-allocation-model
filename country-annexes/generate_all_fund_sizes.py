@@ -1,25 +1,27 @@
 #!/usr/bin/env python3
 """
-Generate Country Annex Tables
-==============================
+Generate Country Annex Tables for All Fund Sizes
+=================================================
 
-Produces per-country allocation tables for four IUSAF scenarios,
-drawn directly from the application calculator to ensure consistency
-with the live model.
+Produces per-country allocation tables for four IUSAF scenarios across
+four fund sizes, drawn directly from the application calculator.
 
-Four scenarios:
-  a) IUSAF (pure):     beta=0, gamma=0 — baseline band-inversion allocation
-  b) Strict:            beta=0.015, gamma=0.03 — TSAC 1.5%, SOSAC 3%
-  c) Gini-minimum:      beta=0.025, gamma=0.03 — TSAC 2.5%, SOSAC 3%
-  d) Band-order boundary: beta=0.03, gamma=0.03 — TSAC 3.0%, SOSAC 3%
+Scenarios:
+  a) IUSAF (pure):     beta=0, gamma=0
+  b) Strict:            beta=0.015, gamma=0.03
+  c) Gini-minimum:      beta=0.025, gamma=0.03
+  d) Band-order boundary: beta=0.03, gamma=0.03
+
+Fund sizes: 50M, 200M, 500M, 1B (1,000M)
 
 Each scenario folder contains:
-  - <scenario>-country-annex.csv   Machine-readable data
-  - <scenario>-country-annex.md    Human-readable documentation
-  - <scenario>-country-annex.docx Word-formatted table for the paper
+  - <scenario>-country-annex.csv
+  - <scenario>-country-annex.md
+  - <scenario>-country-annex.docx
 
 Usage:
-    python3 country-annexes/generate_country_annexes.py
+    cd country-annexes
+    python3 generate_all_fund_sizes.py
 """
 
 import sys
@@ -29,6 +31,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 import duckdb
 import pandas as pd
+import numpy as np
 from docx import Document
 from docx.shared import Pt, Cm, Inches, RGBColor
 from docx.enum.table import WD_TABLE_ALIGNMENT
@@ -41,7 +44,6 @@ from cali_model.calculator import calculate_allocations
 
 # ── Configuration ────────────────────────────────────────────────────────────
 
-FUND = 1_000_000_000
 IPLC = 50
 EXCLUDE_HI = True
 HI_MODE = "exclude_except_sids"
@@ -50,6 +52,13 @@ UN_SCALE = "band_inversion"
 FONT = "Times New Roman"
 HEADER_BG = "D9D9D9"
 SIDS_HIGHLIGHT = "E8F5E9"
+
+FUND_SIZES = [
+    {"amount": 50_000_000, "label": "fifty-million", "display": "50M"},
+    {"amount": 200_000_000, "label": "two-hundred-million", "display": "200M"},
+    {"amount": 500_000_000, "label": "five-hundred-million", "display": "500M"},
+    {"amount": 1_000_000_000, "label": "one-billion", "display": "1B"},
+]
 
 SCENARIOS = [
     {
@@ -91,11 +100,6 @@ DISPLAY_COLS = [
     'component_iusaf_amt', 'component_tsac_amt', 'component_sosac_amt',
     'WB Income Group', 'is_ldc', 'is_sids', 'is_eu_ms', 'un_band'
 ]
-CSV_HEADERS = [
-    'Rank', 'Party', 'Total (USD M)', 'State (USD M)', 'IPLC (USD M)',
-    'IUSAF (USD M)', 'TSAC (USD M)', 'SOSAC (USD M)',
-    'Income Group', 'LDC', 'SIDS', 'EU MS', 'UN Band'
-]
 
 
 def set_cell_shading(cell, color_hex):
@@ -103,23 +107,35 @@ def set_cell_shading(cell, color_hex):
     cell._tc.get_or_add_tcPr().append(shading)
 
 
-def generate_scenario(con, scenario):
-    """Generate CSV, MD, and DOCX for one scenario."""
+def _gini(values):
+    v = np.sort(values)
+    n = len(v)
+    if n == 0 or np.sum(v) == 0:
+        return 0.0
+    idx = np.arange(1, n + 1)
+    return float((2 * np.sum(idx * v) - (n + 1) * np.sum(v)) / (n * np.sum(v)))
+
+
+def generate_scenario(con, fund_size, scenario):
+    """Generate CSV, MD, and DOCX for one scenario at one fund size."""
     sid = scenario["id"]
     sname = scenario["name"]
     beta = scenario["beta"]
     gamma = scenario["gamma"]
-    
+    fund = fund_size["amount"]
+    fund_label = fund_size["label"]
+    fund_display = fund_size["display"]
+
     base_df = get_base_data(con)
     df = calculate_allocations(
-        base_df, FUND, IPLC,
+        base_df, fund, IPLC,
         exclude_high_income=EXCLUDE_HI,
         high_income_mode=HI_MODE,
         tsac_beta=beta, sosac_gamma=gamma,
         equality_mode=False,
         un_scale_mode=UN_SCALE,
     )
-    
+
     # Filter to eligible, sort by allocation desc then party name asc
     eligible = df[df['eligible']].copy()
     eligible = eligible.sort_values(
@@ -127,18 +143,18 @@ def generate_scenario(con, scenario):
     ).reset_index(drop=True)
     eligible.index = eligible.index + 1
     eligible.index.name = 'Rank'
-    
-    out_dir = os.path.join(os.path.dirname(__file__), sid)
+
+    out_dir = os.path.join(os.path.dirname(__file__), fund_label, sid)
     os.makedirs(out_dir, exist_ok=True)
-    
+
     # ── CSV ──────────────────────────────────────────────────────────────
     csv_df = eligible[DISPLAY_COLS].copy()
     csv_df.insert(0, 'Rank', csv_df.index)
     csv_path = os.path.join(out_dir, f"{sid}-country-annex.csv")
     csv_df.to_csv(csv_path, index=False, float_format='%.4f')
     print(f"  Saved: {csv_path} ({len(csv_df)} rows)")
-    
-    # ── Calculate summary stats ──────────────────────────────────────────
+
+    # ── Summary stats ──────────────────────────────────────────────────
     n_eligible = len(eligible)
     total_alloc = eligible['total_allocation'].sum()
     total_state = eligible['state_component'].sum()
@@ -149,14 +165,14 @@ def generate_scenario(con, scenario):
     ldc_total = eligible[eligible['is_ldc']]['total_allocation'].sum()
     sids_total = eligible[eligible['is_sids']]['total_allocation'].sum()
     gini = _gini(eligible['total_allocation'].values)
-    
+
     # ── Markdown ─────────────────────────────────────────────────────────
     md_path = os.path.join(out_dir, f"{sid}-country-annex.md")
     with open(md_path, 'w') as f:
         f.write(f"# Country Annex: {sname}\n\n")
         f.write(f"**{scenario['description']}**\n\n")
         f.write(f"| Parameter | Value |\n|-----------|-------|\n")
-        f.write(f"| Fund size | USD {FUND/1e6:.0f} million |\n")
+        f.write(f"| Fund size | USD {fund/1e6:,.0f} million |\n")
         f.write(f"| State/IPLC split | {IPLC}/{100-IPLC} |\n")
         f.write(f"| TSAC (beta) | {beta*100:.1f}% |\n")
         f.write(f"| SOSAC (gamma) | {gamma*100:.1f}% |\n")
@@ -173,37 +189,37 @@ def generate_scenario(con, scenario):
         f.write(f"| **Total** | **{total_alloc:.2f}** | **100.0%** |\n\n")
         f.write(f"## Per-Country Allocations\n\n")
         f.write("See the accompanying CSV file for full data.\n\n")
-        f.write(f"Generated by `generate_country_annexes.py` using the live calculator.\n")
+        f.write(f"Generated by `generate_all_fund_sizes.py` using the live calculator.\n")
     print(f"  Saved: {md_path}")
-    
+
     # ── Word document ────────────────────────────────────────────────────
     doc_path = os.path.join(out_dir, f"{sid}-country-annex.docx")
     doc = Document()
-    
+
     for section in doc.sections:
         section.top_margin = Cm(1.5)
         section.bottom_margin = Cm(1.5)
         section.left_margin = Cm(1.5)
         section.right_margin = Cm(1.5)
-    
+
     # Title
-    title = doc.add_heading(f"Country Annex: {sname}", level=2)
+    title = doc.add_heading(f"Country Annex: {sname} — USD {fund_display}", level=2)
     title.alignment = WD_ALIGN_PARAGRAPH.CENTER
     for run in title.runs:
         run.font.name = FONT
         run.font.size = Pt(12)
-    
+
     # Subtitle
     sub = doc.add_paragraph()
     sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    sub_text = (f"{n_eligible} eligible Parties | Fund: USD {FUND/1e6:.0f} M | "
+    sub_text = (f"{n_eligible} eligible Parties | Fund: USD {fund/1e6:,.0f} M | "
                 f"State/IPLC: {IPLC}/{100-IPLC} | Gini: {gini:.4f}")
     run = sub.add_run(sub_text)
     run.font.name = FONT
     run.font.size = Pt(8.5)
     run.font.italic = True
-    
-    # Component summary paragraph
+
+    # Component summary
     p = doc.add_paragraph()
     run = p.add_run(
         f"IUSAF: USD {total_iusaf:.1f} M ({total_iusaf/total_alloc*100:.1f}%), "
@@ -213,9 +229,9 @@ def generate_scenario(con, scenario):
     )
     run.font.name = FONT
     run.font.size = Pt(8.5)
-    
+
     doc.add_paragraph()
-    
+
     # Table
     word_headers = [
         'Rank', 'Party', 'Total\n(M)', 'State\n(M)', 'IPLC\n(M)',
@@ -223,28 +239,26 @@ def generate_scenario(con, scenario):
         'Income', 'LDC', 'SIDS', 'EU', 'Band'
     ]
     n_cols = len(word_headers)
-    n_rows = len(eligible) + 1  # +1 for total row
-    
-    table = doc.add_table(rows=n_rows + 1, cols=n_cols)  # +1 for header
+    n_rows = len(eligible) + 1
+
+    table = doc.add_table(rows=n_rows + 1, cols=n_cols)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.style = "Table Grid"
-    
-    # Header row
+
     for j, hdr in enumerate(word_headers):
         cell = table.rows[0].cells[j]
         cell.text = ""
-        p = cell.paragraphs[0]
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_h = cell.paragraphs[0]
+        p_h.alignment = WD_ALIGN_PARAGRAPH.CENTER
         for k, line in enumerate(hdr.split("\n")):
             if k > 0:
-                p.add_run("\n")
-            run = p.add_run(line)
+                p_h.add_run("\n")
+            run = p_h.add_run(line)
             run.font.name = FONT
             run.font.size = Pt(6.5)
             run.font.bold = True
         set_cell_shading(cell, HEADER_BG)
-    
-    # Data rows
+
     for i, (idx, row) in enumerate(eligible.iterrows()):
         is_sids = row.get('is_sids', False)
         values = [
@@ -257,28 +271,28 @@ def generate_scenario(con, scenario):
             f"{row['component_tsac_amt']:.2f}",
             f"{row['component_sosac_amt']:.2f}",
             str(row['WB Income Group']),
-            'LDC' if row['is_ldc'] else '-',
-            'SIDS' if row['is_sids'] else '-',
-            'EU' if row['is_eu_ms'] else '-',
+            'LDC' if row['is_ldc'] else '\u2013',
+            'SIDS' if row['is_sids'] else '\u2013',
+            'EU' if row['is_eu_ms'] else '\u2013',
             str(row['un_band']).split(':')[0] if pd.notna(row['un_band']) else '',
         ]
-        
+
         for j, val in enumerate(values):
             cell = table.rows[i + 1].cells[j]
             cell.text = ""
-            p = cell.paragraphs[0]
+            p_d = cell.paragraphs[0]
             align = WD_ALIGN_PARAGRAPH.CENTER if j in [0, 2, 3, 4, 5, 6, 7] else WD_ALIGN_PARAGRAPH.LEFT
-            p.alignment = align
-            run = p.add_run(val)
+            p_d.alignment = align
+            run = p_d.add_run(val)
             run.font.name = FONT
             run.font.size = Pt(6.5)
             if j == 1 and is_sids:
                 run.font.bold = True
-        
+
         if is_sids:
             for j in range(n_cols):
                 set_cell_shading(table.rows[i + 1].cells[j], SIDS_HIGHLIGHT)
-    
+
     # Total row
     total_row_idx = len(eligible) + 1
     total_vals = [
@@ -290,41 +304,36 @@ def generate_scenario(con, scenario):
     for j, val in enumerate(total_vals):
         cell = table.rows[total_row_idx].cells[j]
         cell.text = ""
-        p = cell.paragraphs[0]
-        p.alignment = WD_ALIGN_PARAGRAPH.RIGHT if j in [2, 3, 4, 5, 6, 7] else WD_ALIGN_PARAGRAPH.LEFT
-        run = p.add_run(val)
+        p_t = cell.paragraphs[0]
+        p_t.alignment = WD_ALIGN_PARAGRAPH.RIGHT if j in [2, 3, 4, 5, 6, 7] else WD_ALIGN_PARAGRAPH.LEFT
+        run = p_t.add_run(val)
         run.font.name = FONT
         run.font.size = Pt(6.5)
         run.font.bold = True
         set_cell_shading(cell, HEADER_BG)
-    
+
     doc.save(doc_path)
     print(f"  Saved: {doc_path}")
-    
+
     return eligible
 
 
-def _gini(values):
-    """Compute Gini coefficient."""
-    import numpy as np
-    v = np.sort(values)
-    n = len(v)
-    if n == 0 or np.sum(v) == 0:
-        return 0.0
-    idx = np.arange(1, n + 1)
-    return float((2 * np.sum(idx * v) - (n + 1) * np.sum(v)) / (n * np.sum(v)))
-
-
 def main():
-    print("Generating country annex tables...")
+    print("Generating country annex tables for all fund sizes...")
     con = duckdb.connect(database=":memory:")
     load_data(con)
-    
-    for scenario in SCENARIOS:
-        print(f"\n  {scenario['name']} (beta={scenario['beta']}, gamma={scenario['gamma']})")
-        generate_scenario(con, scenario)
-    
-    print("\nDone. All four country annexes generated.")
+
+    for fund_size in FUND_SIZES:
+        fund_label = fund_size["label"]
+        fund_display = fund_size["display"]
+        print(f"\n{'='*60}")
+        print(f"Fund size: USD {fund_display}")
+        print(f"{'='*60}")
+        for scenario in SCENARIOS:
+            print(f"\n  {scenario['name']} (beta={scenario['beta']}, gamma={scenario['gamma']})")
+            generate_scenario(con, fund_size, scenario)
+
+    print(f"\nDone. All {len(FUND_SIZES)} fund sizes × {len(SCENARIOS)} scenarios generated.")
 
 
 if __name__ == "__main__":
