@@ -1,5 +1,10 @@
 # Banded TSAC: Implementation Specification
 
+## Note
+
+This is an experimental approach with applying banding logic to the FAOSTAT land area data. It has not been fully implemented and exists on the terrestrial branch
+and has been parked for the moment.
+
 ## Purpose
 
 Replace the linear land-area weighting in TSAC with a log₁₀-banded scheme that mirrors the existing IUSAF banding methodology. This addresses v4 finding 3.6 (Band 6 / China dominance) by making the TSAC weight structure consistent with the rest of the model.

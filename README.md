@@ -1,14 +1,33 @@
 # Cali Fund Allocation Model (Inverted UN Scale Option)
 
-An interactive policy-support tool for biodiversity fund allocation under the CBD Cali Fund. The model uses the inverted UN Scale of Assessments (IUSAF) with optional stewardship overlays (TSAC, SOSAC) to compute indicative allocations for CBD Parties.
+An interactive policy-support tool for biodiversity fund allocation under the CBD Cali Fund. The model uses the inverted UN Scale of Assessments (IUSAF) with optional terrestrial and ocean biodiversity stewardship overlays to compute indicative allocations for CBD Parties.
+
+The objective is to create a simple, easy to communicate formula. That formula can be easily expressed in plain Englih as follows:
+
+> The Cali Fund Allocation formula is based on an inverted United Nations Scale of Assessments used to determine member states contributions to the UN budget. It includes components recognising the different ocean and terrestrial biodiversity stewardship responsibilities among Parties. Recognition of the vital role of indigenous peoples and local communities is integral to the formula.
+
+As a simple formula this can be expressed as follows
+
+Country Share = Inverted UN Scale + Ocean Stewardship + Terrestrial Stewardship
+
+As overlays the Ocean and Terrestrial Stewardship Components reallocate funds from the equity base of the Inverted UN Scale to the Ocean or Terrestrial Stewardship Components. If the Inverted UN Scale is accepted as the baseline then the key question becomes what values in percentage terms should be assigned to the Ocean (SOSAC) and Terrestrial (TSAC) components. 
+
+This approach treats indigenous peoples and local communities as integral to the formula. This is achieved by dividing the country allocation equally between the state and indigenous peoples and local communities. Indigenous peoples and local communities in developed countries are addressed separately as part of a technical paper exercise. This is not currently included in the application itself.
+
+The formula and its model are grounded in paragraphs 17 and 18 of the Annex to decision 16/2. The prop
+
+
 
 ## The Formula
+
+The approach to the allocation formula deliberately avoids the use of mathematical notation in favour of ease of communication. However, the formula can be formally expressed as:  
 
 **Final Share = (1 − β − γ) × IUSAF + β × TSAC + γ × SOSAC**
 
 - **IUSAF**: Inverted UN Scale — the equity base, tilted towards lower-income and LDC countries.
 - **TSAC**: Terrestrial Stewardship — proportional to land area (km²).
-- **SOSAC**: SIDS Ocean Stewardship — equal-share pool for eligible SIDS.
+- **SOSAC**: SIDS Ocean Stewardship — equal-share pool for eligible Small Island Developing States
+.
 - **β, γ**: User-adjustable overlay weights. **The central policy question is where to set the balance between the equity base and the stewardship overlays.**
 
 → Full methodology: [reference/methodology.md](reference/methodology.md)

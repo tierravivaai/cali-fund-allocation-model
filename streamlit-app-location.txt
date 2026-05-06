@@ -1,1 +1,1 @@
-https://cali-fund-inverted-un-scale.streamlit.app/
+https://cali-fund-allocation-model.streamlit.app/
