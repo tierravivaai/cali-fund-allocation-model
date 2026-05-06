@@ -21,6 +21,7 @@ ahteg-reporting/
 ~$*.xlsx
 ~$*.pptx
 *.docx
+!country-annexes/**/*.docx
 *.xlsx
 *.pptx
 sensitivity-reports/ahteg-outputs
