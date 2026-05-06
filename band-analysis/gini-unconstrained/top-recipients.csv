@@ -1,0 +1,31 @@
+,party,total_allocation,state_component,iplc_component,component_iusaf_amt,component_tsac_amt,component_sosac_amt,iusaf_frac,tsac_frac,sosac_frac,WB Income Group,ldc,sids,band
+1,Brazil,9.623,4.812,4.812,3.907,5.717,0,0.406,0.594,0,Upper middle income,-,-,Band 5: 1.0% - 10.0%
+2,Guinea-Bissau,8.602,4.301,4.301,7.813,0.01923,0.7692,0.9083,0.002236,0.08943,Low income,LDC,SIDS,Band 1: <= 0.001%
+3,Solomon Islands,8.602,4.301,4.301,7.813,0.01914,0.7692,0.9083,0.002226,0.08943,Lower middle income,LDC,SIDS,Band 1: <= 0.001%
+4,Belize,8.598,4.299,4.299,7.813,0.0156,0.7692,0.9087,0.001814,0.08946,Upper middle income,-,SIDS,Band 1: <= 0.001%
+5,Timor-Leste,8.593,4.296,4.296,7.813,0.01017,0.7692,0.9093,0.001184,0.08952,Lower middle income,LDC,SIDS,Band 1: <= 0.001%
+6,Vanuatu,8.591,4.295,4.295,7.813,0.008338,0.7692,0.9095,0.0009705,0.08954,Lower middle income,-,SIDS,Band 1: <= 0.001%
+7,Cabo Verde,8.585,4.293,4.293,7.813,0.002756,0.7692,0.9101,0.0003211,0.0896,Upper middle income,-,SIDS,Band 1: <= 0.001%
+8,Samoa,8.584,4.292,4.292,7.813,0.001901,0.7692,0.9102,0.0002215,0.08961,Upper middle income,-,SIDS,Band 1: <= 0.001%
+9,Comoros,8.584,4.292,4.292,7.813,0.001273,0.7692,0.9102,0.0001483,0.08961,Lower middle income,LDC,SIDS,Band 1: <= 0.001%
+10,Sao Tome and Principe,8.583,4.292,4.292,7.813,0.0006566,0.7692,0.9103,7.65e-05,0.08962,Lower middle income,-,SIDS,Band 1: <= 0.001%
+11,Kiribati,8.583,4.292,4.292,7.813,0.000554,0.7692,0.9103,6.455e-05,0.08962,Lower middle income,LDC,SIDS,Band 1: <= 0.001%
+12,Dominica,8.583,4.292,4.292,7.813,0.000513,0.7692,0.9103,5.977e-05,0.08962,Upper middle income,-,SIDS,Band 1: <= 0.001%
+13,Tonga,8.583,4.292,4.292,7.813,0.0004925,0.7692,0.9103,5.738e-05,0.08962,Upper middle income,-,SIDS,Band 1: <= 0.001%
+14,Micronesia (Federated States of),8.583,4.292,4.292,7.813,0.0004788,0.7692,0.9103,5.578e-05,0.08962,Lower middle income,-,SIDS,Band 1: <= 0.001%
+15,Palau,8.583,4.291,4.291,7.813,0.0003146,0.7692,0.9103,3.666e-05,0.08962,High income,-,SIDS,Band 1: <= 0.001%
+16,Saint Vincent and the Grenadines,8.583,4.291,4.291,7.813,0.0002667,0.7692,0.9103,3.108e-05,0.08962,Upper middle income,-,SIDS,Band 1: <= 0.001%
+17,Grenada,8.583,4.291,4.291,7.813,0.0002325,0.7692,0.9103,2.709e-05,0.08963,Upper middle income,-,SIDS,Band 1: <= 0.001%
+18,Saint Kitts and Nevis,8.583,4.291,4.291,7.813,0.0001778,0.7692,0.9104,2.072e-05,0.08963,High income,-,SIDS,Band 1: <= 0.001%
+19,Niue,8.583,4.291,4.291,7.813,0.0001778,0.7692,0.9104,2.072e-05,0.08963,High income,-,SIDS,Band 1: <= 0.001%
+20,Cook Islands,8.583,4.291,4.291,7.813,0.0001614,0.7692,0.9104,1.881e-05,0.08963,High income,-,SIDS,Band 1: <= 0.001%
+21,Marshall Islands,8.583,4.291,4.291,7.813,0.0001231,0.7692,0.9104,1.434e-05,0.08963,Upper middle income,-,SIDS,Band 1: <= 0.001%
+22,Tuvalu,8.583,4.291,4.291,7.813,2.052e-05,0.7692,0.9104,2.391e-06,0.08963,Upper middle income,LDC,SIDS,Band 1: <= 0.001%
+23,Nauru,8.583,4.291,4.291,7.813,1.368e-05,0.7692,0.9104,1.594e-06,0.08963,High income,-,SIDS,Band 1: <= 0.001%
+24,China,8.505,4.252,4.252,2.084,6.421,0,0.245,0.755,0,Upper middle income,-,-,Band 6: > 10.0%
+25,Democratic Republic of the Congo,8.322,4.161,4.161,6.772,1.551,0,0.8137,0.1863,0,Low income,LDC,-,Band 2: 0.001% - 0.01%
+26,Central African Republic,8.239,4.12,4.12,7.813,0.4261,0,0.9483,0.05171,0,Low income,LDC,-,Band 1: <= 0.001%
+27,Sudan,8.049,4.025,4.025,6.772,1.278,0,0.8413,0.1587,0,Low income,LDC,-,Band 2: 0.001% - 0.01%
+28,Eritrea,7.896,3.948,3.948,7.813,0.08288,0,0.9895,0.0105,0,Low income,LDC,-,Band 1: <= 0.001%
+29,Liberia,7.879,3.94,3.94,7.813,0.06588,0,0.9916,0.008361,0,Low income,LDC,-,Band 1: <= 0.001%
+30,Sierra Leone,7.863,3.931,3.931,7.813,0.04937,0,0.9937,0.006279,0,Low income,LDC,-,Band 1: <= 0.001%

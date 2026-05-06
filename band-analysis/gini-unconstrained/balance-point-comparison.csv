@@ -1,0 +1,5 @@
+name,tsac_pct,sosac_pct,iusaf_pct,gini,spearman,band_preserved,b5_mean,b6_mean,b5_b6_margin_pct,ldc_total_m,ldc_count,sids_total_m,sids_count,stewardship_exceeds_iusaf,n_eligible
+Strict,1.5,3,95.5,0.0933112,0.951423,True,4.91934,3.97142,19.2694,333.864,44,321.149,39,0,142
+Gini-minimum (band-preserved),2.5,3,94.5,0.0885994,0.944809,True,5.44244,5.14891,5.39332,333.068,44,318.252,39,1,142
+Band-order boundary,3,3,94,0.0866091,0.929022,False,5.70399,5.73766,-0.590309,332.67,44,316.804,39,1,142
+Unconstrained Gini minimum,5.35,3,91.65,0.0828338,0.838949,False,6.93327,8.50478,-22.6662,330.8,44,309.998,39,2,142

@@ -1,0 +1,7 @@
+fund_size,Strict (1.5/3)_pool_pct,Strict (1.5/3)_pool_m,Gini-minimum (2.5/3)_pool_pct,Gini-minimum (2.5/3)_pool_m,Band-order boundary (3/3)_pool_pct,Band-order boundary (3/3)_pool_m
+$50m,4.5,2.2,5.5,2.8,6.0,3.0
+$200m,4.5,9.0,5.5,11.0,6.0,12.0
+$500m,4.5,22.5,5.5,27.5,6.0,30.0
+$1bn,4.5,45.0,5.5,55.0,6.0,60.0
+$5bn,4.5,225.0,5.5,275.0,6.0,300.0
+$10bn,4.5,450.0,5.5,550.0,6.0,600.0
