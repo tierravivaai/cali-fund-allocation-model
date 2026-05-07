@@ -171,7 +171,6 @@ All validation CSVs are in `model-tables/table-validation/`. The validation scri
 │
 ├── country-annexes/              # Country annex DOCX tables (4 scenarios × 4 fund sizes)
 ├── sensitivity-reports/          # Generated sensitivity outputs
-│   ├── iusaf-outputs/            # v3 IUSAF allocation outputs (5 CSVs + DOCX)
 │   └── v4-sensitivity-reports/  # v4 sensitivity & calibration reports
 │       ├── executive_summary.md
 │       ├── technical_annex.md
