@@ -77,8 +77,6 @@ streamlit run src/app.py
 streamlit run src/sensitivity.py
 ```
 
-```
-
 ## Table Sources
 
 Tables in the working paper (`iusaf_paper-06052026.docx`) are generated from the live DuckDB calculator used in the application and validated against reference CSVs. The table numbering below refers to the paper's internal numbering.
