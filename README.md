@@ -44,7 +44,7 @@ As is explained below this repository was written by Dr. Paul Oldham using advan
 ## Key Document Outputs
 
 1. The Working Paper in Word can be downloaded [here](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/docs/working_papers/iusaf_paper-06052026.docx)
-2. The tables used in the paper are here: []
+2. Tables in the working paper are generated from the live calculator and validated against CSV references. See [Table Sources](#table-sources) below.
 3. Country Annexes are provided for the various balance points
 at different scales of the Cali Fund (see [country-annexes](https://github.com/tierravivaai/cali-fund-allocation-model/tree/main/country-annexes)). Combined annexes per fund size: [$50M](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/country-annexes/fifty-million/country-annexes-fifty-million.docx), [$200M](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/country-annexes/two-hundred-million/country-annexes-two-hundred-million.docx), [$500M](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/country-annexes/five-hundred-million/country-annexes-five-hundred-million.docx), [$1 billion](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/country-annexes/one-billion/country-annexes-one-billion.docx)
 - Pure Inverted Scale: [$50M](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/country-annexes/fifty-million/iusaf-pure/iusaf-pure-country-annex.docx), [$200M](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/country-annexes/two-hundred-million/iusaf-pure/iusaf-pure-country-annex.docx), [$500M](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/country-annexes/five-hundred-million/iusaf-pure/iusaf-pure-country-annex.docx), [$1 billion](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/country-annexes/one-billion/iusaf-pure/iusaf-pure-country-annex.docx)
@@ -81,6 +81,39 @@ streamlit run src/sensitivity.py
 # Run the experimental banded TSAC variant (terrestrial branch)
 streamlit run src/banded_app.py --server.port 8502
 ```
+
+```
+
+## Table Sources
+
+Tables in the working paper (`iusaf_paper-06052026.docx`) are generated from the live DuckDB calculator and validated against reference CSVs. The table numbering below refers to the paper's internal numbering.
+
+| Paper Table | Content | Generator Script | Validated CSV |
+|---|---|---|---|
+| 1 | Six-band IUSAF configuration | `src/cali_model/calculator.py` | `config/un_scale_bands.yaml` |
+| 2 | Allocation by UN Region | `scripts/validate_all_tables.py` → `gen_region_table()` | `model-tables/iusaf-unregion-15042026.csv` |
+| 3 | Allocation by UN Sub-Region | `scripts/validate_all_tables.py` → `gen_subregion_table()` | `model-tables/iusaf-unsubregion-15042026.csv` |
+| 4 | Allocation by Intermediate Region | `scripts/validate_all_tables.py` → `gen_intermediate_region_table()` | `model-tables/iusaf-unintermediate-region-15042026.csv` |
+| 5 | LDC allocation panel | `scripts/validate_all_tables.py` → `gen_ldc_sids_panel()` | `model-tables/iusaf-ldc-panel-16042026.csv` |
+| 6 | SIDS allocation panel | `scripts/validate_all_tables.py` → `gen_ldc_sids_panel()` | `model-tables/iusaf-sids-panel-16042026.csv` |
+| 7 | Top 31 parties by allocation | `scripts/validate_all_tables.py` → `gen_ranked_country_table()` | `model-tables/iusaf-ranked-country-16042026.csv` |
+| 8 | Bottom 22 parties by allocation | `scripts/validate_all_tables.py` → `gen_ranked_country_table()` | `model-tables/iusaf-ranked-country-16042026.csv` |
+| 9 | Middle 89 parties by allocation | `scripts/validate_all_tables.py` → `gen_ranked_country_table()` | `model-tables/iusaf-ranked-country-16042026.csv` |
+| 10 | SIDS band distribution (SOSAC impact) | `src/cali_model/calculator.py` | `model-tables/iusaf-sids-countries-15042026.csv` |
+| 11 | SOSAC per-SIDS by band | `src/cali_model/calculator.py` | `model-tables/iusaf-sids-panel-16042026.csv` |
+| 12 | Land area (TSAC input) top 20 | `src/cali_model/calculator.py` | `model-tables/iusaf-band-order-preservation.csv` |
+| 13 (E1) | Component allocation by balance point & fund size | `scripts/generate_tsac_section_draft.py` | Computed live from `cali_model` |
+| 14 (E2) | Stewardship pool by balance point & fund size | `scripts/generate_tsac_section_draft.py` | Computed live from `cali_model` |
+| 15 (A) | Band-order preservation across TSAC levels | `scripts/generate_optiond_tables.py` → `write_band_order_table()` | `model-tables/iusaf-band-order-preservation.csv` |
+| 16 (B) | TSAC break-point summary | `scripts/generate_optiond_tables.py` → `write_breakpoint_summary_table()` | `model-tables/iusaf-breakpoint-summary.csv` |
+| 17 (C) | Full TSAC ranking trajectory | `src/cali_model/balance_analysis.py` | `model-tables/iusaf-breakpoint-summary.csv` |
+| 18 (D1) | IUSAF band composition | `src/cali_model/calculator.py` | Computed live |
+| 19 (D2) | Change in band allocation vs pure IUSAF | `src/cali_model/calculator.py` | Computed live |
+| 20 | IPLC developed-country Option 1 (equality) | `iplc-developed/` test-verified | `model-tables/iplc-option1-equality-*.csv` |
+| 21 | IPLC developed-country Option 2 (banded) | `iplc-developed/` test-verified | `model-tables/iplc-option2-banded-*.csv` |
+| 22–25 | Country annexes (4 scenarios × $1B) | `country-annexes/generate_all_fund_sizes.py` | Per-scenario CSVs in `country-annexes/{fund}/{scenario}/` |
+
+All validation CSVs are in `model-tables/table-validation/`. The validation script is `scripts/validate_all_tables.py`.
 
 ## Repository Structure
 
