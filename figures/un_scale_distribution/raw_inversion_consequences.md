@@ -1,5 +1,7 @@
 # Raw Inversion Consequences: Concentration of IUSAF Shares
 
+**Resolved through IUSAF Bands**
+
 ## The Claim
 
 > "90 Parties to the Convention are assessed under the 0.001 per cent and that under raw inversion, each of those Parties would receive approximately 1.07 per cent of the fund, collectively absorbing over 96 per cent of the total."

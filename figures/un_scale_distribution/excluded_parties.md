@@ -1,5 +1,7 @@
 # Zero-Rated Parties and the Division-by-Zero Problem
 
+**Resolved by Approach 3**
+
 ## Issue
 
 Three CBD Parties have a 0% share on the UN Scale of Assessments (2027) because they are not UN member states and therefore do not contribute to the UN budget:
@@ -44,7 +46,7 @@ All three receive effectively zero under pure IUSAF.
 
 ---
 
-## The Political Problem
+## The Problem
 
 The asymmetry creates a three-tier outcome among zero-rated Parties:
 
@@ -58,7 +60,7 @@ This is not a policy choice but a mathematical consequence: `1 / 0` is undefined
 
 ---
 
-## Possible Approaches for Discussion
+## Possible Approaches for Discussion 
 
 1. **Minimum floor** — Apply a small minimum allocation floor (e.g., 0.001%) to all eligible Parties, ensuring no eligible Party receives zero regardless of UN share.
 
