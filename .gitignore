@@ -24,6 +24,7 @@ ahteg-reporting/
 *.docx
 !country-annexes/**/*.docx
 !docs/working_papers/iusaf_paper-07052026.docx
+!sensitivity-reports/v4-sensitivity-reports/Cali_Fund_v4_sensitivity_reports.docx
 *.xlsx
 *.pptx
 
