@@ -31,12 +31,15 @@ ahteg-reporting/
 # Stale / experimental content
 band-analysis/experimental/
 deprecated/
+!deprecated/README.md
+!deprecated/*/README.md
 model-tables.zip
 
 # Docs: ignore working_papers folder but allow specific files
 docs/working_papers/*
 !docs/working_papers/iusaf_paper-07052026.docx
 !docs/working_papers/iusaf_paper-07052026.pdf
+!docs/working_papers/README.md
 docs/*.docx
 docs/*.html
 
