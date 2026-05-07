@@ -38,7 +38,7 @@ The model identifies four named balance-point scenarios. All four hold SOSAC fix
 
 | Scenario | TSAC (β) | SOSAC (γ) | Description |
 |----------|----------|-----------|-------------|
-| IUSAF (Pure) | 0.0% | 3% | Pure inverted UN Scale with band inversion — no terrestrial stewardship overlay |
+| IUSAF (Pure) | 0.0% | 0.0% | Pure inverted UN Scale with band inversion — no stewardship overlays |
 | Strict | 1.5% | 3% | Conservative stewardship overlay; band order fully preserved |
 | Gini-minimum | 2.5% | 3% | Minimises Gini coefficient subject to band-order preservation (Band 5 mean > Band 6 mean) and Spearman ρ ≥ 0.80 |
 | Band-order boundary | 3.0% | 3% | The boundary at which Band 6 mean allocation equals Band 5 mean — the structural limit of band-order preservation |

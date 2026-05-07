@@ -22,7 +22,7 @@
 - Added GitHub raw download URLs for all 16 annex DOCX + 4 combined annexes to README.
 
 ### Documentation: 4-scenario balance points
-- Replaced old 3-point balance point table (Gini-minimum, Band-order overturn, Stewardship-forward) with 4 named scenarios: **IUSAF (Pure)** β=0, **Strict** β=1.5%, **Gini-minimum** β=2.5%, **Band-order boundary** β=3.0% (all at SOSAC γ=3%).
+- Replaced old 3-point balance point table (Gini-minimum, Band-order overturn, Stewardship-forward) with 4 named scenarios: **IUSAF (Pure)** β=0/γ=0, **Strict** β=1.5%, **Gini-minimum** β=2.5%, **Band-order boundary** β=3.0% (the latter three at SOSAC γ=3%).
 - Updated both README and `reference/methodology.md`.
 - Added per-Party subscript notation to allocation formula: `Country Shareᵢ = (1−β−γ) × IUSAFᵢ + β × TSACᵢ + γ × SOSACᵢ` with explanation.
 

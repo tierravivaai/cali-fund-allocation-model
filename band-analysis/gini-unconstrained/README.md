@@ -12,7 +12,7 @@ Using the same IUSAF allocation model (142 eligible Parties, fund = USD 1,000M, 
 
 | Setting | TSAC | SOSAC | IUSAF | Gini | Band Order | Band 5/6 Margin | Spearman ρ | Stewardship > IUSAF |
 |---------|------|-------|-------|------|------------|-----------------|------------|-------|
-| Pure IUSAF | 0% | 3% | 97% | 0.1011 | Preserved | +46.7% | 1.000 | No |
+| Pure IUSAF | 0% | 0% | 100% | 0.1011 | Preserved | +46.7% | 1.000 | No |
 | Strict | 1.5% | 3% | 95.5% | 0.0933 | Preserved | +19.3% | 0.951 | No |
 | **Gini-min (band-preserved)** | **2.5%** | **3%** | **94.5%** | **0.0886** | **Preserved** | **+5.4%** | **0.945** | **Yes (China)** |
 | Band-order boundary | 3.0% | 3% | 94.0% | 0.0866 | Just violated | −0.6% | 0.929 | Yes (China) |

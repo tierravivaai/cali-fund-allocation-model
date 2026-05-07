@@ -239,7 +239,7 @@ The v4.0 methodology replaces the arbitrary Spearman ρ ≥ 0.85 threshold with 
 
 | Scenario | TSAC (β) | SOSAC (γ) | Description |
 |----------|----------|-----------|-------------|
-| IUSAF (Pure) | 0.0% | 3% | Pure inverted UN Scale — no terrestrial stewardship overlay |
+| IUSAF (Pure) | 0.0% | 0.0% | Pure inverted UN Scale — no stewardship overlays |
 | Strict | 1.5% | 3% | Conservative stewardship overlay; band order fully preserved |
 | Gini-minimum | 2.5% | 3% | Lowest Gini preserving band order (Spearman ρ ≈ 0.945) |
 | Band-order boundary | 3.0% | 3% | Band 6 mean equals Band 5 mean — structural limit of band-order preservation |
