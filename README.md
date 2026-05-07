@@ -41,7 +41,7 @@ An important strength of the simple approach is that it does not require mathema
 This repository contains the background datasets used in the calculation of options
 under the formula by individual country and United Nations region. It contains two streamlit applications (one for the country tables and one for sensitivity testing). 
 
-The formula application is available online at [https://cali-fund-allocation-model.streamlit.app/](https://cali-fund-allocation-model.streamlit.app/) and can be woken from 
+The formula application is available online at [https://cali-fund-allocation-model.streamlit.app/](https://cali-fund-allocation-model.streamlit.app/) and can be woken from sleep (which will take a few minutes). Instructions for the sensitivity application are provided below.
 
 
 As is explained below this repository was written by Dr. Paul Oldham using advanced AI software engineering tools, notably [Droid from Factory AI](https://factory.ai/), and a number of different AI models. The key advantage of the use of AI is speed and rigour because testing, validation and peer review of code can all be automated. You will find a very detailed set of unit tests (testing code) and a sensitivity test suite (testing the model). Instructions on cloning and running the repository and its applications is provided below. 
@@ -131,7 +131,7 @@ All validation CSVs are in `model-tables/table-validation/`. The validation scri
 │       ├── sensitivity_scenarios.py # Scenario definitions and two-way grids
 │       └── reporting.py          # Markdown/CSV export generation
 │
-├── tests/                        # Pytest suite (178+ tests)
+├── tests/                        # Pytest suite (138 tests)
 │   ├── test_logic.py             # Party count, inversion, allocation sums
 │   ├── test_band_inversion.py    # Band assignment and weight validation
 │   ├── test_tsac_sosac.py       # Component blending and isolation
@@ -189,6 +189,15 @@ All validation CSVs are in `model-tables/table-validation/`. The validation scri
 │
 ├── deprecated/                   # Retired content (instructions, v3 reports, Spearman threshold)
 ├── docs/                         # Working paper and supporting markdown
+│   ├── working_papers/           # Working paper (DOCX + PDF)
+│   ├── component-rationale.md    # TSAC/SOSAC component design rationale
+│   ├── sosac-rationale.md        # SOSAC rationale
+│   ├── spearman-threshold-assessment.md # Assessment of deprecated ρ≥0.85 threshold
+│   └── table-validation-*.md     # Validation reports
+├── peer_review/                  # AI peer review reports
+│   ├── opus-4-6-peer_review_*.md # Opus 4.6 peer review (tracked)
+│   ├── gpt54-extra-high-peer-review.md
+│   └── gemini3-pro-high-peer-review-report.md
 │
 ├── requirements.txt               # Python dependencies
 ├── change_log.md                  # Versioned change history
@@ -252,7 +261,7 @@ The v4.0 methodology replaces the arbitrary Spearman ρ ≥ 0.85 threshold with 
 ## Testing
 
 ```bash
-# Run full test suite (178+ tests)
+# Run full test suite (138 tests)
 pytest tests/ -v
 
 # Run IPLC structural validation (40 tests)
@@ -268,7 +277,7 @@ pytest tests/ --cov=src/cali_model --cov-report=term-missing
 
 | Branch | Status | Description |
 |--------|--------|-------------|
-| `main` | Active | Production code, 178+ tests, app.py + sensitivity.py |
+| `main` | Active | Production code, 138 tests, app.py + sensitivity.py |
 | `terrestrial` | Parked | Banded TSAC variant (banded_app.py); v4 sensitivity reports now on `main` |
 
 Archived/deleted branches: `iplc` (merged to main), `optiond` (merged to main as v4.0).
@@ -291,6 +300,7 @@ See [change_log.md](change_log.md) for the full versioned history. Key milestone
 - **v4.1**: Balance-point ranking tables, IPLC developed-country tables, DuckDB fix
 - **v4.2**: Banded TSAC app, calibration harness, v4 sensitivity reports (merged from terrestrial to main)
 - **v4.2.1**: DuckDB StringDtype fix on main, IPLC structural validation (40 tests)
+- **v5.0**: Housekeeping, documentation consolidation, v4 reports merged to main, folder reorganisation
 
 ## Use of AI
 

@@ -2,7 +2,7 @@
 
 ## Test Suite
 
-The repository contains **25+ test modules** with **178+ automated tests** covering mathematical integrity, UI behaviour, and data consistency.
+The repository contains **25+ test modules** with **138 automated tests** covering mathematical integrity, UI behaviour, and data consistency.
 
 Run all tests:
 ```bash
