@@ -1,5 +1,7 @@
 # The Spearman 0.85 Threshold: Origin, Application, and Empirical Assessment
 
+**Resolved through Option D**
+
 ## 1. Current Status
 
 The Spearman rank correlation threshold of ρ > 0.85 is used in the model as the boundary for "recognisably the same rank order as pure IUSAF." It serves as a binding constraint in the Gini-optimal point identification: the Gini-optimal setting is defined as the TSAC weight that minimises the Gini coefficient while keeping Spearman rank correlation vs pure IUSAF above 0.85.

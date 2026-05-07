@@ -45,3 +45,4 @@ sensitivity-reports/ahteg-outputs
 sensitivity-reports/v2-sensitivity-reports
 .coverage
 *.html
+docs/ahteg-report-structure.md
