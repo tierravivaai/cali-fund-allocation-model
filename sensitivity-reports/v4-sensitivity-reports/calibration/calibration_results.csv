@@ -1,0 +1,2 @@
+config,gini_min_beta,gini_min_gamma,gini_min_value,tsac_iusaf_crossing_beta,tsac_iusaf_crossing_gamma,max_tsac_iusaf_ratio,max_ratio_beta,max_ratio_gamma,moderate_overlay_count,total_scenarios,moderate_overlay_pct,sids_total_m,ldc_total_m,criteria_1_tsac_iusaf_le_2,criteria_2_overlay_ge_35,criteria_3_gini_le_current,all_criteria_pass
+geometric_base_2,0.14,0.0,0.06468923293414242,0.12,0.04,1.4019920318725094,0.15,0.1,122,176,69.31818181818183,276.20662561462024,340.25570918938627,True,True,True,True

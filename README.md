@@ -170,7 +170,17 @@ All validation CSVs are in `model-tables/table-validation/`. The validation scri
 │   └── validation_analysis.md    # Why Option 1 ≈ Option 2
 │
 ├── country-annexes/              # Country annex DOCX tables (4 scenarios × 4 fund sizes)
-├── sensitivity-reports/          # Generated sensitivity outputs (v4)
+├── sensitivity-reports/          # Generated sensitivity outputs
+│   ├── iusaf-outputs/            # v3 IUSAF allocation outputs (5 CSVs + DOCX)
+│   └── v4-sensitivity-reports/  # v4 sensitivity & calibration reports
+│       ├── executive_summary.md
+│       ├── technical_annex.md
+│       ├── two_way_grid_analysis.md
+│       ├── scale_invariance.md
+│       ├── tsac_sosac_grid_coarse.csv  # 176-scenario TSAC×SOSAC grid
+│       ├── tsac_sosac_grid_fine.csv    # 441-scenario fine grid (0.5pp)
+│       ├── tsac_sosac_heatmap_*.png    # Gini & Spearman heatmaps
+│       └── calibration/              # Banded TSAC calibration harness outputs
 ├── band-analysis/                 # Break-point and stewardship pool analysis
 ├── figures/                       # Plots and visualisations (UN scale distribution, contribution bands)
 ├── reference/                     # Detailed documentation
@@ -260,7 +270,7 @@ pytest tests/ --cov=src/cali_model --cov-report=term-missing
 | Branch | Status | Description |
 |--------|--------|-------------|
 | `main` | Active | Production code, 178+ tests, app.py + sensitivity.py |
-| `terrestrial` | Parked | Banded TSAC variant (banded_app.py), calibration harness, v4.2 sensitivity reports |
+| `terrestrial` | Parked | Banded TSAC variant (banded_app.py); v4 sensitivity reports now on `main` |
 
 Archived/deleted branches: `iplc` (merged to main), `optiond` (merged to main as v4.0).
 
@@ -280,7 +290,7 @@ See [change_log.md](change_log.md) for the full versioned history. Key milestone
 - **v3**: 6-band IUSAF, Gini reporting, balance-point analysis, 138 tests
 - **v4.0**: Band-order preservation replaces Spearman 0.85 threshold, gini_optimal → gini_minimum rename
 - **v4.1**: Balance-point ranking tables, IPLC developed-country tables, DuckDB fix
-- **v4.2**: Banded TSAC app, calibration harness, v4 sensitivity reports (terrestrial branch)
+- **v4.2**: Banded TSAC app, calibration harness, v4 sensitivity reports (merged from terrestrial to main)
 - **v4.2.1**: DuckDB StringDtype fix on main, IPLC structural validation (40 tests)
 
 ## Use of AI
