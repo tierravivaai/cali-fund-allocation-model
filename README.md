@@ -1,22 +1,21 @@
 # Cali Fund Allocation Model (Inverted UN Scale Option)
 
-This repository contains all the code, data and tests used to create the Inverted UN Scale of Assessments Formula (IUSAF) model as an option for consideration by the Ad Hoc Technical Expert Group on the Allocation Methodology for the Cali Fund established under the Convention on Biological Diversity by decision 16/2. The repository elaborates what is called Option A: The Inverted UN Scale of Assessments for consideration by the AHTEG.
+An interactive policy-support tool for biodiversity fund allocation under the CBD Cali Fund. The model uses the inverted UN Scale of Assessments (IUSAF) with optional terrestrial and ocean biodiversity stewardship overlays to compute indicative allocations for CBD Parties.
 
-The objective is to create a simple and easy to communicate allocation formula. The central idea is that the Cali Fund allocation will be made based on recognition of a Party's economic capacity and biodiversity stewardship responsibilities. In its simplest form the allocation formula reads: 
+The objective is to create a simple, easy to communicate formula. That formula can be easily expressed in plain Englih as follows:
 
-> Country Share = economic capacity + biodiversity stewardship
+> The Cali Fund Allocation formula is based on an inverted United Nations Scale of Assessments used to determine member states contributions to the UN budget. It includes components recognising the different ocean and terrestrial biodiversity stewardship responsibilities among Parties. Recognition of the vital role of indigenous peoples and local communities is integral to the formula.
 
-The formula works in an innovative way. The United Nations core budget is set by the Contributions Committee through the United Nations Scale of Assessments and is agreed by the General Assembly every three years (currently 2025-2027). Under the UN Scale, developing countries and least developed countries make smaller contributions and member states with higher economic capacity make larger contributions. The proposed formula for the Cali Fund allocation turns the UN Scale on its head and inverts the UN Scale so that Parties to the CBD with lower agreed economic capacity will receive a higher allocation from the Cali Fund. Parties with higher agreed economic capacity under the UN Scale will receive a lower allocation from the Cali Fund. This is achieved by organising 142 CBD Parties into six weighted bands using the UN Scale where Parties in lower bands receive a larger allocation than Parties in higher bands (so that band 1 receives more than band 2 and so on until band 6). This approach favours least developed and lower income developing countries.
+As a simple formula this can be expressed as follows
 
-The formula also recognises that different Parties to the CBD have different biodiversity stewardship responsibilities that reflect their biogeographic characteristics. Small Island Developing States (SIDS) are formally recognised by the United Nations for the structural challenges that they face. SIDS also hold responsibility for stewardship of large ocean areas. In a similar way, some middle income Parties hold biodiverity stewardship responsibilitites for very large and diverse biogeographic ecosystems.
+The formula also recognises that different Parties to the CBD have different biodiversity stewardship responsibilities that reflect their biogeographic characteristics. Small Island Developing States (SIDS) are formally recognised by the United Nations for the structural challenges that they face. SIDS also hold responsibility for stewardship of large ocean areas. In a similar way, some middle income Parties hold biodiversity stewardship responsibilitites for very large and diverse biogeographic ecosystems.
 
-The formula recognises these biodiversity stewardship responsibilities through a SIDS Ocean Stewardship Component (SOSAC) and Terrestrial Stewardship Component (TSAC). These are overlays on top of the allocation by economic capacity that reallocate a pool of funds to recognise stewardship.
+The formula recognises these biodiversity stewardship responsibilities through a SIDS Ocean Stewardship Component (SOSAC) and Terrestrial Stewardship Component (TSAC). These are *overlays* on top of the allocation by economic capacity that reallocate a pool of funds to recognise stewardship.
 
-Indigenous Peoples and Local Communities play a vital role in the conservation and sustainable use of biodiversity. The formula treats Indigenous Peoples and Local Communities as integral and divides the geographic country allocation equally between the state and Indigenous Peoples and Local Communities. The formula includes and allocation for Indigenous Peoples and Local Communities in developed countries.  
+This approach treats indigenous peoples and local communities as integral to the formula. This is achieved by dividing the country allocation equally between the state and indigenous peoples and local communities. Indigenous peoples and local communities in developed countries are addressed separately as part of a technical paper exercise. This is not currently included in the application itself.
 
-That formula can be easily expressed in plain English as follows:
+The formula and its model are grounded in paragraphs 17 and 18 of the Annex to decision 16/2. The prop
 
-> The Cali Fund Allocation formula is based on an inverted United Nations Scale of Assessments used to determine member states contributions to the UN core budget. It includes components recognising the different ocean and terrestrial biodiversity stewardship responsibilities among Parties. Recognition of the vital role of indigenous peoples and local communities for the conservation and sustainable use of biodiversity is integral to the formula.
 
 As a formula this can be expressed at different levels of detail for different audiences:
 
@@ -34,12 +33,11 @@ OR using mathematical symbols for TSAC (β) and SOSAC (γ):
 
     Country Share = (1 − β − γ) × IUSAF + β × TSAC + γ × SOSAC
 
-An important strength of the simple approach is that it does not require mathematical symbols to explain it. Where the formal expression helps is in making clear that the stewardship pool is created by **reallocating funds** from the equity base of the Inverted UN Scale (IUSAF) to the stewardship components. If the use of the inverted UN Scale is accepted as the foundation for the allocation formula the key challenge becomes deciding on the size of the stewardship pool. 
+An important strength of the simple approach is that it does not require mathematical symbols to explain it. Where the formal expression helps is in making clear that the stewardship pool is created by *reallocating funds* from the equity base of the Inverted UN Scale (IUSAF) to the stewardship components. If the use of the inverted UN Scale is accepted as the foundation for the allocation formula the key challenge becomes deciding on the size of the stewardship pool. 
 
-This repository contains the background datasets used in the calculation of options
-under the formula by individual country and United Nations region. It contains two streamlit applications (one for the country tables and one for sensitivity testing). 
+This repository contains the background datasets used in the calculation of options under the formula by individual country and United Nations region. It contains two streamlit applications (one for the country tables and one for sensitivity testing). 
 
-As is explained below this repository was written by Dr. Paul Oldham using advanced AI software engineering tools, notably Droid from Factory AI, and a number of different AI models. The key advantage of the use of AI is speed and rigour because testing, validation and peer review of code can all be automated. You will find a very detailed set of unit tests (testing code) and a sensitivity test suite (testing the model). Instructions on cloning and running the repository and its applications is provided below. 
+As is explained below this repository was written by Dr. Paul Oldham using advanced AI software engineering tools, notably Droid from Factory AI, and a number of different AI models. The key advantage of the use of AI is speed and rigour because testing, validation and peer review of code can all be automated. You will find a very detailed set of unit tests (testing the code) and a sensitivity test suite (testing the model). Instructions on cloning and running the repository and its applications is provided below. 
 
 ## Key Document Outputs
 
@@ -77,16 +75,13 @@ streamlit run src/app.py
 
 # Run the sensitivity/robustness app
 streamlit run src/sensitivity.py
-
-# Run the experimental banded TSAC variant (terrestrial branch)
-streamlit run src/banded_app.py --server.port 8502
 ```
 
 ```
 
 ## Table Sources
 
-Tables in the working paper (`iusaf_paper-06052026.docx`) are generated from the live DuckDB calculator and validated against reference CSVs. The table numbering below refers to the paper's internal numbering.
+Tables in the working paper (`iusaf_paper-06052026.docx`) are generated from the live DuckDB calculator used in the application and validated against reference CSVs. The table numbering below refers to the paper's internal numbering.
 
 | Paper Table | Content | Generator Script | Validated CSV |
 |---|---|---|---|
@@ -206,11 +201,11 @@ Dedicated parameter-sweep and reporting interface for reviewers and statistician
 - Balance-point identification (Gini-minimum subject to structural constraints)
 - Integrity checks export (`integrity_checks.csv`)
 - Markdown summary generation
-- Named balance-point scenarios: `gini_minimum`, `band_order_overturn`, `stewardship_forward`
+- Named balance-point scenarios: `iusaf_pure`, `iusaf_strict`, `gini_minimum`, `band_order_boundary`
 
 ## Balance Point Scenarios (v4.0)
 
-The v4.0 methodology replaced an arbitrary Spearman ρ ≥ 0.85 threshold introduced in v3.0 with **band-order preservation** (Band 5 mean > Band 6 mean) plus a Spearman safety floor of 0.80. Four named scenarios at SOSAC=3%:
+The v4.0 methodology replaces the arbitrary Spearman ρ ≥ 0.85 threshold with **band-order preservation** (Band 5 mean > Band 6 mean) plus a Spearman safety floor of 0.80. Four named scenarios at SOSAC=3%:
 
 | Scenario | TSAC (β) | SOSAC (γ) | Description |
 |----------|----------|-----------|-------------|
