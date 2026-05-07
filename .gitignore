@@ -14,18 +14,31 @@ data_temp_*/
 .factory/
 data-raw.zip
 archive/
-docs/
 ahteg-reporting/
 ~$*
 ~$*.docx
 ~$*.xlsx
 ~$*.pptx
+
+# Office binary files — only track specific exceptions
 *.docx
 !country-annexes/**/*.docx
+!docs/working_papers/iusaf_paper-06052026.docx
 *.xlsx
 *.pptx
+
+# Stale / experimental content
+band-analysis/experimental/
+deprecated/
+model-tables.zip
+
+# Docs: ignore working_papers folder but allow one specific file
+docs/working_papers/*
+!docs/working_papers/iusaf_paper-06052026.docx
+docs/*.docx
+docs/*.html
+
 sensitivity-reports/ahteg-outputs
 sensitivity-reports/v2-sensitivity-reports
-docs
 .coverage
 *.html

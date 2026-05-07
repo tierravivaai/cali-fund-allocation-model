@@ -1,6 +1,6 @@
 # Threshold Revision: Band-Order Preservation as Structural Constraint
 
-## Status
+## Status **Implemented v4**
 
 This document specifies a methodological revision to the Gini-optimal balance-point definition. It supersedes the previous Spearman ≥ 0.85 constraint. The revision is to be implemented on a feature branch, merged to main, and tagged as a minor version increment.
 
