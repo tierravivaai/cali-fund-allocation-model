@@ -34,14 +34,17 @@ OR using mathematical symbols for TSAC (β) and SOSAC (γ):
 
     Country Shareᵢ = (1 − β − γ) × IUSAFᵢ + β × TSACᵢ + γ × SOSACᵢ
 
-Where the subscript ᵢ denotes that each component value is computed per Party. Every eligible CBD Party receives its own share based on its individual IUSAF weight (economic capacity), land area (TSAC), and SIDS status (SOSAC). The weights β and γ are global parameters set by the Cali Fund; the per-Party component values vary across countries.
+Where the subscript ᵢ denotes that each component value is computed per Party. Every eligible CBD Party receives its own share based on its individual IUSAF weight (economic capacity), land area (TSAC), and SIDS status (SOSAC). The weights β and γ are global parameters and the per-Party component values vary across countries.
 
 An important strength of the simple approach is that it does not require mathematical symbols to explain it. Where the formal expression helps is in making clear that the stewardship pool is created by **reallocating funds** from the equity base of the Inverted UN Scale (IUSAF) to the stewardship components. If the use of the inverted UN Scale is accepted as the foundation for the allocation formula the key challenge becomes deciding on the size of the stewardship pool. 
 
 This repository contains the background datasets used in the calculation of options
 under the formula by individual country and United Nations region. It contains two streamlit applications (one for the country tables and one for sensitivity testing). 
 
-As is explained below this repository was written by Dr. Paul Oldham using advanced AI software engineering tools, notably Droid from Factory AI, and a number of different AI models. The key advantage of the use of AI is speed and rigour because testing, validation and peer review of code can all be automated. You will find a very detailed set of unit tests (testing code) and a sensitivity test suite (testing the model). Instructions on cloning and running the repository and its applications is provided below. 
+The formula application is available online at [https://cali-fund-allocation-model.streamlit.app/](https://cali-fund-allocation-model.streamlit.app/) and can be woken from 
+
+
+As is explained below this repository was written by Dr. Paul Oldham using advanced AI software engineering tools, notably [Droid from Factory AI](https://factory.ai/), and a number of different AI models. The key advantage of the use of AI is speed and rigour because testing, validation and peer review of code can all be automated. You will find a very detailed set of unit tests (testing code) and a sensitivity test suite (testing the model). Instructions on cloning and running the repository and its applications is provided below. 
 
 ## Key Document Outputs
 
@@ -277,4 +280,9 @@ See [change_log.md](change_log.md) for the full versioned history. Key milestone
 
 ## Use of AI
 
-The code base is written in Python using Factory AI Droid as the development harness. Current main coding model: GLM-5 (Z.ai). High-level reasoning through Opus 4.6–4.7, GPT-5.4-5.5 Codex. Code planning and automated peer review uses GPT-5 Codex, Claude Opus 4.6-4.7, and Gemini Pro 3. The main models used to write code were GPT5 Codex (various) and Claude Sonnet switching to GLM-5.1 - the Droid default - for v4 for its robustness and lack of clutter. Code and model review sessions were performed outside of Droid in independent clean sessions in Claude Code (Anthropic), Codex (Open AI) and Antigravity (Google). Model based peer review proved invaluable in identifying issues requiring attention prior to human review (such as catching that a Spearman value of 0.85 used during model exploration had become hard coded). But caution is required with higher level reasoning models such as the recent Opus 4.7 due to a tendency to produce irrelevant and confusing clutter. The responsible human is Dr. Paul Oldham.
+The code base is written in Python using [Factory AI Droid](https://factory.ai/) as the development harness. 
+- Current main coding model: GLM-5 (Z.ai). 
+- High-level reasoning through Opus 4.6–4.7, GPT-5.4-5.5 Codex. 
+- Code planning and automated peer review uses GPT-5 Codex, Claude Opus 4.6-4.7, and Gemini Pro 3. The main models used to write code were GPT5 Codex (various) and Claude Sonnet switching to GLM-5.1 - the Droid default - for v4 for its robustness. 
+- Code and model review sessions were performed outside of Droid in independent clean sessions in Claude Code (Anthropic), Codex (Open AI) and Antigravity (Google). Model based peer review proved invaluable in identifying issues requiring attention prior to human review (such as catching that a Spearman value of 0.85 used during model exploration had become hard coded). But caution is required with higher level reasoning models such as the recent Opus 4.7 due to a tendency to produce irrelevant and confusing clutter. LLMs are an aid for improving critical human review: not a replacement for it. 
+- The responsible human is Dr. Paul Oldham.
