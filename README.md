@@ -32,7 +32,9 @@ OR with acronyms:
 
 OR using mathematical symbols for TSAC (β) and SOSAC (γ):
 
-    Country Share = (1 − β − γ) × IUSAF + β × TSAC + γ × SOSAC
+    Country Shareᵢ = (1 − β − γ) × IUSAFᵢ + β × TSACᵢ + γ × SOSACᵢ
+
+Where the subscript ᵢ denotes that each component value is computed per Party. Every eligible CBD Party receives its own share based on its individual IUSAF weight (economic capacity), land area (TSAC), and SIDS status (SOSAC). The weights β and γ are global parameters set by the Cali Fund; the per-Party component values vary across countries.
 
 An important strength of the simple approach is that it does not require mathematical symbols to explain it. Where the formal expression helps is in making clear that the stewardship pool is created by **reallocating funds** from the equity base of the Inverted UN Scale (IUSAF) to the stewardship components. If the use of the inverted UN Scale is accepted as the foundation for the allocation formula the key challenge becomes deciding on the size of the stewardship pool. 
 
@@ -56,13 +58,15 @@ at different scales of the Cali Fund (see [country-annexes](https://github.com/t
 
 The approach to the allocation formula deliberately avoids the use of mathematical notation in favour of ease of communication. However, the formula can be formally expressed as:  
 
-**Final Share = (1 − β − γ) × IUSAF + β × TSAC + γ × SOSAC**
+**Country Shareᵢ = (1 − β − γ) × IUSAFᵢ + β × TSACᵢ + γ × SOSACᵢ**
+
+The subscript ᵢ denotes a per-Party calculation: each component value differs by country.
 
 - **IUSAF**: Inverted UN Scale — the equity base, tilted towards lower-income and LDC countries.
 - **TSAC**: Terrestrial Stewardship — proportional to land area (km²).
 - **SOSAC**: SIDS Ocean Stewardship — equal-share pool for eligible Small Island Developing States
 .
-- **β, γ**: User-adjustable overlay weights. **The central policy question is where to set the balance between the equity base and the stewardship overlays.**
+- **β, γ**: Global overlay weights applied uniformly across all Parties. **The central policy question is where to set the balance between the equity base and the stewardship overlays.**
 
 → Full methodology: [reference/methodology.md](reference/methodology.md)
 

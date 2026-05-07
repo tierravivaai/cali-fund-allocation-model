@@ -2,13 +2,15 @@
 
 ## Allocation Formula
 
-**Final Share = (1 − β − γ) × IUSAF + β × TSAC + γ × SOSAC**
+**Country Shareᵢ = (1 − β − γ) × IUSAFᵢ + β × TSACᵢ + γ × SOSACᵢ**
+
+The subscript ᵢ denotes a per-Party calculation: each component value differs by country, while β and γ are global parameters applied uniformly.
 
 Where:
-- **IUSAF** (Inverted UN Scale Allocation Function): the equity base, tilted towards lower-income and least developed countries.
-- **TSAC** (Terrestrial Stewardship Allocation Component): adjustment for land-area-based stewardship.
-- **SOSAC** (SIDS Ocean Stewardship Allocation Component): equal-share pool for eligible SIDS.
-- **β** (TSAC weight) and **γ** (SOSAC weight) are user-adjustable sliders.
+- **IUSAFᵢ** (Inverted UN Scale Allocation Function): the equity base for Party *i*, tilted towards lower-income and least developed countries.
+- **TSACᵢ** (Terrestrial Stewardship Allocation Component): land-area-based stewardship adjustment for Party *i*.
+- **SOSACᵢ** (SIDS Ocean Stewardship Allocation Component): equal-share pool for eligible SIDS (zero for non-SIDS).
+- **β** (TSAC weight) and **γ** (SOSAC weight) are global overlay weights applied uniformly across all Parties.
 - The IPLC/State split divides each Party's allocation at the selected percentage (default 50/50).
 
 ## IUSAF: Raw Inversion vs Band-Based Inversion
