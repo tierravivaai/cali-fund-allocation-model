@@ -23,7 +23,7 @@ ahteg-reporting/
 # Office binary files — only track specific exceptions
 *.docx
 !country-annexes/**/*.docx
-!docs/working_papers/iusaf_paper-06052026.docx
+!docs/working_papers/iusaf_paper-07052026.docx
 *.xlsx
 *.pptx
 
@@ -32,9 +32,10 @@ band-analysis/experimental/
 deprecated/
 model-tables.zip
 
-# Docs: ignore working_papers folder but allow one specific file
+# Docs: ignore working_papers folder but allow specific files
 docs/working_papers/*
-!docs/working_papers/iusaf_paper-06052026.docx
+!docs/working_papers/iusaf_paper-07052026.docx
+!docs/working_papers/iusaf_paper-07052026.pdf
 docs/*.docx
 docs/*.html
 

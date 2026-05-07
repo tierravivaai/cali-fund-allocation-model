@@ -43,7 +43,7 @@ As is explained below this repository was written by Dr. Paul Oldham using advan
 
 ## Key Document Outputs
 
-1. The Working Paper in Word can be downloaded [here](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/docs/working_papers/iusaf_paper-06052026.docx)
+1. The Working Paper in Word can be downloaded [here](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/docs/working_papers/iusaf_paper-07052026.docx) or as [PDF](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/docs/working_papers/iusaf_paper-07052026.pdf)
 2. Tables in the working paper are generated from the live calculator and validated against CSV references. See [Table Sources](#table-sources) below.
 3. Country Annexes are provided for the various balance points
 at different scales of the Cali Fund (see [country-annexes](https://github.com/tierravivaai/cali-fund-allocation-model/tree/main/country-annexes)). Combined annexes per fund size: [$50M](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/country-annexes/fifty-million/country-annexes-fifty-million.docx), [$200M](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/country-annexes/two-hundred-million/country-annexes-two-hundred-million.docx), [$500M](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/country-annexes/five-hundred-million/country-annexes-five-hundred-million.docx), [$1 billion](https://github.com/tierravivaai/cali-fund-allocation-model/raw/refs/heads/main/country-annexes/one-billion/country-annexes-one-billion.docx)
@@ -81,7 +81,7 @@ streamlit run src/sensitivity.py
 
 ## Table Sources
 
-Tables in the working paper (`iusaf_paper-06052026.docx`) are generated from the live DuckDB calculator used in the application and validated against reference CSVs. The table numbering below refers to the paper's internal numbering.
+Tables in the working paper (`iusaf_paper-07052026.docx`) are generated from the live DuckDB calculator used in the application and validated against reference CSVs. The table numbering below refers to the paper's internal numbering.
 
 | Paper Table | Content | Generator Script | Validated CSV |
 |---|---|---|---|
