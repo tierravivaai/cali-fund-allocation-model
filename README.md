@@ -4,7 +4,7 @@ This repository contains all the code, data and tests used to create the Inverte
 
 The objective is to create a simple and easy to communicate allocation formula. The central idea is that the Cali Fund allocation will be made based on recognition of a Party's economic capacity and biodiversity stewardship responsibilities. In its simplest form the allocation formula reads: 
 
-Country Share = economic capacity + biodiversity stewardship
+> Country Share = economic capacity + biodiversity stewardship
 
 The formula works in an innovative way. The United Nations core budget is set by the Contributions Committee through the United Nations Scale of Assessments and is agreed by the General Assembly every three years (currently 2025-2027). Under the UN Scale, developing countries and least developed countries make smaller contributions and member states with higher economic capacity make larger contributions. The proposed formula for the Cali Fund allocation turns the UN Scale on its head and inverts the UN Scale so that Parties to the CBD with lower agreed economic capacity will receive a higher allocation from the Cali Fund. Parties with higher agreed economic capacity under the UN Scale will receive a lower allocation from the Cali Fund. This is achieved by organising 142 CBD Parties into six weighted bands using the UN Scale where Parties in lower bands receive a larger allocation than Parties in higher bands (so that band 1 receives more than band 2 and so on until band 6). This approach favours least developed and lower income developing countries.
 
@@ -14,7 +14,7 @@ The formula recognises these biodiversity stewardship responsibilities through a
 
 Indigenous Peoples and Local Communities play a vital role in the conservation and sustainable use of biodiversity. The formula treats Indigenous Peoples and Local Communities as integral and divides the geographic country allocation equally between the state and Indigenous Peoples and Local Communities. The formula includes and allocation for Indigenous Peoples and Local Communities in developed countries.  
 
-That formula can be easily expressed in plain Englih as follows:
+That formula can be easily expressed in plain English as follows:
 
 > The Cali Fund Allocation formula is based on an inverted United Nations Scale of Assessments used to determine member states contributions to the UN core budget. It includes components recognising the different ocean and terrestrial biodiversity stewardship responsibilities among Parties. Recognition of the vital role of indigenous peoples and local communities for the conservation and sustainable use of biodiversity is integral to the formula.
 
@@ -175,19 +175,16 @@ Dedicated parameter-sweep and reporting interface for reviewers and statistician
 - Markdown summary generation
 - Named balance-point scenarios: `gini_minimum`, `band_order_overturn`, `stewardship_forward`
 
-### `banded_app.py` — Experimental Banded TSAC Variant
+## Balance Point Scenarios (v4.0)
 
-**Available on the `terrestrial` branch only.** A parallel app using `tsac_mode="banded"` (log₁₀ land-area bands with geometric_base_2 weights) instead of linear land area. Extended sliders (0–30%), three balance-point presets (Strict, Gini-minimum, Boundary), and a Spearman-based overlay warning. See [banded_app_spec_v3.md](../banded_app_spec_v3.md) for details.
+The v4.0 methodology replaced an arbitrary Spearman ρ ≥ 0.85 threshold introduced in v3.0 with **band-order preservation** (Band 5 mean > Band 6 mean) plus a Spearman safety floor of 0.80. Four named scenarios at SOSAC=3%:
 
-## Balance Points (v4.0)
-
-The v4.0 methodology replaced an arbitrary Spearman ρ ≥ 0.85 threshold introduced in v3.0 with **band-order preservation** (Band 5 mean > Band 6 mean) plus a Spearman safety floor of 0.80. Key reference points at SOSAC=3%:
-
-| Point | TSAC | Gini | Spearman ρ | Definition |
-|-------|------|------|-----------|-----------|
-| Gini-minimum | 2.5% | 0.0886 | 0.945 | Lowest Gini preserving band order |
-| Band-order overturn | 3.0% | — | 0.93 | Band 6 overtakes Band 5 |
-| Stewardship-forward | 5.0% | — | — | Exploratory reference |
+| Scenario | TSAC (β) | SOSAC (γ) | Description |
+|----------|----------|-----------|-------------|
+| IUSAF (Pure) | 0.0% | 3% | Pure inverted UN Scale — no terrestrial stewardship overlay |
+| Strict | 1.5% | 3% | Conservative stewardship overlay; band order fully preserved |
+| Gini-minimum | 2.5% | 3% | Lowest Gini preserving band order (Spearman ρ ≈ 0.945) |
+| Band-order boundary | 3.0% | 3% | Band 6 mean equals Band 5 mean — structural limit of band-order preservation |
 
 → Full stewardship design: [reference/methodology.md](reference/methodology.md)
 
