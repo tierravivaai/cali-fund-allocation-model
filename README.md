@@ -111,8 +111,8 @@ Tables in the working paper (`iusaf_paper-07052026.docx`) are generated from the
 | 17 (C) | Full TSAC ranking trajectory | `src/cali_model/balance_analysis.py` | `model-tables/iusaf-breakpoint-summary.csv` |
 | 18 (D1) | IUSAF band composition | `src/cali_model/calculator.py` | Computed live |
 | 19 (D2) | Change in band allocation vs pure IUSAF | `src/cali_model/calculator.py` | Computed live |
-| 20 | IPLC developed-country Option 1 (equality) | `iplc-developed/` test-verified | `model-tables/iplc-option1-equality-*.csv` |
-| 21 | IPLC developed-country Option 2 (banded) | `iplc-developed/` test-verified | `model-tables/iplc-option2-banded-*.csv` |
+| 20 | IPLC developed-country Option 1 (equality) | `iplc-developed/` test-verified | `iplc-developed/iplc-option1-equality-*.csv` |
+| 21 | IPLC developed-country Option 2 (banded) | `iplc-developed/` test-verified | `iplc-developed/iplc-option2-banded-*.csv` |
 | 22–25 | Country annexes (4 scenarios × $1B) | `country-annexes/generate_all_fund_sizes.py` | Per-scenario CSVs in `country-annexes/{fund}/{scenario}/` |
 
 All validation CSVs are in `model-tables/table-validation/`. The validation script is `scripts/validate_all_tables.py`.
@@ -123,10 +123,9 @@ All validation CSVs are in `model-tables/table-validation/`. The validation scri
 ├── src/                          # Application and model code
 │   ├── app.py                    # Main Streamlit negotiation app
 │   ├── sensitivity.py            # Sensitivity analysis & reporting app
-│   ├── banded_app.py             # Experimental banded TSAC variant (terrestrial branch)
-│   └── cali_model/              # Core calculation library
+│   └── cali_model/               # Core calculation library
 │       ├── calculator.py         # calculate_allocations() and aggregation functions
-│       ├── data_loader.py         # DuckDB-based ETL (raw data → base_df)
+│       ├── data_loader.py        # DuckDB-based ETL (raw data → base_df)
 │       ├── balance_analysis.py   # Fine sweeps, Gini-minimum identification
 │       ├── sensitivity_metrics.py # Gini, Spearman, component ratios
 │       ├── sensitivity_scenarios.py # Scenario definitions and two-way grids
@@ -148,8 +147,8 @@ All validation CSVs are in `model-tables/table-validation/`. The validation scri
 │   ├── generate_balance_point_rankings.py  # Balance-point tables
 │   ├── generate_optiond_tables.py         # Option D threshold tables
 │   ├── generate_tsac_section_draft.py      # TSAC section Word output
-│   ├── rank_change_scenarios.py            # Rank-change panel figures
-│   ├── csv_to_word_lib.py                 # Word table generation utility
+│   ├── generate_all_fund_sizes.py          # Country annex generation
+│   ├── validate_all_tables.py              # Table validation against live calculator
 │   └── ...                                 # Cross-check and export scripts
 │
 ├── config/                       # Model configuration
@@ -162,19 +161,25 @@ All validation CSVs are in `model-tables/table-validation/`. The validation scri
 │   ├── CLASS_2025_10_07.xlsx         # World Bank income groups
 │   └── ...                           # Land area, EU, UNSD regions
 │
-├── model-tables/                 # Generated output tables (CSV, DOCX, MD)
+├── model-tables/                 # Generated output tables (CSV, MD) + table-validation/
 ├── iplc-developed/               # IPLC developed-country analysis
 │   ├── specification.md           # Option 1 & 2 specification
-│   ├── iplc-integration-options.md # Structural options (A–D)
+│   ├── iplc-option1-equality.md    # Option 1 analysis and CSVs
+│   ├── iplc-option2-banded.md     # Option 2 analysis and CSVs
 │   ├── test_structural_validation.py # 40 structural validation tests
 │   └── validation_analysis.md    # Why Option 1 ≈ Option 2
 │
-├── sensitivity-reports/          # Generated sensitivity outputs
-├── band-analysis/                 # Break-point analysis
+├── country-annexes/              # Country annex DOCX tables (4 scenarios × 4 fund sizes)
+├── sensitivity-reports/          # Generated sensitivity outputs (v4)
+├── band-analysis/                 # Break-point and stewardship pool analysis
+├── figures/                       # Plots and visualisations (UN scale distribution, contribution bands)
 ├── reference/                     # Detailed documentation
 │   ├── methodology.md             # Formula, bands, balance points
 │   ├── data-sources.md            # Data pipeline and sources
 │   └── validation.md              # Test suite and integrity checks
+│
+├── deprecated/                   # Retired content (instructions, v3 reports, Spearman threshold)
+├── docs/                         # Working paper and supporting markdown
 │
 ├── requirements.txt               # Python dependencies
 ├── change_log.md                  # Versioned change history
