@@ -38,6 +38,8 @@ docs/working_papers/*
 docs/*.docx
 docs/*.html
 
+iplc-developed/iplc-integration-options.md
+
 sensitivity-reports/ahteg-outputs
 sensitivity-reports/v2-sensitivity-reports
 .coverage

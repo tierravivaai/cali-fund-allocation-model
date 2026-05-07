@@ -12,7 +12,7 @@ The formula also recognises that different Parties to the CBD have different bio
 
 The formula recognises these biodiversity stewardship responsibilities through a SIDS Ocean Stewardship Component (SOSAC) and Terrestrial Stewardship Component (TSAC). These are overlays on top of the allocation by economic capacity that reallocate a pool of funds to recognise stewardship.
 
-Indigenous Peoples and Local Communities play a vital role in the conservation and sustainable use of biodiversity. The formula treats Indigenous Peoples and Local Communities as integral and divides the geographic country allocation equally between the state and Indigenous Peoples and Local Communities. The formula includes and allocation for Indigenous Peoples and Local Communities in developed countries.  
+Indigenous Peoples and Local Communities play a vital role in the conservation and sustainable use of biodiversity. The formula treats Indigenous Peoples and Local Communities as integral and divides the geographic country allocation equally between the state and Indigenous Peoples and Local Communities. The formula includes an allocation for Indigenous Peoples and Local Communities in developed countries.  
 
 That formula can be easily expressed in plain English as follows:
 
@@ -260,8 +260,6 @@ The `iplc-developed/` directory contains a paper-exercise calculating IPLC alloc
 - **Option 2**: Banded IUSAF with the 9 countries added to Bands 4–5 (IPLC ≈ 2.11% of fund).
 
 The closeness of these results is structurally expected: Band 4 countries gain relative to equality while Band 5 countries lose, and the effects partially cancel. See [iplc-developed/validation_analysis.md](iplc-developed/validation_analysis.md).
-
-Four structural integration options (A–D) are analysed in [iplc-developed/iplc-integration-options.md](iplc-developed/iplc-integration-options.md). Option D (unified pool with State-component return) is recommended.
 
 ## Version History
 
