@@ -1,5 +1,75 @@
 # Change Log
 
+## v5.0 — Housekeeping, documentation, and repository consolidation (2026-05-07)
+
+### Repository structure and gitignore overhaul
+- Restructured `.gitignore`: replaced blanket `docs/` ignore with targeted `docs/working_papers/*` + specific file exceptions; added `*.docx` with exceptions for `country-annexes/**/*.docx`, `docs/working_papers/iusaf_paper-07052026.docx`, and `sensitivity-reports/v4-sensitivity-reports/Cali_Fund_v4_sensitivity_reports.docx`; added `*.pdf` exception for `iusaf_paper-07052026.pdf`; added `band-analysis/experimental/`, `deprecated/`, `model-tables.zip`, `docs/ahteg-report-structure.md`.
+- Removed 7 model-tables DOCX files from git tracking (`git rm --cached`) despite `*.docx` gitignore rule.
+- Consolidated folders: moved `images/` → `figures/`, `instructions/` → `deprecated/instructions/`, removed empty `logic/` directory.
+- Moved stale content to `deprecated/`: `sensitivity-plan.md`, `small-fixes.md`, `optiond-threshold-revision-rationale.md`, `v3-sensitivity-reports/`, `iusaf-outputs/`.
+- De-duplicated 12 IPLC CSVs that were tracked in both `iplc-developed/` and `model-tables/` — kept `iplc-developed/` as canonical, removed `model-tables/` copies.
+- Removed `iplc-developed/iplc-integration-options.md` from repo (unreviewed content) and from README.
+- Removed `streamlit-app-location.txt` from git tracking.
+- Added `docs/sosac-rationale.md`, `docs/spearman-threshold-assessment.md`, and `data-raw/README_WORLD_BANK_CLASS_2025_10_07` to tracked files.
+
+### Working paper update
+- Updated working paper from 0605 to 0705 version: `iusaf_paper-06052026.docx` → `iusaf_paper-07052026.docx` + `iusaf_paper-07052026.pdf`.
+- Updated README download links (Word + PDF).
+
+### Country annex generation
+- Generated country annex DOCX tables for 4 scenarios (IUSAF Pure, Strict, Gini-minimum, Band-order boundary) × 4 fund sizes ($50M, $200M, $500M, $1B).
+- Added `country-annexes/combine_annexes.py` to merge 4 scenario DOCX into 1 combined DOCX per fund size.
+- Added GitHub raw download URLs for all 16 annex DOCX + 4 combined annexes to README.
+
+### Documentation: 4-scenario balance points
+- Replaced old 3-point balance point table (Gini-minimum, Band-order overturn, Stewardship-forward) with 4 named scenarios: **IUSAF (Pure)** β=0, **Strict** β=1.5%, **Gini-minimum** β=2.5%, **Band-order boundary** β=3.0% (all at SOSAC γ=3%).
+- Updated both README and `reference/methodology.md`.
+- Added per-Party subscript notation to allocation formula: `Country Shareᵢ = (1−β−γ) × IUSAFᵢ + β × TSACᵢ + γ × SOSACᵢ` with explanation.
+
+### Documentation: table sources
+- Added Table Sources section to README mapping all 25 tables in the working paper to their generator scripts (`validate_all_tables.py`, `generate_optiond_tables.py`, `generate_tsac_section_draft.py`, `generate_all_fund_sizes.py`) and validated CSVs in `model-tables/`.
+
+### v4 sensitivity reports merged from terrestrial branch
+- Cherry-picked 36 files (CSVs, MDs, PNGs, calibration script) from the `terrestrial` branch to `main`:
+  - Two-way TSAC×SOSAC grids: coarse (176-scenario) and fine (441-scenario, 0.5pp intervals).
+  - Gini and Spearman heatmaps (coarse + fine).
+  - Narrative reports: executive summary, technical annex, two-way grid analysis, scale invariance.
+  - Integrity checks (per-scenario + compiled).
+  - Calibration harness outputs: 7 banded TSAC configurations × grid + integrity CSVs + comparison plots.
+  - Calibration script: `scripts/calibrate_banded_tsac.py`.
+- Added `Cali_Fund_v4_sensitivity_reports.docx` to git tracking.
+- Updated README: expanded sensitivity-reports tree, noted v4 reports now on main, updated branch status and version history.
+- Moved v3-era `sensitivity-reports/iusaf-outputs/` to `deprecated/iusaf-outputs/` (6 CSVs + DOCX, not referenced by any code, superseded by v4 reports).
+
+### Band-weight flattening analysis (merged via PR #2)
+- Added band weight flattening analysis with constrained Gini minimisation.
+- Added stewardship pool volume analysis with restructured tables.
+- Added unconstrained Gini minimum analysis.
+- Clarified Gini improvement as absolute 0.006, not misleading 6.5% relative.
+- Reorganised `band-analysis/` folder structure.
+- Added standalone band-weights-flatten discussion document.
+
+### Table validation and region tables (2026-05-04)
+- Added `scripts/validate_all_tables.py` for table generation and validation.
+- Regenerated CSV outputs for all model tables.
+- Added UN region and sub-region combined table.
+- Added intermediate region table organised by UN region.
+- Fixed LDC/SIDS table data and `party_master.csv` overrides.
+
+### Other documentation updates
+- Added Streamlit app URL and updated Use of AI section in README.
+- Removed `banded_app.py` section from README (local-only branch content).
+- Added `docs/sosac-rationale.md` and `docs/spearman-threshold-assessment.md` to tracked docs.
+- Added `data-raw/README_WORLD_BANK_CLASS_2025_10_07` for World Bank classification source documentation.
+- Fixed stray backtick fence breaking Repository Structure rendering.
+- Fixed reverted opening paragraphs after merge conflict resolution.
+- Fixed typo: "and allocation" → "an allocation".
+
+### Test status
+- All 138 tests pass (no new tests added on main in this cycle; test files listed under v4.2 exist only on the `terrestrial` branch).
+
+---
+
 ## v4.3.0 — Party master consolidation (2026-04-25)
 
 ### Data loader: consolidated override table (peer review §2.3)
@@ -251,12 +321,12 @@
 ### TSAC band assignments
 - Added `tsac_banded/tsac_band_assignments.csv` with per-country land-area, band assignment, and banded weight.
 
-### Tests
-- `tests/test_banded_tsac.py`: 215 tests for banded TSAC logic (band assignment, weight normalisation, allocation correctness, edge cases).
-- `tests/test_calibration_harness.py`: calibration harness validation.
-- `tests/test_iplc_developed.py`: IPLC developed-country allocation tests (Option 1 and Option 2).
-- `tests/test_v4_sensitivity.py`: v4 sensitivity framework validation.
-- `tests/test_sensitivity_modules.py`: extended with Spearman and balance metrics tests.
+### Tests (terrestrial branch only)
+- `tests/test_banded_tsac.py`: 215 tests for banded TSAC logic (band assignment, weight normalisation, allocation correctness, edge cases) — **on `terrestrial` branch only, not merged to `main`**.
+- `tests/test_calibration_harness.py`: calibration harness validation — **on `terrestrial` branch only**.
+- `tests/test_iplc_developed.py`: IPLC developed-country allocation tests (Option 1 and Option 2) — **on `terrestrial` branch only**.
+- `tests/test_v4_sensitivity.py`: v4 sensitivity framework validation — **on `terrestrial` branch only**.
+- `tests/test_sensitivity_modules.py`: extended with Spearman and balance metrics tests — **on `main`**.
 
 ### Git workflow
 - Branch `terrestrial` parked at commit `e5b5c57` with full documentation.
