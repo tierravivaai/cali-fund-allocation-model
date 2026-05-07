@@ -30,17 +30,18 @@ Parties are grouped into 6 UN-share bands with pre-assigned weights, reducing se
 
 Configuration: `config/un_scale_bands.yaml`.
 
-## Balance Points (v4.0)
+## Balance Point Scenarios (v4.0)
 
-The model identifies three named balance points at SOSAC=3%, subject to structural constraints:
+The model identifies four named balance-point scenarios. All four hold SOSAC fixed at 3% and vary TSAC to explore the trade-off between the equity base and terrestrial stewardship:
 
-| Point | TSAC | SOSAC | Constraint |
-|-------|------|-------|-----------|
-| Gini-minimum | 2.5% | 3% | Minimises Gini subject to band-order preservation (Band 5 mean > Band 6 mean) and Spearman ρ ≥ 0.80 |
-| Band-order overturn | 3.0% | 3% | Band 6 mean allocation exceeds Band 5 mean |
-| Stewardship-forward | 5.0% | 3% | Exploratory reference point |
+| Scenario | TSAC (β) | SOSAC (γ) | Description |
+|----------|----------|-----------|-------------|
+| IUSAF (Pure) | 0.0% | 3% | Pure inverted UN Scale with band inversion — no terrestrial stewardship overlay |
+| Strict | 1.5% | 3% | Conservative stewardship overlay; band order fully preserved |
+| Gini-minimum | 2.5% | 3% | Minimises Gini coefficient subject to band-order preservation (Band 5 mean > Band 6 mean) and Spearman ρ ≥ 0.80 |
+| Band-order boundary | 3.0% | 3% | The boundary at which Band 6 mean allocation equals Band 5 mean — the structural limit of band-order preservation |
 
-**Band-order preservation** replaces the earlier arbitrary Spearman ρ ≥ 0.85 threshold. The only empirical structural break is at ρ ≈ 0.93 (TSAC=3%), where Band 6 overtakes Band 5.
+**Band-order preservation** replaces the earlier arbitrary Spearman ρ ≥ 0.85 threshold. The empirical structural break is at TSAC ≈ 3.0% (Spearman ρ ≈ 0.93), where Band 6 mean allocation catches up with Band 5. Country annex tables for all four scenarios are generated at four fund sizes ($50M, $200M, $500M, $1B) and are available under `country-annexes/`.
 
 ## Stewardship Slider Design
 

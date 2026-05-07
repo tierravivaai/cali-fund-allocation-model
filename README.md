@@ -179,15 +179,16 @@ Dedicated parameter-sweep and reporting interface for reviewers and statistician
 
 **Available on the `terrestrial` branch only.** A parallel app using `tsac_mode="banded"` (log₁₀ land-area bands with geometric_base_2 weights) instead of linear land area. Extended sliders (0–30%), three balance-point presets (Strict, Gini-minimum, Boundary), and a Spearman-based overlay warning. See [banded_app_spec_v3.md](../banded_app_spec_v3.md) for details.
 
-## Balance Points (v4.0)
+## Balance Point Scenarios (v4.0)
 
-The v4.0 methodology replaced an arbitrary Spearman ρ ≥ 0.85 threshold introduced in v3.0 with **band-order preservation** (Band 5 mean > Band 6 mean) plus a Spearman safety floor of 0.80. Key reference points at SOSAC=3%:
+The v4.0 methodology replaced an arbitrary Spearman ρ ≥ 0.85 threshold introduced in v3.0 with **band-order preservation** (Band 5 mean > Band 6 mean) plus a Spearman safety floor of 0.80. Four named scenarios at SOSAC=3%:
 
-| Point | TSAC | Gini | Spearman ρ | Definition |
-|-------|------|------|-----------|-----------|
-| Gini-minimum | 2.5% | 0.0886 | 0.945 | Lowest Gini preserving band order |
-| Band-order overturn | 3.0% | — | 0.93 | Band 6 overtakes Band 5 |
-| Stewardship-forward | 5.0% | — | — | Exploratory reference |
+| Scenario | TSAC (β) | SOSAC (γ) | Description |
+|----------|----------|-----------|-------------|
+| IUSAF (Pure) | 0.0% | 3% | Pure inverted UN Scale — no terrestrial stewardship overlay |
+| Strict | 1.5% | 3% | Conservative stewardship overlay; band order fully preserved |
+| Gini-minimum | 2.5% | 3% | Lowest Gini preserving band order (Spearman ρ ≈ 0.945) |
+| Band-order boundary | 3.0% | 3% | Band 6 mean equals Band 5 mean — structural limit of band-order preservation |
 
 → Full stewardship design: [reference/methodology.md](reference/methodology.md)
 
